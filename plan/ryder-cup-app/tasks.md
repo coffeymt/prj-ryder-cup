@@ -21,7 +21,7 @@ Implementation plan for the Ryder Cup golf tournament web app. See `prd.md` for 
 **Entry criteria:** PRD approved.
 **Exit criteria:** Git repo on `feature/ryder-cup-app`, SvelteKit app scaffolded, `wrangler dev` runs locally, infrastructure blueprint documented, DNS + D1 + Resend provisioned (via Architect blueprint + user manual steps).
 
-- [ ] **Task P0.T1** — Initialize git repo at workspace root and create `feature/ryder-cup-app` branch from `main` before any other changes. Add a baseline `.gitignore` appropriate for a Node + SvelteKit + Cloudflare project. → Coder | Files: `.gitignore`, `.git/` (init), `README.md` (stub)
+- [x] **Task P0.T1** — Initialize git repo at workspace root and create `feature/ryder-cup-app` branch from `main` before any other changes. Add a baseline `.gitignore` appropriate for a Node + SvelteKit + Cloudflare project. → Coder | Files: `.gitignore`, `.git/` (init), `README.md` (stub)
   - Depends on: none
   - Acceptance: `git status` shows clean working tree on branch `feature/ryder-cup-app`; `main` exists as the default branch.
 
