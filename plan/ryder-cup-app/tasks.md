@@ -54,7 +54,7 @@ Implementation plan for the Ryder Cup golf tournament web app. See `prd.md` for 
 
 All tasks in this phase write to **non-overlapping** migration files and can run in parallel.
 
-- [ ] **Task P1.T1** — Author `0001_init.sql`: DDL for `tournaments`, `teams`, `players`, `courses`, `tees`, `holes`, `rounds`, `round_segments`, `matches`, `match_sides`, `match_side_players`, `hole_scores`, `match_hole_results`, `match_results`, `audit_log`, `magic_link_tokens`, `processed_ops`, `commissioners`. Include appropriate indexes for `(tournament_id, ...)` access patterns, unique constraints on `tournaments.code` and `magic_link_tokens.token_hash`. Reference `.github/skills/sql-development.md` and `.github/skills/database-optimization.md`. → Coder | Files: `web/migrations/0001_init.sql`
+- [x] **Task P1.T1** — Author `0001_init.sql`: DDL for `tournaments`, `teams`, `players`, `courses`, `tees`, `holes`, `rounds`, `round_segments`, `matches`, `match_sides`, `match_side_players`, `hole_scores`, `match_hole_results`, `match_results`, `audit_log`, `magic_link_tokens`, `processed_ops`, `commissioners`. Include appropriate indexes for `(tournament_id, ...)` access patterns, unique constraints on `tournaments.code` and `magic_link_tokens.token_hash`. Reference `.github/skills/sql-development.md` and `.github/skills/database-optimization.md`. → Coder | Files: `web/migrations/0001_init.sql`
   - Depends on: P0.T4
   - Acceptance: `wrangler d1 execute DB --local --file web/migrations/0001_init.sql` succeeds against an empty local D1; every entity from the Domain Model in `prd.md` is represented; no hardcoded tournament data present.
 
