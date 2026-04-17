@@ -1,5 +1,9 @@
 #!/usr/bin/env node
 
+// This runner intentionally reapplies every migration file on every invocation.
+// It does not maintain migration state and relies on each SQL file being
+// idempotent (for example via CREATE IF NOT EXISTS and INSERT OR IGNORE).
+
 import { readdir } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -8,12 +12,12 @@ import { spawn } from 'node:child_process';
 const VALID_ENVS = new Set(['preview', 'production']);
 
 function printUsage() {
-  console.error('Usage: node scripts/apply-migrations.mjs [--remote --env <preview|production>]');
+  console.error('Usage: node scripts/apply-migrations.mjs [--remote] [--env <preview|production>]');
 }
 
 function parseArgs(argv) {
   let remote = false;
-  let env = 'preview';
+  let env;
 
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
@@ -47,7 +51,10 @@ function parseArgs(argv) {
 }
 
 async function runMigration(migrationPath, remote, env) {
-  const targetArgs = remote ? ['--remote', '--env', env] : ['--local'];
+  const targetArgs = remote ? ['--remote'] : ['--local'];
+  if (remote && env) {
+    targetArgs.push('--env', env);
+  }
   const npxArgs = ['wrangler', 'd1', 'execute', 'DB', ...targetArgs, '--file', migrationPath];
   const npxCommand = 'npx';
 
@@ -74,7 +81,7 @@ async function runMigration(migrationPath, remote, env) {
 
 async function main() {
   const { remote, env } = parseArgs(process.argv.slice(2));
-  const targetLabel = remote ? `remote (${env})` : 'local';
+  const targetLabel = remote ? (env ? `remote (${env})` : 'remote') : 'local';
 
   const scriptPath = fileURLToPath(import.meta.url);
   const scriptDir = path.dirname(scriptPath);
