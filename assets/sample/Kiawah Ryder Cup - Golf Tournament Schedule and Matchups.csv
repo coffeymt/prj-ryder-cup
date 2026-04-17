@@ -1,0 +1,58 @@
+Total Points Available:,30,,,
+Winning The Cup:,The first team to reach 15.5 points takes the victory.,,,
+Payout:,The losing team pays for the group’s dinner on Friday night after the final round at Turtle Point.,,,
+,,,,
+Players,Handicap,,,
+Ted,2.4,,,
+Evan,8.9,,,
+Matt,10.6,,,
+Bob,18.6,,,
+Corey,5.8,,,
+Tim,13.2,,,
+Jake,15.4,,,
+Mike M,6,,,
+Mike C,11.4,,,
+Joe,25,,,
+,,,,
+Captains:,Low handicappers Ted (2.4) and Corey (5.8),,,
+,,,,
+Snake Draft:,Captains alternate picking one player from each tier to guarantee the aggregate handicaps match up well.,,,
+,,,,
+Oak Point Dilemma:,Ted and Tim (13.2) are both sitting out Thursday morning. They cannot be on the same team. Defaults will be made from Tier 3. Tim is automatically assigned to Team Corey. Jake is automatically assigned to Ted.,,,
+,,,,
+Draft Tiers,,,,
+Tier 1:,Mike M (6.0) & Evan (8.9),,,
+Tier 2:,Matt (10.6) & Mike C (11.4),,,
+Tier 3:,Jake (15.4) & Tim (13.2) (Defaulted),,,
+Tier 4:,Bob (18.6) & Joe (25.0),,,
+,,,,
+Match Formats & Handicaps,,,,
+Format,Description,Handicap,,
+2-Man Scramble,"Both players hit tee shots, select the best drive, and both hit from that spot. Continue until holed.",35/15 Blended Net,,
+Modified Alt Shot / Pinehurst,"Both players tee off. Select the best ball, then opposite player plays the second shot, and continues to play true alternate shot into the hole.",60/40 Blended Net,,
+Shamble,"Both players tee off, select the best drive, and then everyone plays their own ball into the hole from there.",80% Net,,
+Four-Ball / Better Ball,Everyone plays their own ball from tee to green. The lowest net score on the hole wins it for the team.,Net,,
+Singles,Standard 1v1 match play.,Net,,
+,,,,
+Sample Draft,,,,
+"Ted (56.7): Ted, Evan, Mike C, Jake, Bob",,,,
+"Corey (60.6): Corey, Mike M, Matt, Tim, Joe",,,,
+,,,,
+Date & Time,Course (Players),Format,Points,Matchups (Team Ted vs. Team Corey)
+,,,,
+"Tue 5/12, 2:10 PM",Cougar Point (10),"F9: Scramble, B9: Four-Ball",6,"2v2: Ted & Bob vs. Corey & Joe
+2v2: Evan & Jake vs. Mike M & Tim
+1v1: Mike C vs. Matt"
+"Wed 5/13, 12:10 PM",Osprey Point (10),"F9: Alt-Shot, B9: Four-Ball",6,"2v2: Ted & Mike C vs. Corey & Matt
+2v2: Evan & Bob vs. Mike M & Joe
+1v1: Jake vs. Tim"
+"Thu 5/14, 7:40 AM",Oak Point (8),"F9: Shamble, B9: Four-Ball",4,"2v2: Evan & Bob vs. Corey & Joe
+2v2: Mike C & Jake vs. Mike M & Matt"
+"Thu 5/14, 2:40 PM",Ocean Course (10),"18-Holes (Front, Back, Overall)",9,"2v2: Mike C & Evan vs. Matt & Mike M
+2v2: Jake & Bob vs. Tim & Joe
+1v1: Ted vs. Corey"
+"Fri 5/15, 10:00 AM",Turtle Point (10),18-Hole Singles (Overall Win),5,"Ted vs. Corey
+Evan vs. Mike M
+Mike C vs. Matt
+Jake vs. Tim
+Bob vs. Joe"
