@@ -1,7 +1,42 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "web",
+  // Authoritative infrastructure values are defined in assets/INFRASTRUCTURE.md.
+  "name": "ryder-cup-app",
   "compatibility_date": "2026-04-17",
   "compatibility_flags": ["nodejs_als"],
   "pages_build_output_dir": ".svelte-kit/cloudflare",
+  // Placeholder IDs must be replaced with real preview/production D1 IDs before
+  // any --remote d1 commands can succeed.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "ryder-cup-local",
+      "database_id": "00000000-0000-0000-0000-000000000000"
+    }
+  ],
+  "env": {
+    "preview": {
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "ryder-cup-preview",
+          "database_id": "00000000-0000-0000-0000-000000000000"
+        }
+      ]
+    },
+    "production": {
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "ryder-cup-prod",
+          "database_id": "00000000-0000-0000-0000-000000000000"
+        }
+      ]
+    }
+  },
+  // Secrets are registered out-of-band and never stored in this file:
+  // wrangler secret put COOKIE_SIGNING_KEY --env <preview|production>
+  // wrangler secret put SPECTATOR_COOKIE_KEY --env <preview|production>
+  // wrangler secret put MAGIC_LINK_KEY --env <preview|production>
+  // wrangler secret put RESEND_API_KEY --env <preview|production>
 }
