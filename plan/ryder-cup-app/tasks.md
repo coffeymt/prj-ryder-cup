@@ -77,7 +77,7 @@ All tasks in this phase write to **non-overlapping** migration files and can run
 
 All tasks in this phase write to **non-overlapping** files under `web/src/lib/engine/` and can run in parallel once `P2.T1` (type definitions) completes.
 
-- [ ] **Task P2.T1** — Define engine type contracts in `types.ts`: `HandicapIndex`, `Slope`, `CourseRating`, `Par`, `StrokeIndex`, `CourseHandicap`, `PlayingHandicap`, `Allowance`, `Segment` (`F9`|`B9`|`18`), `Format`, `HoleScore`, `MatchSideState`, `MatchState`, `CloseNotation`. Pure types only — no runtime exports. Reference `.github/skills/api-contract-validation.md`. → Coder | Files: `web/src/lib/engine/types.ts`
+- [x] **Task P2.T1** — Define engine type contracts in `types.ts`: `HandicapIndex`, `Slope`, `CourseRating`, `Par`, `StrokeIndex`, `CourseHandicap`, `PlayingHandicap`, `Allowance`, `Segment` (`F9`|`B9`|`18`), `Format`, `HoleScore`, `MatchSideState`, `MatchState`, `CloseNotation`. Pure types only — no runtime exports. Reference `.github/skills/api-contract-validation.md`. → Coder | Files: `web/src/lib/engine/types.ts`
   - Depends on: P1.T1
   - Acceptance: Types compile under `tsconfig` strict mode; downstream engine modules import from this file only.
 
