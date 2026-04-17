@@ -12,7 +12,9 @@
     "e2e": "playwright test",
     "lint": "eslint . --ext .js,.ts,.svelte && prettier --check .",
     "format": "prettier --write .",
-    "migrations:apply": "wrangler d1 migrations apply DB --local"
+    "migrations:apply": "node scripts/apply-migrations.mjs",
+    "migrations:apply:preview": "node scripts/apply-migrations.mjs --remote --env preview",
+    "migrations:apply:production": "node scripts/apply-migrations.mjs --remote --env production"
   },
   "devDependencies": {
     "@eslint/compat": "^2.0.5",
