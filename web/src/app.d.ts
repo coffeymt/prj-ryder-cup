@@ -1,0 +1,27 @@
+// See https://svelte.dev/docs/kit/types#app.d.ts
+// for information about these interfaces
+declare global {
+  namespace App {
+    interface Platform {
+      env: Env;
+      ctx: ExecutionContext;
+      caches: CacheStorage;
+      cf?: IncomingRequestCfProperties;
+    }
+
+    interface Locals {
+      // set by auth hooks in Phase 3
+      session?: {
+        tournamentId: string;
+        playerId: string;
+        role: 'commissioner' | 'player' | 'spectator';
+      };
+    }
+
+    // interface Error {}
+    // interface PageData {}
+    // interface PageState {}
+  }
+}
+
+export {};
