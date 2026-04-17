@@ -29,12 +29,7 @@ export function computeTournamentTally(
     }
   }
 
-  const leader =
-    teamATotal > teamBTotal
-      ? 'A'
-      : teamATotal < teamBTotal
-        ? 'B'
-        : 'AS';
+  const leader = teamATotal > teamBTotal ? 'A' : teamATotal < teamBTotal ? 'B' : 'AS';
 
   return {
     teamAId,
@@ -43,6 +38,6 @@ export function computeTournamentTally(
     teamBTotal,
     pointsToWin,
     leader,
-    subMatchResults: subMatchResults.slice()
+    subMatchResults: subMatchResults.slice(),
   };
 }

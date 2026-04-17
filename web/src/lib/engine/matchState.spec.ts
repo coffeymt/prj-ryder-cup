@@ -13,7 +13,7 @@ function createHoleResults(sequence: HoleResultValue[]): HoleResult[] {
         holeNumber: index + 1,
         result,
         sideANet: 4,
-        sideBNet: 5
+        sideBNet: 5,
       };
     }
 
@@ -22,7 +22,7 @@ function createHoleResults(sequence: HoleResultValue[]): HoleResult[] {
         holeNumber: index + 1,
         result,
         sideANet: 5,
-        sideBNet: 4
+        sideBNet: 4,
       };
     }
 
@@ -31,7 +31,7 @@ function createHoleResults(sequence: HoleResultValue[]): HoleResult[] {
         holeNumber: index + 1,
         result,
         sideANet: 4,
-        sideBNet: 4
+        sideBNet: 4,
       };
     }
 
@@ -39,7 +39,7 @@ function createHoleResults(sequence: HoleResultValue[]): HoleResult[] {
       holeNumber: index + 1,
       result: 'PENDING',
       sideANet: null,
-      sideBNet: null
+      sideBNet: null,
     };
   });
 }
@@ -117,7 +117,7 @@ describe('computeMatchState', () => {
       'B_WINS',
       'A_WINS',
       'B_WINS',
-      'A_WINS'
+      'A_WINS',
     ];
     const state = computeMatchState(
       createHoleResults(sequence),
@@ -151,7 +151,7 @@ describe('computeMatchState', () => {
       'A_WINS',
       'B_WINS',
       'A_WINS',
-      'B_WINS'
+      'B_WINS',
     ];
     const state = computeMatchState(
       createHoleResults(sequence),
@@ -190,7 +190,7 @@ describe('computeMatchState', () => {
       'A_WINS',
       'B_WINS',
       'A_WINS',
-      'B_WINS'
+      'B_WINS',
     ];
     const state = computeMatchState(
       createHoleResults(sequence),
@@ -231,7 +231,7 @@ describe('computeMatchState', () => {
       'A_WINS',
       'B_WINS',
       'A_WINS',
-      'HALVED'
+      'HALVED',
     ];
     const state = computeMatchState(
       createHoleResults(sequence),
@@ -268,7 +268,7 @@ describe('computeMatchState', () => {
       'B_WINS',
       'A_WINS',
       'B_WINS',
-      'A_WINS'
+      'A_WINS',
     ];
     const state = computeMatchState(
       createHoleResults(sequence),
@@ -296,7 +296,7 @@ describe('computeMatchState', () => {
       'HALVED',
       'A_WINS',
       'B_WINS',
-      'A_WINS'
+      'A_WINS',
     ];
     const state = computeMatchState(
       createHoleResults(sequence),
@@ -324,7 +324,7 @@ describe('computeMatchState', () => {
       'A_WINS',
       'B_WINS',
       'A_WINS',
-      'B_WINS'
+      'B_WINS',
     ];
     const state = computeMatchState(
       createHoleResults(sequence),

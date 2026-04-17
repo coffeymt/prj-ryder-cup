@@ -4,10 +4,7 @@ function byStrokeIndexAscending(left: HoleData, right: HoleData): number {
   return Number(left.strokeIndex) - Number(right.strokeIndex);
 }
 
-export function buildStrokeMap(
-  playingHandicap: PlayingHandicap,
-  holes: HoleData[]
-): StrokeMap {
+export function buildStrokeMap(playingHandicap: PlayingHandicap, holes: HoleData[]): StrokeMap {
   const strokeMap: Record<number, number> = {};
 
   for (const hole of holes) {

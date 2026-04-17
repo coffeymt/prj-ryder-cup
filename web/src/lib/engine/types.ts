@@ -6,7 +6,7 @@ export type StrokeIndex = number & { readonly _brand: 'StrokeIndex' };
 export type CourseHandicap = number & { readonly _brand: 'CourseHandicap' };
 export type PlayingHandicap = number & { readonly _brand: 'PlayingHandicap' };
 
-export type Unbranded<T> = T extends number & { readonly _brand: infer _ } ? number : T;
+export type Unbranded<T> = T extends { readonly _brand: string } ? number : T;
 
 export interface HoleData {
   holeNumber: number;
@@ -60,7 +60,7 @@ export const DEFAULT_ALLOWANCES: TournamentAllowances = {
   pinehurst: { type: 'blended', lowPct: 0.6, highPct: 0.4 },
   shamble: { type: 'perPlayer', pct: 0.85 },
   fourBall: { type: 'perPlayer', pct: 1.0 },
-  singles: { type: 'perPlayer', pct: 1.0 }
+  singles: { type: 'perPlayer', pct: 1.0 },
 } as const;
 
 export const USGA_ALLOWANCES: TournamentAllowances = {
@@ -68,7 +68,7 @@ export const USGA_ALLOWANCES: TournamentAllowances = {
   pinehurst: { type: 'blended', lowPct: 0.6, highPct: 0.4 },
   shamble: { type: 'perPlayer', pct: 0.75 },
   fourBall: { type: 'perPlayer', pct: 0.9 },
-  singles: { type: 'perPlayer', pct: 1.0 }
+  singles: { type: 'perPlayer', pct: 1.0 },
 } as const;
 
 export interface PlayerHandicapInput {
@@ -117,12 +117,7 @@ export interface HoleResult {
 
 export type MatchStateStatus = 'PENDING' | 'IN_PROGRESS' | 'DORMIE' | 'CLOSED' | 'FINAL';
 
-export type MatchStateSummary =
-  | 'AS'
-  | `${number} UP`
-  | 'DORMIE'
-  | `${number}&${number}`
-  | 'HALVED';
+export type MatchStateSummary = 'AS' | `${number} UP` | 'DORMIE' | `${number}&${number}` | 'HALVED';
 
 export interface MatchSideState {
   sideId: number;

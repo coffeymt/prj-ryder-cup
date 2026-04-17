@@ -5,7 +5,7 @@ import {
   applyPerPlayerAllowance,
   computePerPlayerHandicaps,
   computeTeamHandicaps,
-  normalizeMatchPlayHandicaps
+  normalizeMatchPlayHandicaps,
 } from './allowances';
 import { computeCH18 } from './courseHandicap';
 import type {
@@ -16,7 +16,7 @@ import type {
   PlayingHandicap,
   StrokeMap,
   StrokeIndex,
-  TeeData
+  TeeData,
 } from './types';
 import { DEFAULT_ALLOWANCES, USGA_ALLOWANCES } from './types';
 
@@ -37,9 +37,9 @@ const mockTee: TeeData = {
     return {
       holeNumber,
       par: 4 as Par,
-      strokeIndex: holeNumber as StrokeIndex
+      strokeIndex: holeNumber as StrokeIndex,
     };
-  })
+  }),
 };
 
 function toNumericStrokeMap(strokeMap: StrokeMap): Record<number, number> {
@@ -47,7 +47,10 @@ function toNumericStrokeMap(strokeMap: StrokeMap): Record<number, number> {
 }
 
 function sumStrokeMap(strokeMap: StrokeMap): number {
-  return Object.values(toNumericStrokeMap(strokeMap)).reduce((total, strokes) => total + strokes, 0);
+  return Object.values(toNumericStrokeMap(strokeMap)).reduce(
+    (total, strokes) => total + strokes,
+    0
+  );
 }
 
 describe('allowances', () => {
@@ -71,11 +74,11 @@ describe('allowances', () => {
   });
 
   it('2) applyBlendedAllowance computes blended team PH', () => {
-    const teamHandicap = applyBlendedAllowance(
-      3 as CourseHandicap,
-      20 as CourseHandicap,
-      { type: 'blended', lowPct: 0.35, highPct: 0.15 }
-    );
+    const teamHandicap = applyBlendedAllowance(3 as CourseHandicap, 20 as CourseHandicap, {
+      type: 'blended',
+      lowPct: 0.35,
+      highPct: 0.15,
+    });
 
     expect(teamHandicap).toBe(4);
   });
@@ -92,7 +95,7 @@ describe('allowances', () => {
     const results = computePerPlayerHandicaps(
       [
         { playerId: 1, sideId: 1, handicapIndex: 8.9 as HandicapIndex },
-        { playerId: 2, sideId: 2, handicapIndex: 15.4 as HandicapIndex }
+        { playerId: 2, sideId: 2, handicapIndex: 15.4 as HandicapIndex },
       ],
       mockTee,
       'FULL18',
@@ -113,7 +116,7 @@ describe('allowances', () => {
     const results = computePerPlayerHandicaps(
       [
         { playerId: 1, sideId: 1, handicapIndex: 8.9 as HandicapIndex },
-        { playerId: 2, sideId: 2, handicapIndex: 15.4 as HandicapIndex }
+        { playerId: 2, sideId: 2, handicapIndex: 15.4 as HandicapIndex },
       ],
       mockTee,
       'F9',
@@ -137,7 +140,7 @@ describe('allowances', () => {
       '6',
       '7',
       '8',
-      '9'
+      '9',
     ]);
     expect(sumStrokeMap(results[1].strokeMap)).toBe(3);
   });
@@ -149,16 +152,16 @@ describe('allowances', () => {
           sideId: 11,
           players: [
             { playerId: 1, sideId: 11, handicapIndex: 2.4 as HandicapIndex },
-            { playerId: 2, sideId: 11, handicapIndex: 18.6 as HandicapIndex }
-          ]
+            { playerId: 2, sideId: 11, handicapIndex: 18.6 as HandicapIndex },
+          ],
         },
         {
           sideId: 22,
           players: [
             { playerId: 3, sideId: 22, handicapIndex: 5.8 as HandicapIndex },
-            { playerId: 4, sideId: 22, handicapIndex: 25.0 as HandicapIndex }
-          ]
-        }
+            { playerId: 4, sideId: 22, handicapIndex: 25.0 as HandicapIndex },
+          ],
+        },
       ],
       mockTee,
       'FULL18',
@@ -179,7 +182,7 @@ describe('allowances', () => {
       ...mockTee,
       cr9f: null,
       slope9f: null,
-      par9f: null
+      par9f: null,
     };
 
     expect(() =>

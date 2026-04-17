@@ -9,7 +9,7 @@ function createCanonical18Holes(): HoleData[] {
     return {
       holeNumber,
       par: 4 as Par,
-      strokeIndex: holeNumber as StrokeIndex
+      strokeIndex: holeNumber as StrokeIndex,
     };
   });
 }

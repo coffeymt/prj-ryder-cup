@@ -20,7 +20,7 @@ function createSubMatchResult(
     pointsAvailable,
     sideAPoints,
     sideBPoints,
-    closeNotation: null
+    closeNotation: null,
   };
 }
 
@@ -90,7 +90,7 @@ describe('computeTournamentTally', () => {
           0.5,
           index % 3 === 0 ? 'F9' : index % 3 === 1 ? 'B9' : 'OVERALL'
         )
-      )
+      ),
     ];
 
     const tally = computeTournamentTally(subMatchResults, TEAM_A_ID, TEAM_B_ID, 15.5);
@@ -104,7 +104,7 @@ describe('computeTournamentTally', () => {
   it('4) commissioner override can cross points-to-win threshold', () => {
     const subMatchResults = createThirtyPointHalvedResults();
     const overrides: PointOverride[] = [
-      { teamId: TEAM_A_ID, deltaPoints: 0.5, reason: 'Weather-adjusted ruling' }
+      { teamId: TEAM_A_ID, deltaPoints: 0.5, reason: 'Weather-adjusted ruling' },
     ];
     const tally = computeTournamentTally(subMatchResults, TEAM_A_ID, TEAM_B_ID, 15.5, overrides);
 
@@ -118,7 +118,7 @@ describe('computeTournamentTally', () => {
   it('5) negative override deducts points and supports negative totals when needed', () => {
     const subMatchResults = createThirtyPointHalvedResults();
     const deduction: PointOverride[] = [
-      { teamId: TEAM_B_ID, deltaPoints: -1, reason: 'Voided round adjustment' }
+      { teamId: TEAM_B_ID, deltaPoints: -1, reason: 'Voided round adjustment' },
     ];
     const tally = computeTournamentTally(subMatchResults, TEAM_A_ID, TEAM_B_ID, 15.5, deduction);
 
@@ -128,12 +128,12 @@ describe('computeTournamentTally', () => {
     expectPointConservation(tally, subMatchResults, deduction);
 
     const negativeTotals = computeTournamentTally(subMatchResults, TEAM_A_ID, TEAM_B_ID, 15.5, [
-      { teamId: TEAM_B_ID, deltaPoints: -20, reason: 'Extreme penalty' }
+      { teamId: TEAM_B_ID, deltaPoints: -20, reason: 'Extreme penalty' },
     ]);
     expect(negativeTotals.teamATotal).toBe(15);
     expect(negativeTotals.teamBTotal).toBe(-5);
     expectPointConservation(negativeTotals, subMatchResults, [
-      { teamId: TEAM_B_ID, deltaPoints: -20, reason: 'Extreme penalty' }
+      { teamId: TEAM_B_ID, deltaPoints: -20, reason: 'Extreme penalty' },
     ]);
   });
 

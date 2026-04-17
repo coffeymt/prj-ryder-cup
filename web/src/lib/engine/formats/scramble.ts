@@ -7,7 +7,7 @@ import type {
   MatchState,
   PlayerHandicapInput,
   Segment,
-  TeeData
+  TeeData,
 } from '../types';
 
 export interface ScrambleSideInput {
@@ -48,7 +48,7 @@ function resolveHoleResult(
       holeNumber,
       result: 'HALVED',
       sideANet: null,
-      sideBNet: null
+      sideBNet: null,
     };
   }
 
@@ -57,7 +57,7 @@ function resolveHoleResult(
       holeNumber,
       result: 'B_WINS',
       sideANet: null,
-      sideBNet: null
+      sideBNet: null,
     };
   }
 
@@ -66,7 +66,7 @@ function resolveHoleResult(
       holeNumber,
       result: 'A_WINS',
       sideANet: null,
-      sideBNet: null
+      sideBNet: null,
     };
   }
 
@@ -80,7 +80,7 @@ function resolveHoleResult(
       holeNumber,
       result: 'PENDING',
       sideANet: null,
-      sideBNet: null
+      sideBNet: null,
     };
   }
 
@@ -94,7 +94,7 @@ function resolveHoleResult(
       holeNumber,
       result: 'A_WINS',
       sideANet,
-      sideBNet
+      sideBNet,
     };
   }
 
@@ -103,7 +103,7 @@ function resolveHoleResult(
       holeNumber,
       result: 'B_WINS',
       sideANet,
-      sideBNet
+      sideBNet,
     };
   }
 
@@ -111,7 +111,7 @@ function resolveHoleResult(
     holeNumber,
     result: 'HALVED',
     sideANet,
-    sideBNet
+    sideBNet,
   };
 }
 
@@ -126,7 +126,7 @@ export function computeScrambleResults(
   const sideTeamHandicaps = computeTeamHandicaps(
     [
       { sideId: sideA.sideId, players: sideA.players },
-      { sideId: sideB.sideId, players: sideB.players }
+      { sideId: sideB.sideId, players: sideB.players },
     ],
     tee,
     segment,
@@ -140,7 +140,9 @@ export function computeScrambleResults(
     throw new Error('Could not compute team handicaps for scramble sides.');
   }
 
-  const segmentHoles = getSegmentHoles(tee, segment).slice().sort((a, b) => a.holeNumber - b.holeNumber);
+  const segmentHoles = getSegmentHoles(tee, segment)
+    .slice()
+    .sort((a, b) => a.holeNumber - b.holeNumber);
   const sideAScoresByHole = indexHoleScores(sideA.holeScores);
   const sideBScoresByHole = indexHoleScores(sideB.holeScores);
 

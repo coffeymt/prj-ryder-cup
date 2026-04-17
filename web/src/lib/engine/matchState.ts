@@ -1,9 +1,4 @@
-import type {
-  HoleResult,
-  MatchState,
-  MatchStateStatus,
-  MatchStateSummary
-} from './types';
+import type { HoleResult, MatchState, MatchStateStatus, MatchStateSummary } from './types';
 
 interface PointsEarned {
   sideAPoints: number;
@@ -74,20 +69,20 @@ function computePointsEarned(margin: number, pointsAvailable: number): PointsEar
     const sideAPoints = pointsAvailable / 2;
     return {
       sideAPoints,
-      sideBPoints: pointsAvailable - sideAPoints
+      sideBPoints: pointsAvailable - sideAPoints,
     };
   }
 
   if (margin > 0) {
     return {
       sideAPoints: pointsAvailable,
-      sideBPoints: 0
+      sideBPoints: 0,
     };
   }
 
   return {
     sideAPoints: 0,
-    sideBPoints: pointsAvailable
+    sideBPoints: pointsAvailable,
   };
 }
 
@@ -100,7 +95,7 @@ export function computeMatchState(
 ): MatchState {
   const boundedTotalHoles = Math.max(0, Math.trunc(totalHoles));
   const normalizedHoleResults = holeResults.slice(0, boundedTotalHoles).map((holeResult) => ({
-    ...holeResult
+    ...holeResult,
   }));
 
   let holesPlayed = 0;
@@ -154,14 +149,14 @@ export function computeMatchState(
       sideId: sideAId,
       holesWon: sideAHolesWon,
       holesSplit: sideAHolesSplit,
-      pointsEarned: sideAPoints
+      pointsEarned: sideAPoints,
     },
     sideB: {
       sideId: sideBId,
       holesWon: sideBHolesWon,
       holesSplit: sideBHolesSplit,
-      pointsEarned: sideBPoints
+      pointsEarned: sideBPoints,
     },
-    holeResults: normalizedHoleResults
+    holeResults: normalizedHoleResults,
   };
 }

@@ -9,7 +9,7 @@ import type {
   PlayingHandicap,
   Segment,
   TeamPlayingHandicap,
-  TeeData
+  TeeData,
 } from './types';
 
 function toPlayingHandicap(value: number): PlayingHandicap {
@@ -43,7 +43,9 @@ function computeSegmentCourseHandicap(
     }
 
     // Convention 2 fallback: if 9-hole ratings are missing, use half of CH18.
-    return toCourseHandicap(Number(computeCH18(handicapIndex, tee.slope18, tee.cr18, tee.par18)) / 2);
+    return toCourseHandicap(
+      Number(computeCH18(handicapIndex, tee.slope18, tee.cr18, tee.par18)) / 2
+    );
   }
 
   if (segment === 'B9') {
@@ -52,7 +54,9 @@ function computeSegmentCourseHandicap(
     }
 
     // Convention 2 fallback: if 9-hole ratings are missing, use half of CH18.
-    return toCourseHandicap(Number(computeCH18(handicapIndex, tee.slope18, tee.cr18, tee.par18)) / 2);
+    return toCourseHandicap(
+      Number(computeCH18(handicapIndex, tee.slope18, tee.cr18, tee.par18)) / 2
+    );
   }
 
   return computeCH18(handicapIndex, tee.slope18, tee.cr18, tee.par18);
@@ -108,7 +112,7 @@ export function computePerPlayerHandicaps(
       courseHandicap: courseHandicaps[index],
       playingHandicap: unnormalizedPlayingHandicaps[index],
       strokes,
-      strokeMap: buildStrokeMap(strokes, segmentHoles)
+      strokeMap: buildStrokeMap(strokes, segmentHoles),
     };
   });
 }
@@ -127,7 +131,9 @@ export function computeTeamHandicaps(
     const sideNumbers = sideCourseHandicaps.map((value) => Number(value));
     const low = Math.min(...sideNumbers);
     const high = Math.max(...sideNumbers);
-    const blendedCourseHandicap = toCourseHandicap(low * allowance.lowPct + high * allowance.highPct);
+    const blendedCourseHandicap = toCourseHandicap(
+      low * allowance.lowPct + high * allowance.highPct
+    );
 
     return {
       sideId: side.sideId,
@@ -136,7 +142,7 @@ export function computeTeamHandicaps(
         toCourseHandicap(low),
         toCourseHandicap(high),
         allowance
-      )
+      ),
     };
   });
 
@@ -151,7 +157,7 @@ export function computeTeamHandicaps(
       teamCourseHandicap: side.teamCourseHandicap,
       teamPlayingHandicap: side.teamPlayingHandicap,
       strokes,
-      strokeMap: buildStrokeMap(strokes, segmentHoles)
+      strokeMap: buildStrokeMap(strokes, segmentHoles),
     };
   });
 }

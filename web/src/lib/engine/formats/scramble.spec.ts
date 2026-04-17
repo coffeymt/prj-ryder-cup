@@ -7,7 +7,7 @@ import type {
   Par,
   PlayerHandicapInput,
   StrokeIndex,
-  TeeData
+  TeeData,
 } from '../types';
 import { DEFAULT_ALLOWANCES } from '../types';
 
@@ -32,15 +32,15 @@ const mockTee: TeeData = {
     return {
       holeNumber,
       par: 4 as Par,
-      strokeIndex: holeNumber as StrokeIndex
+      strokeIndex: holeNumber as StrokeIndex,
     };
-  })
+  }),
 };
 
 function createPlayers(sideId: number, lowHi: number, highHi: number): PlayerHandicapInput[] {
   return [
     { playerId: sideId * 10 + 1, sideId, handicapIndex: lowHi as HandicapIndex },
-    { playerId: sideId * 10 + 2, sideId, handicapIndex: highHi as HandicapIndex }
+    { playerId: sideId * 10 + 2, sideId, handicapIndex: highHi as HandicapIndex },
   ];
 }
 
@@ -60,7 +60,7 @@ function createHoleScores(
       grossStrokes: value.grossStrokes,
       isConceded: value.isConceded ?? false,
       isPickedUp: false,
-      opId: `op-${sideId}-${holeNumber}`
+      opId: `op-${sideId}-${holeNumber}`,
     });
   }
   return scores;
@@ -74,7 +74,7 @@ function createSide(
   return {
     sideId,
     players,
-    holeScores
+    holeScores,
   };
 }
 
@@ -92,7 +92,7 @@ describe('computeScrambleResults', () => {
         6: { grossStrokes: 4 },
         7: { grossStrokes: 4 },
         8: { grossStrokes: 4 },
-        9: { grossStrokes: null }
+        9: { grossStrokes: null },
       })
     );
     const sideB = createSide(
@@ -107,7 +107,7 @@ describe('computeScrambleResults', () => {
         6: { grossStrokes: 5 },
         7: { grossStrokes: 4 },
         8: { grossStrokes: 4 },
-        9: { grossStrokes: null }
+        9: { grossStrokes: null },
       })
     );
 
@@ -140,7 +140,7 @@ describe('computeScrambleResults', () => {
         6: { grossStrokes: 5 },
         7: { grossStrokes: 4 },
         8: { grossStrokes: 5 },
-        9: { grossStrokes: 4 }
+        9: { grossStrokes: 4 },
       })
     );
     const sideB = createSide(
@@ -155,7 +155,7 @@ describe('computeScrambleResults', () => {
         6: { grossStrokes: 4 },
         7: { grossStrokes: 5 },
         8: { grossStrokes: 4 },
-        9: { grossStrokes: 4 }
+        9: { grossStrokes: 4 },
       })
     );
 
@@ -180,14 +180,14 @@ describe('computeScrambleResults', () => {
       SIDE_A_ID,
       createPlayers(SIDE_A_ID, 0, 0),
       createHoleScores(SIDE_A_ID, 1, 9, {
-        4: { grossStrokes: null, isConceded: true }
+        4: { grossStrokes: null, isConceded: true },
       })
     );
     const sideB = createSide(
       SIDE_B_ID,
       createPlayers(SIDE_B_ID, 0, 0),
       createHoleScores(SIDE_B_ID, 1, 9, {
-        4: { grossStrokes: 5 }
+        4: { grossStrokes: 5 },
       })
     );
 
@@ -208,14 +208,14 @@ describe('computeScrambleResults', () => {
       SIDE_A_ID,
       createPlayers(SIDE_A_ID, 2.4, 18.6),
       createHoleScores(SIDE_A_ID, 1, 18, {
-        1: { grossStrokes: 5 }
+        1: { grossStrokes: 5 },
       })
     );
     const sideB = createSide(
       SIDE_B_ID,
       createPlayers(SIDE_B_ID, 0, 0),
       createHoleScores(SIDE_B_ID, 1, 18, {
-        1: { grossStrokes: 4 }
+        1: { grossStrokes: 4 },
       })
     );
 
@@ -239,7 +239,7 @@ describe('computeScrambleResults', () => {
       createPlayers(SIDE_A_ID, 0, 0),
       createHoleScores(SIDE_A_ID, 1, 9, {
         1: { grossStrokes: 4 },
-        2: { grossStrokes: 5 }
+        2: { grossStrokes: 5 },
       })
     );
     const sideB = createSide(
@@ -247,7 +247,7 @@ describe('computeScrambleResults', () => {
       createPlayers(SIDE_B_ID, 0, 0),
       createHoleScores(SIDE_B_ID, 1, 9, {
         1: { grossStrokes: 5 },
-        2: { grossStrokes: 4 }
+        2: { grossStrokes: 4 },
       })
     );
 

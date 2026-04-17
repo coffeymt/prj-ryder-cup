@@ -8,7 +8,7 @@ import type {
   PerPlayerAllowance,
   Segment,
   StrokeIndex,
-  TeeData
+  TeeData,
 } from '../types';
 import { computeSinglesResults, type SinglesSideInput } from './singles';
 
@@ -31,8 +31,8 @@ const mockTee: TeeData = {
   holes: Array.from({ length: 18 }, (_, index) => ({
     holeNumber: index + 1,
     par: 4 as Par,
-    strokeIndex: (index + 1) as StrokeIndex
-  }))
+    strokeIndex: (index + 1) as StrokeIndex,
+  })),
 };
 
 type HoleOutcome = 'A' | 'B' | 'H' | 'P';
@@ -54,7 +54,7 @@ function createSideInput(
   const grossOverrides = new Map<number, number | null>(
     Object.entries(options.grossOverrides ?? {}).map(([holeNumber, grossStrokes]) => [
       Number(holeNumber),
-      grossStrokes
+      grossStrokes,
     ])
   );
   const concededHoleSet = new Set(options.concededHoles ?? []);
@@ -69,7 +69,7 @@ function createSideInput(
       : defaultGross,
     isConceded: concededHoleSet.has(hole.holeNumber),
     isPickedUp: pickedUpHoleSet.has(hole.holeNumber),
-    opId: `op-${sideId}-${playerId}-${hole.holeNumber}`
+    opId: `op-${sideId}-${playerId}-${hole.holeNumber}`,
   }));
 
   return {
@@ -77,13 +77,16 @@ function createSideInput(
     player: {
       playerId,
       sideId,
-      handicapIndex: handicapIndex as HandicapIndex
+      handicapIndex: handicapIndex as HandicapIndex,
     },
-    holeScores
+    holeScores,
   };
 }
 
-function buildGrossByOutcome(outcomes: HoleOutcome[], side: 'A' | 'B'): Record<number, number | null> {
+function buildGrossByOutcome(
+  outcomes: HoleOutcome[],
+  side: 'A' | 'B'
+): Record<number, number | null> {
   const grossByHole: Record<number, number | null> = {};
   outcomes.forEach((outcome, index) => {
     const holeNumber = index + 1;
@@ -126,13 +129,23 @@ describe('computeSinglesResults', () => {
     }
 
     const expectedDifference =
-      Math.round(Number(coreyHandicap.playingHandicap)) - Math.round(Number(tedHandicap.playingHandicap));
+      Math.round(Number(coreyHandicap.playingHandicap)) -
+      Math.round(Number(tedHandicap.playingHandicap));
 
     expect(tedHandicap.strokes).toBe(0);
     expect(coreyHandicap.strokes).toBe(expectedDifference);
 
-    const state = computeSinglesResults(ted, corey, mockTee, FULL18, FULL_ALLOWANCE, POINTS_AVAILABLE);
-    const coreyWonHoles = state.holeResults.filter((holeResult) => holeResult.result === 'B_WINS').length;
+    const state = computeSinglesResults(
+      ted,
+      corey,
+      mockTee,
+      FULL18,
+      FULL_ALLOWANCE,
+      POINTS_AVAILABLE
+    );
+    const coreyWonHoles = state.holeResults.filter(
+      (holeResult) => holeResult.result === 'B_WINS'
+    ).length;
 
     expect(coreyWonHoles).toBe(expectedDifference);
   });
@@ -141,7 +154,14 @@ describe('computeSinglesResults', () => {
     const sideA = createSideInput(1, 101, 10, { defaultGross: null, concededHoles: [3] });
     const sideB = createSideInput(2, 202, 10, { defaultGross: null });
 
-    const state = computeSinglesResults(sideA, sideB, mockTee, FULL18, FULL_ALLOWANCE, POINTS_AVAILABLE);
+    const state = computeSinglesResults(
+      sideA,
+      sideB,
+      mockTee,
+      FULL18,
+      FULL_ALLOWANCE,
+      POINTS_AVAILABLE
+    );
     const hole3 = state.holeResults.find((holeResult) => holeResult.holeNumber === 3);
 
     expect(hole3?.result).toBe('B_WINS');
@@ -151,7 +171,14 @@ describe('computeSinglesResults', () => {
     const sideA = createSideInput(1, 101, 10, { defaultGross: null, pickedUpHoles: [7] });
     const sideB = createSideInput(2, 202, 10, { defaultGross: null });
 
-    const state = computeSinglesResults(sideA, sideB, mockTee, FULL18, FULL_ALLOWANCE, POINTS_AVAILABLE);
+    const state = computeSinglesResults(
+      sideA,
+      sideB,
+      mockTee,
+      FULL18,
+      FULL_ALLOWANCE,
+      POINTS_AVAILABLE
+    );
     const hole7 = state.holeResults.find((holeResult) => holeResult.holeNumber === 7);
 
     expect(hole7?.result).toBe('B_WINS');
@@ -161,7 +188,14 @@ describe('computeSinglesResults', () => {
     const sideA = createSideInput(1, 101, 10, { defaultGross: null, grossOverrides: { 5: 4 } });
     const sideB = createSideInput(2, 202, 10, { defaultGross: null, grossOverrides: { 5: 4 } });
 
-    const state = computeSinglesResults(sideA, sideB, mockTee, FULL18, FULL_ALLOWANCE, POINTS_AVAILABLE);
+    const state = computeSinglesResults(
+      sideA,
+      sideB,
+      mockTee,
+      FULL18,
+      FULL_ALLOWANCE,
+      POINTS_AVAILABLE
+    );
     const hole5 = state.holeResults.find((holeResult) => holeResult.holeNumber === 5);
 
     expect(hole5?.result).toBe('HALVED');
@@ -187,19 +221,26 @@ describe('computeSinglesResults', () => {
       'A',
       'B',
       'A',
-      'H'
+      'H',
     ];
 
     const sideA = createSideInput(1, 101, 10, {
       defaultGross: null,
-      grossOverrides: buildGrossByOutcome(outcomes, 'A')
+      grossOverrides: buildGrossByOutcome(outcomes, 'A'),
     });
     const sideB = createSideInput(2, 202, 10, {
       defaultGross: null,
-      grossOverrides: buildGrossByOutcome(outcomes, 'B')
+      grossOverrides: buildGrossByOutcome(outcomes, 'B'),
     });
 
-    const state = computeSinglesResults(sideA, sideB, mockTee, FULL18, FULL_ALLOWANCE, POINTS_AVAILABLE);
+    const state = computeSinglesResults(
+      sideA,
+      sideB,
+      mockTee,
+      FULL18,
+      FULL_ALLOWANCE,
+      POINTS_AVAILABLE
+    );
 
     expect(state.status).toBe('FINAL');
     expect(state.closeNotation).toBe('1UP');
@@ -226,19 +267,26 @@ describe('computeSinglesResults', () => {
       'A',
       'B',
       'A',
-      'B'
+      'B',
     ];
 
     const sideA = createSideInput(1, 101, 10, {
       defaultGross: null,
-      grossOverrides: buildGrossByOutcome(outcomes, 'A')
+      grossOverrides: buildGrossByOutcome(outcomes, 'A'),
     });
     const sideB = createSideInput(2, 202, 10, {
       defaultGross: null,
-      grossOverrides: buildGrossByOutcome(outcomes, 'B')
+      grossOverrides: buildGrossByOutcome(outcomes, 'B'),
     });
 
-    const state = computeSinglesResults(sideA, sideB, mockTee, FULL18, FULL_ALLOWANCE, POINTS_AVAILABLE);
+    const state = computeSinglesResults(
+      sideA,
+      sideB,
+      mockTee,
+      FULL18,
+      FULL_ALLOWANCE,
+      POINTS_AVAILABLE
+    );
 
     expect(state.status).toBe('FINAL');
     expect(state.closeNotation).toBe('HALVED');
@@ -266,19 +314,26 @@ describe('computeSinglesResults', () => {
       'H',
       'H',
       'P',
-      'P'
+      'P',
     ];
 
     const sideA = createSideInput(1, 101, 10, {
       defaultGross: null,
-      grossOverrides: buildGrossByOutcome(outcomes, 'A')
+      grossOverrides: buildGrossByOutcome(outcomes, 'A'),
     });
     const sideB = createSideInput(2, 202, 10, {
       defaultGross: null,
-      grossOverrides: buildGrossByOutcome(outcomes, 'B')
+      grossOverrides: buildGrossByOutcome(outcomes, 'B'),
     });
 
-    const state = computeSinglesResults(sideA, sideB, mockTee, FULL18, FULL_ALLOWANCE, POINTS_AVAILABLE);
+    const state = computeSinglesResults(
+      sideA,
+      sideB,
+      mockTee,
+      FULL18,
+      FULL_ALLOWANCE,
+      POINTS_AVAILABLE
+    );
 
     expect(state.status).toBe('CLOSED');
     expect(state.closeNotation).toBe('3&2');

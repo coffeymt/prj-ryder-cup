@@ -9,7 +9,7 @@ import type {
   PlayerHandicapInput,
   Segment,
   StrokeMap,
-  TeeData
+  TeeData,
 } from '../types';
 
 export interface ShambleSideInput {
@@ -172,16 +172,32 @@ export function computeShambleResults(
   const holeNumbers = getSegmentHoleNumbers(tee, segment);
 
   const holeResults: HoleResult[] = holeNumbers.map((holeNumber) => {
-    const sideAEvaluation = evaluateSideHole(sideA, holeNumber, strokeMapsByPlayerId, sideAScoreIndex);
-    const sideBEvaluation = evaluateSideHole(sideB, holeNumber, strokeMapsByPlayerId, sideBScoreIndex);
+    const sideAEvaluation = evaluateSideHole(
+      sideA,
+      holeNumber,
+      strokeMapsByPlayerId,
+      sideAScoreIndex
+    );
+    const sideBEvaluation = evaluateSideHole(
+      sideB,
+      holeNumber,
+      strokeMapsByPlayerId,
+      sideBScoreIndex
+    );
 
     return {
       holeNumber,
       result: resolveHoleResult(sideAEvaluation, sideBEvaluation),
       sideANet: sideAEvaluation.net,
-      sideBNet: sideBEvaluation.net
+      sideBNet: sideBEvaluation.net,
     };
   });
 
-  return computeMatchState(holeResults, holeNumbers.length, pointsAvailable, sideA.sideId, sideB.sideId);
+  return computeMatchState(
+    holeResults,
+    holeNumbers.length,
+    pointsAvailable,
+    sideA.sideId,
+    sideB.sideId
+  );
 }

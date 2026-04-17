@@ -7,7 +7,7 @@ import type {
   PerPlayerAllowance,
   PlayerHandicapInput,
   Segment,
-  TeeData
+  TeeData,
 } from '../types';
 
 export interface SinglesSideInput {
@@ -94,9 +94,18 @@ export function computeSinglesResults(
   allowance: PerPlayerAllowance,
   pointsAvailable: number
 ): MatchState {
-  const playerHandicaps = computePerPlayerHandicaps([sideA.player, sideB.player], tee, segment, allowance);
-  const sideAHandicap = playerHandicaps.find((playerHandicap) => playerHandicap.sideId === sideA.sideId);
-  const sideBHandicap = playerHandicaps.find((playerHandicap) => playerHandicap.sideId === sideB.sideId);
+  const playerHandicaps = computePerPlayerHandicaps(
+    [sideA.player, sideB.player],
+    tee,
+    segment,
+    allowance
+  );
+  const sideAHandicap = playerHandicaps.find(
+    (playerHandicap) => playerHandicap.sideId === sideA.sideId
+  );
+  const sideBHandicap = playerHandicaps.find(
+    (playerHandicap) => playerHandicap.sideId === sideB.sideId
+  );
 
   if (sideAHandicap === undefined || sideBHandicap === undefined) {
     throw new Error('Singles sides must map to exactly one normalized player handicap each.');

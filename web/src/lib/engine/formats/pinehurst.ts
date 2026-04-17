@@ -8,7 +8,7 @@ import type {
   MatchState,
   PlayerHandicapInput,
   Segment,
-  TeeData
+  TeeData,
 } from '../types';
 
 export interface PinehurstSideInput {
@@ -107,7 +107,7 @@ export function computePinehurstResults(
   const [sideATeamHandicap, sideBTeamHandicap] = computeTeamHandicaps(
     [
       { sideId: sideA.sideId, players: sideA.players },
-      { sideId: sideB.sideId, players: sideB.players }
+      { sideId: sideB.sideId, players: sideB.players },
     ],
     tee,
     segment,
@@ -133,9 +133,15 @@ export function computePinehurstResults(
       holeNumber: hole.holeNumber,
       result,
       sideANet,
-      sideBNet
+      sideBNet,
     };
   });
 
-  return computeMatchState(holeResults, segmentHoles.length, pointsAvailable, sideA.sideId, sideB.sideId);
+  return computeMatchState(
+    holeResults,
+    segmentHoles.length,
+    pointsAvailable,
+    sideA.sideId,
+    sideB.sideId
+  );
 }

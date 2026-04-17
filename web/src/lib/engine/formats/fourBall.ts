@@ -8,7 +8,7 @@ import type {
   PlayerHandicapInput,
   PlayerPlayingHandicap,
   Segment,
-  TeeData
+  TeeData,
 } from '../types';
 
 export interface FourBallSideInput {
@@ -51,9 +51,7 @@ function indexScoresByHole(holeScores: HoleScoreInput[]): Map<number, HoleScoreI
   return scoresByHole;
 }
 
-function indexLatestPlayerHoleScores(
-  holeScores: HoleScoreInput[]
-): Map<string, HoleScoreInput> {
+function indexLatestPlayerHoleScores(holeScores: HoleScoreInput[]): Map<string, HoleScoreInput> {
   const latestScores = new Map<string, HoleScoreInput>();
 
   for (const holeScore of holeScores) {
@@ -117,7 +115,7 @@ function evaluateSideHole(
     return {
       teamNet: null,
       isForfeit: true,
-      isPending: false
+      isPending: false,
     };
   }
 
@@ -125,14 +123,14 @@ function evaluateSideHole(
     return {
       teamNet: null,
       isForfeit: false,
-      isPending: true
+      isPending: true,
     };
   }
 
   return {
     teamNet: Math.min(...nets),
     isForfeit: false,
-    isPending: false
+    isPending: false,
   };
 }
 
@@ -151,7 +149,7 @@ function computeHoleResult(
       holeNumber,
       result: 'HALVED',
       sideANet: null,
-      sideBNet: null
+      sideBNet: null,
     };
   }
 
@@ -160,7 +158,7 @@ function computeHoleResult(
       holeNumber,
       result: 'B_WINS',
       sideANet: null,
-      sideBNet: sideBEvaluation.teamNet
+      sideBNet: sideBEvaluation.teamNet,
     };
   }
 
@@ -169,7 +167,7 @@ function computeHoleResult(
       holeNumber,
       result: 'A_WINS',
       sideANet: sideAEvaluation.teamNet,
-      sideBNet: null
+      sideBNet: null,
     };
   }
 
@@ -178,7 +176,7 @@ function computeHoleResult(
       holeNumber,
       result: 'HALVED',
       sideANet: null,
-      sideBNet: null
+      sideBNet: null,
     };
   }
 
@@ -187,7 +185,7 @@ function computeHoleResult(
       holeNumber,
       result: 'B_WINS',
       sideANet: null,
-      sideBNet: sideBEvaluation.teamNet
+      sideBNet: sideBEvaluation.teamNet,
     };
   }
 
@@ -196,7 +194,7 @@ function computeHoleResult(
       holeNumber,
       result: 'A_WINS',
       sideANet: sideAEvaluation.teamNet,
-      sideBNet: null
+      sideBNet: null,
     };
   }
 
@@ -205,7 +203,7 @@ function computeHoleResult(
       holeNumber,
       result: 'PENDING',
       sideANet: sideAEvaluation.teamNet,
-      sideBNet: sideBEvaluation.teamNet
+      sideBNet: sideBEvaluation.teamNet,
     };
   }
 
@@ -214,7 +212,7 @@ function computeHoleResult(
       holeNumber,
       result: 'PENDING',
       sideANet: sideAEvaluation.teamNet,
-      sideBNet: sideBEvaluation.teamNet
+      sideBNet: sideBEvaluation.teamNet,
     };
   }
 
@@ -223,7 +221,7 @@ function computeHoleResult(
       holeNumber,
       result: 'A_WINS',
       sideANet: sideAEvaluation.teamNet,
-      sideBNet: sideBEvaluation.teamNet
+      sideBNet: sideBEvaluation.teamNet,
     };
   }
 
@@ -232,7 +230,7 @@ function computeHoleResult(
       holeNumber,
       result: 'B_WINS',
       sideANet: sideAEvaluation.teamNet,
-      sideBNet: sideBEvaluation.teamNet
+      sideBNet: sideBEvaluation.teamNet,
     };
   }
 
@@ -240,7 +238,7 @@ function computeHoleResult(
     holeNumber,
     result: 'HALVED',
     sideANet: sideAEvaluation.teamNet,
-    sideBNet: sideBEvaluation.teamNet
+    sideBNet: sideBEvaluation.teamNet,
   };
 }
 

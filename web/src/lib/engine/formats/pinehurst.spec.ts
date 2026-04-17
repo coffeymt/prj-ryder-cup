@@ -7,7 +7,7 @@ import type {
   HoleScoreInput,
   Par,
   StrokeIndex,
-  TeeData
+  TeeData,
 } from '../types';
 import { computePinehurstResults, type PinehurstSideInput } from './pinehurst';
 
@@ -32,9 +32,9 @@ function createEngineTee(): TeeData {
       return {
         holeNumber,
         par: 4 as Par,
-        strokeIndex: holeNumber as StrokeIndex
+        strokeIndex: holeNumber as StrokeIndex,
       };
-    })
+    }),
   };
 }
 
@@ -42,7 +42,7 @@ function createPlayers(sideId: number, handicaps: number[]): PinehurstSideInput[
   return handicaps.map((handicapIndex, index) => ({
     playerId: sideId * 10 + index + 1,
     sideId,
-    handicapIndex: handicapIndex as HandicapIndex
+    handicapIndex: handicapIndex as HandicapIndex,
   }));
 }
 
@@ -59,7 +59,7 @@ function createTeamHoleScore(
     grossStrokes,
     isConceded: overrides.isConceded ?? false,
     isPickedUp: overrides.isPickedUp ?? false,
-    opId: `op-${sideId}-${holeNumber}`
+    opId: `op-${sideId}-${holeNumber}`,
   };
 }
 
@@ -71,7 +71,7 @@ function createSide(
   return {
     sideId,
     players: createPlayers(sideId, handicaps),
-    holeScores
+    holeScores,
   };
 }
 
@@ -100,24 +100,32 @@ describe('computePinehurstResults', () => {
 
   it('2) closes a 9-hole match with Team B winning', () => {
     const tee = createEngineTee();
-    const sideA = createSide(1, [0, 0], [
-      createTeamHoleScore(1, 1, 5),
-      createTeamHoleScore(1, 2, 5),
-      createTeamHoleScore(1, 3, 4),
-      createTeamHoleScore(1, 4, 5),
-      createTeamHoleScore(1, 5, 4),
-      createTeamHoleScore(1, 6, 5),
-      createTeamHoleScore(1, 7, 4)
-    ]);
-    const sideB = createSide(2, [0, 0], [
-      createTeamHoleScore(2, 1, 4),
-      createTeamHoleScore(2, 2, 4),
-      createTeamHoleScore(2, 3, 5),
-      createTeamHoleScore(2, 4, 4),
-      createTeamHoleScore(2, 5, 4),
-      createTeamHoleScore(2, 6, 4),
-      createTeamHoleScore(2, 7, 4)
-    ]);
+    const sideA = createSide(
+      1,
+      [0, 0],
+      [
+        createTeamHoleScore(1, 1, 5),
+        createTeamHoleScore(1, 2, 5),
+        createTeamHoleScore(1, 3, 4),
+        createTeamHoleScore(1, 4, 5),
+        createTeamHoleScore(1, 5, 4),
+        createTeamHoleScore(1, 6, 5),
+        createTeamHoleScore(1, 7, 4),
+      ]
+    );
+    const sideB = createSide(
+      2,
+      [0, 0],
+      [
+        createTeamHoleScore(2, 1, 4),
+        createTeamHoleScore(2, 2, 4),
+        createTeamHoleScore(2, 3, 5),
+        createTeamHoleScore(2, 4, 4),
+        createTeamHoleScore(2, 5, 4),
+        createTeamHoleScore(2, 6, 4),
+        createTeamHoleScore(2, 7, 4),
+      ]
+    );
 
     const result = computePinehurstResults(sideA, sideB, tee, 'F9', PINEHURST_ALLOWANCE, 1);
 
@@ -131,9 +139,7 @@ describe('computePinehurstResults', () => {
   it('3) awards a conceded hole to the opponent (sideB concedes hole 5)', () => {
     const tee = createEngineTee();
     const sideA = createSide(1, [0, 0], [createTeamHoleScore(1, 5, 4)]);
-    const sideB = createSide(2, [0, 0], [
-      createTeamHoleScore(2, 5, null, { isConceded: true })
-    ]);
+    const sideB = createSide(2, [0, 0], [createTeamHoleScore(2, 5, null, { isConceded: true })]);
 
     const result = computePinehurstResults(sideA, sideB, tee, 'F9', PINEHURST_ALLOWANCE, 1);
 
@@ -155,28 +161,36 @@ describe('computePinehurstResults', () => {
 
   it('5) resolves as halved after 9 holes and splits points evenly', () => {
     const tee = createEngineTee();
-    const sideA = createSide(1, [0, 0], [
-      createTeamHoleScore(1, 1, 4),
-      createTeamHoleScore(1, 2, 5),
-      createTeamHoleScore(1, 3, 4),
-      createTeamHoleScore(1, 4, 5),
-      createTeamHoleScore(1, 5, 4),
-      createTeamHoleScore(1, 6, 5),
-      createTeamHoleScore(1, 7, 4),
-      createTeamHoleScore(1, 8, 5),
-      createTeamHoleScore(1, 9, 4)
-    ]);
-    const sideB = createSide(2, [0, 0], [
-      createTeamHoleScore(2, 1, 5),
-      createTeamHoleScore(2, 2, 4),
-      createTeamHoleScore(2, 3, 5),
-      createTeamHoleScore(2, 4, 4),
-      createTeamHoleScore(2, 5, 5),
-      createTeamHoleScore(2, 6, 4),
-      createTeamHoleScore(2, 7, 5),
-      createTeamHoleScore(2, 8, 4),
-      createTeamHoleScore(2, 9, 4)
-    ]);
+    const sideA = createSide(
+      1,
+      [0, 0],
+      [
+        createTeamHoleScore(1, 1, 4),
+        createTeamHoleScore(1, 2, 5),
+        createTeamHoleScore(1, 3, 4),
+        createTeamHoleScore(1, 4, 5),
+        createTeamHoleScore(1, 5, 4),
+        createTeamHoleScore(1, 6, 5),
+        createTeamHoleScore(1, 7, 4),
+        createTeamHoleScore(1, 8, 5),
+        createTeamHoleScore(1, 9, 4),
+      ]
+    );
+    const sideB = createSide(
+      2,
+      [0, 0],
+      [
+        createTeamHoleScore(2, 1, 5),
+        createTeamHoleScore(2, 2, 4),
+        createTeamHoleScore(2, 3, 5),
+        createTeamHoleScore(2, 4, 4),
+        createTeamHoleScore(2, 5, 5),
+        createTeamHoleScore(2, 6, 4),
+        createTeamHoleScore(2, 7, 5),
+        createTeamHoleScore(2, 8, 4),
+        createTeamHoleScore(2, 9, 4),
+      ]
+    );
 
     const pointsAvailable = 2;
     const result = computePinehurstResults(

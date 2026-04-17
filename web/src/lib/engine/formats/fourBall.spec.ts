@@ -10,7 +10,7 @@ import type {
   PlayerHandicapInput,
   Segment,
   StrokeIndex,
-  TeeData
+  TeeData,
 } from '../types';
 import { computeFourBallResults, type FourBallSideInput } from './fourBall';
 
@@ -36,9 +36,9 @@ const tee: TeeData = {
     return {
       holeNumber,
       par: 4 as Par,
-      strokeIndex: holeNumber as StrokeIndex
+      strokeIndex: holeNumber as StrokeIndex,
     };
-  })
+  }),
 };
 
 function createFourBallPlayers(
@@ -50,7 +50,7 @@ function createFourBallPlayers(
 ): PlayerHandicapInput[] {
   return [
     { playerId: firstPlayerId, sideId, handicapIndex: firstIndex as HandicapIndex },
-    { playerId: secondPlayerId, sideId, handicapIndex: secondIndex as HandicapIndex }
+    { playerId: secondPlayerId, sideId, handicapIndex: secondIndex as HandicapIndex },
   ];
 }
 
@@ -68,7 +68,7 @@ function createHoleScore(
     grossStrokes,
     isConceded: overrides.isConceded ?? false,
     isPickedUp: overrides.isPickedUp ?? false,
-    opId: `${matchSideId}-${playerId ?? 'side'}-${holeNumber}-${grossStrokes ?? 'null'}`
+    opId: `${matchSideId}-${playerId ?? 'side'}-${holeNumber}-${grossStrokes ?? 'null'}`,
   };
 }
 
@@ -81,7 +81,7 @@ function buildFull18SideScores(
 ): HoleScoreInput[] {
   return firstPlayerGrosses.flatMap((firstGross, index) => [
     createHoleScore(index + 1, firstPlayerId, sideId, firstGross),
-    createHoleScore(index + 1, secondPlayerId, sideId, secondPlayerGrosses[index])
+    createHoleScore(index + 1, secondPlayerId, sideId, secondPlayerGrosses[index]),
   ]);
 }
 
@@ -89,7 +89,7 @@ describe('computeFourBallResults', () => {
   it('1) default 100% keeps full CH as PH before normalization and applies delta strokes', () => {
     const allPlayers = [
       ...createFourBallPlayers(SIDE_A_ID, 101, 6.0, 102, 11.4),
-      ...createFourBallPlayers(SIDE_B_ID, 201, 10.6, 202, 8.9)
+      ...createFourBallPlayers(SIDE_B_ID, 201, 10.6, 202, 8.9),
     ];
 
     const handicaps = computePerPlayerHandicaps(
@@ -112,7 +112,7 @@ describe('computeFourBallResults', () => {
   it('2) USGA 90% allowance reduces PH vs default 100%', () => {
     const allPlayers = [
       ...createFourBallPlayers(SIDE_A_ID, 101, 6.0, 102, 11.4),
-      ...createFourBallPlayers(SIDE_B_ID, 201, 10.6, 202, 8.9)
+      ...createFourBallPlayers(SIDE_B_ID, 201, 10.6, 202, 8.9),
     ];
 
     const defaultHandicaps = computePerPlayerHandicaps(
@@ -140,7 +140,7 @@ describe('computeFourBallResults', () => {
   it('3) normalization uses all four players across the full match baseline', () => {
     const allPlayers = [
       ...createFourBallPlayers(SIDE_A_ID, 101, 6.0, 102, 11.4),
-      ...createFourBallPlayers(SIDE_B_ID, 201, 10.6, 202, 8.9)
+      ...createFourBallPlayers(SIDE_B_ID, 201, 10.6, 202, 8.9),
     ];
 
     const handicaps = computePerPlayerHandicaps(
@@ -152,7 +152,7 @@ describe('computeFourBallResults', () => {
     const expectedPlayingHandicaps = new Map<number, number>(
       allPlayers.map((player) => [
         player.playerId,
-        Math.round(Number(computeCH18(player.handicapIndex, tee.slope18, tee.cr18, tee.par18)))
+        Math.round(Number(computeCH18(player.handicapIndex, tee.slope18, tee.cr18, tee.par18))),
       ])
     );
     const lowestPlayingHandicap = Math.min(...Array.from(expectedPlayingHandicaps.values()));
@@ -178,13 +178,13 @@ describe('computeFourBallResults', () => {
       players: createFourBallPlayers(SIDE_A_ID, 101, 10.0, 102, 10.0),
       holeScores: [
         createHoleScore(1, 101, SIDE_A_ID, null, { isPickedUp: true }),
-        createHoleScore(1, 102, SIDE_A_ID, 4)
-      ]
+        createHoleScore(1, 102, SIDE_A_ID, 4),
+      ],
     };
     const sideB: FourBallSideInput = {
       sideId: SIDE_B_ID,
       players: createFourBallPlayers(SIDE_B_ID, 201, 10.0, 202, 10.0),
-      holeScores: [createHoleScore(1, 201, SIDE_B_ID, 5), createHoleScore(1, 202, SIDE_B_ID, 6)]
+      holeScores: [createHoleScore(1, 201, SIDE_B_ID, 5), createHoleScore(1, 202, SIDE_B_ID, 6)],
     };
 
     const result = computeFourBallResults(
@@ -207,13 +207,13 @@ describe('computeFourBallResults', () => {
       players: createFourBallPlayers(SIDE_A_ID, 101, 10.0, 102, 10.0),
       holeScores: [
         createHoleScore(1, 101, SIDE_A_ID, null, { isPickedUp: true }),
-        createHoleScore(1, 102, SIDE_A_ID, null, { isPickedUp: true })
-      ]
+        createHoleScore(1, 102, SIDE_A_ID, null, { isPickedUp: true }),
+      ],
     };
     const sideB: FourBallSideInput = {
       sideId: SIDE_B_ID,
       players: createFourBallPlayers(SIDE_B_ID, 201, 10.0, 202, 10.0),
-      holeScores: [createHoleScore(1, 201, SIDE_B_ID, 6), createHoleScore(1, 202, SIDE_B_ID, 7)]
+      holeScores: [createHoleScore(1, 201, SIDE_B_ID, 6), createHoleScore(1, 202, SIDE_B_ID, 7)],
     };
 
     const result = computeFourBallResults(
@@ -237,13 +237,13 @@ describe('computeFourBallResults', () => {
       holeScores: [
         createHoleScore(1, 101, SIDE_A_ID, 3),
         createHoleScore(1, 102, SIDE_A_ID, 4),
-        createHoleScore(1, null, SIDE_A_ID, null, { isConceded: true })
-      ]
+        createHoleScore(1, null, SIDE_A_ID, null, { isConceded: true }),
+      ],
     };
     const sideB: FourBallSideInput = {
       sideId: SIDE_B_ID,
       players: createFourBallPlayers(SIDE_B_ID, 201, 10.0, 202, 10.0),
-      holeScores: [createHoleScore(1, 201, SIDE_B_ID, 6), createHoleScore(1, 202, SIDE_B_ID, 7)]
+      holeScores: [createHoleScore(1, 201, SIDE_B_ID, 6), createHoleScore(1, 202, SIDE_B_ID, 7)],
     };
 
     const result = computeFourBallResults(
@@ -269,7 +269,7 @@ describe('computeFourBallResults', () => {
         102,
         [4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 4, 4, 4, 4, 4],
         [5, 6, 5, 6, 5, 6, 5, 6, 5, 6, 5, 6, 5, 5, 5, 5, 5, 5]
-      )
+      ),
     };
     const sideB: FourBallSideInput = {
       sideId: SIDE_B_ID,
@@ -280,7 +280,7 @@ describe('computeFourBallResults', () => {
         202,
         [5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 5],
         [6, 5, 6, 5, 6, 5, 6, 5, 6, 5, 6, 5, 6, 5, 6, 5, 6, 6]
-      )
+      ),
     };
 
     const result = computeFourBallResults(
