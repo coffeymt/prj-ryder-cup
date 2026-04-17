@@ -58,11 +58,11 @@ All tasks in this phase write to **non-overlapping** migration files and can run
   - Depends on: P0.T4
   - Acceptance: `wrangler d1 execute DB --local --file web/migrations/0001_init.sql` succeeds against an empty local D1; every entity from the Domain Model in `prd.md` is represented; no hardcoded tournament data present.
 
-- [ ] **Task P1.T2** — Author `0002_seed_kiawah.sql`: INSERT statements seeding the five Kiawah courses (Cougar Point, Osprey Point, Oak Point, Ocean Course, Turtle Point) with their tees and per-hole par + stroke index for the primary tournament tees, plus 18-hole and 9-hole CR/Slope/par. Cross-check values against BlueGolf course profiles and the Ocean Course scorecard (sources listed in `prd.md` Appendix B). Mark `isSeed = true`. Reference `.github/skills/sql-development.md`. → Coder | Files: `web/migrations/0002_seed_kiawah.sql`
+- [x] **Task P1.T2** — Author `0002_seed_kiawah.sql`: INSERT statements seeding the five Kiawah courses (Cougar Point, Osprey Point, Oak Point, Ocean Course, Turtle Point) with their tees and per-hole par + stroke index for the primary tournament tees, plus 18-hole and 9-hole CR/Slope/par. Cross-check values against BlueGolf course profiles and the Ocean Course scorecard (sources listed in `prd.md` Appendix B). Mark `isSeed = true`. Reference `.github/skills/sql-development.md`. → Coder | Files: `web/migrations/0002_seed_kiawah.sql`
   - Depends on: P1.T1
   - Acceptance: Migration applies cleanly after `0001_init.sql`; each course has 18 holes with non-null par and SI 1–18 (no duplicates); each tee has non-null `cr18`, `slope18`, `par18`, and non-null `cr9F`/`slope9F`/`par9F`/`cr9B`/`slope9B`/`par9B` where available. Values cite their source in a SQL comment block at the top of the file.
 
-- [ ] **Task P1.T3** — Add an `npm` script `migrations:apply` that runs every file in `migrations/*.sql` in order against the configured D1 binding (local by default; `--remote` flag for production). → Coder | Files: `web/package.json` (script only), `web/scripts/apply-migrations.mjs`
+- [x] **Task P1.T3** — Add an `npm` script `migrations:apply` that runs every file in `migrations/*.sql` in order against the configured D1 binding (local by default; `--remote` flag for production). → Coder | Files: `web/package.json` (script only), `web/scripts/apply-migrations.mjs`
   - Depends on: P1.T1
   - Acceptance: `pnpm migrations:apply` idempotently applies all migrations locally; re-running is a no-op.
 
