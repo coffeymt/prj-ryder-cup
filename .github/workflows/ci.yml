@@ -30,7 +30,7 @@ jobs:
           npm --version
 
       - name: Install dependencies
-        run: npm install --no-fund 2>&1
+        run: npm ci
 
       - name: Sync SvelteKit types
         run: npx svelte-kit sync
