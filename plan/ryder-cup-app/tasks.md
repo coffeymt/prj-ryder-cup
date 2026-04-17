@@ -25,7 +25,7 @@ Implementation plan for the Ryder Cup golf tournament web app. See `prd.md` for 
   - Depends on: none
   - Acceptance: `git status` shows clean working tree on branch `feature/ryder-cup-app`; `main` exists as the default branch.
 
-- [ ] **Task P0.T2** — Author infrastructure blueprint documenting all Cloudflare resources, secrets, and DNS records the project needs. Deliverable is a concise markdown doc covering: Pages project (preview + prod), D1 database name + binding, custom domain `rydercup.sbcctears.com`, Workers secrets (`COOKIE_SIGNING_KEY`, `MAGIC_LINK_KEY`, `SPECTATOR_COOKIE_KEY`, `RESEND_API_KEY`), Resend sending-domain setup (SPF/DKIM/DMARC records to add to the Cloudflare zone), preview URL pattern, environment naming convention. Reference `.github/skills/api-contract-validation.md` and `.github/skills/pipeline-orchestration.md` for patterns. → Architect | Files: `assets/INFRASTRUCTURE.md`
+- [x] **Task P0.T2** — Author infrastructure blueprint documenting all Cloudflare resources, secrets, and DNS records the project needs. Deliverable is a concise markdown doc covering: Pages project (preview + prod), D1 database name + binding, custom domain `rydercup.sbcctears.com`, Workers secrets (`COOKIE_SIGNING_KEY`, `MAGIC_LINK_KEY`, `SPECTATOR_COOKIE_KEY`, `RESEND_API_KEY`), Resend sending-domain setup (SPF/DKIM/DMARC records to add to the Cloudflare zone), preview URL pattern, environment naming convention. Reference `.github/skills/api-contract-validation.md` and `.github/skills/pipeline-orchestration.md` for patterns. → Architect | Files: `assets/INFRASTRUCTURE.md`
   - Depends on: P0.T1
   - Acceptance: Document enumerates every resource with a `verify` command and a `provision` step. No secret values are inline — only variable names.
 
