@@ -37,7 +37,7 @@ Implementation plan for the Ryder Cup golf tournament web app. See `prd.md` for 
   - Depends on: P0.T3
   - Acceptance: `wrangler d1 list` works when run by the user with valid Cloudflare credentials; `wrangler pages dev web/.svelte-kit/cloudflare` runs locally.
 
-- [ ] **Task P0.T5** — Document user-facing one-time setup steps in `assets/SETUP.md`: Cloudflare account / API token prerequisites, `wrangler login`, creating the D1 database, adding the `rydercup.sbcctears.com` CNAME in the existing Cloudflare zone, creating a Resend account and verifying the sending domain, registering secrets via `wrangler secret put`. Reference `.github/skills/documentation-standards.md`. → Documenter | Files: `assets/SETUP.md`
+- [x] **Task P0.T5** — Document user-facing one-time setup steps in `assets/SETUP.md`: Cloudflare account / API token prerequisites, `wrangler login`, creating the D1 database, adding the `rydercup.sbcctears.com` CNAME in the existing Cloudflare zone, creating a Resend account and verifying the sending domain, registering secrets via `wrangler secret put`. Reference `.github/skills/documentation-standards.md`. → Documenter | Files: `assets/SETUP.md`
   - Depends on: P0.T2
   - Acceptance: A reader with zero prior context can execute every step in order; no step says "TBD" or "see later"; every CLI command shows the expected success output.
 
