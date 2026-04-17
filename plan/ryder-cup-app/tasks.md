@@ -33,7 +33,7 @@ Implementation plan for the Ryder Cup golf tournament web app. See `prd.md` for 
   - Depends on: P0.T1
   - Acceptance: `pnpm install` (or `npm install`) completes; `pnpm dev` serves the default SvelteKit page at `localhost:5173`; `pnpm lint` and `pnpm test` run (even with zero tests).
 
-- [ ] **Task P0.T4** — Author `wrangler.toml` with bindings for D1 (`DB`) and placeholder references to Workers secrets. Configure separate `[env.preview]` and `[env.production]` blocks. Do not include secret values. → Coder | Files: `web/wrangler.toml`
+- [x] **Task P0.T4** — Author Wrangler config with bindings for D1 (`DB`) and placeholder references to Workers secrets. Configure separate preview and production env blocks. Do not include secret values. → Coder | Files: `web/wrangler.jsonc` (using Wrangler's JSONC format instead of TOML)
   - Depends on: P0.T3
   - Acceptance: `wrangler d1 list` works when run by the user with valid Cloudflare credentials; `wrangler pages dev web/.svelte-kit/cloudflare` runs locally.
 
@@ -41,7 +41,7 @@ Implementation plan for the Ryder Cup golf tournament web app. See `prd.md` for 
   - Depends on: P0.T2
   - Acceptance: A reader with zero prior context can execute every step in order; no step says "TBD" or "see later"; every CLI command shows the expected success output.
 
-- [ ] **Task P0.T6** — Add GitHub Actions CI workflow: install, lint, test, build on every push/PR. No deploy step in this task. → Coder | Files: `.github/workflows/ci.yml`
+- [x] **Task P0.T6** — Add GitHub Actions CI workflow: install, lint, test, build on every push/PR. No deploy step in this task. → Coder | Files: `.github/workflows/ci.yml`
   - Depends on: P0.T3
   - Acceptance: Workflow passes on a clean `feature/ryder-cup-app` branch.
 
