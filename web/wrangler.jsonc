@@ -11,8 +11,8 @@
     {
       "binding": "DB",
       "database_name": "ryder-cup-local",
-      "database_id": "00000000-0000-0000-0000-000000000000"
-    }
+      "database_id": "00000000-0000-0000-0000-000000000000",
+    },
   ],
   "env": {
     "preview": {
@@ -20,19 +20,19 @@
         {
           "binding": "DB",
           "database_name": "ryder-cup-preview",
-          "database_id": "00000000-0000-0000-0000-000000000000"
-        }
-      ]
+          "database_id": "00000000-0000-0000-0000-000000000000",
+        },
+      ],
     },
     "production": {
       "d1_databases": [
         {
           "binding": "DB",
           "database_name": "ryder-cup-prod",
-          "database_id": "00000000-0000-0000-0000-000000000000"
-        }
-      ]
-    }
+          "database_id": "00000000-0000-0000-0000-000000000000",
+        },
+      ],
+    },
   },
   // Secrets are registered out-of-band and never stored in this file:
   // wrangler secret put COOKIE_SIGNING_KEY --env <preview|production>

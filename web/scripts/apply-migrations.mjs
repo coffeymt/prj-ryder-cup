@@ -11,10 +11,6 @@ import { spawn } from 'node:child_process';
 
 const VALID_ENVS = new Set(['preview', 'production']);
 
-function printUsage() {
-  console.error('Usage: node scripts/apply-migrations.mjs [--remote] [--env <preview|production>]');
-}
-
 function parseArgs(argv) {
   let remote = false;
   let env;
@@ -61,7 +57,7 @@ async function runMigration(migrationPath, remote, env) {
   await new Promise((resolve, reject) => {
     const child = spawn(npxCommand, npxArgs, {
       stdio: 'inherit',
-      shell: process.platform === 'win32'
+      shell: process.platform === 'win32',
     });
 
     child.on('error', (error) => {
