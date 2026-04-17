@@ -81,47 +81,47 @@ All tasks in this phase write to **non-overlapping** files under `web/src/lib/en
   - Depends on: P1.T1
   - Acceptance: Types compile under `tsconfig` strict mode; downstream engine modules import from this file only.
 
-- [ ] **Task P2.T2** — Implement Course Handicap (CH) calculation per WHS Rule 6.1a and 9-hole CH per Rule 6.1b. Pure function, no I/O. Include inline unit tests in a sibling spec. → Coder | Files: `web/src/lib/engine/courseHandicap.ts`, `web/src/lib/engine/courseHandicap.spec.ts`
+- [x] **Task P2.T2** — Implement Course Handicap (CH) calculation per WHS Rule 6.1a and 9-hole CH per Rule 6.1b. Pure function, no I/O. Include inline unit tests in a sibling spec. → Coder | Files: `web/src/lib/engine/courseHandicap.ts`, `web/src/lib/engine/courseHandicap.spec.ts`
   - Depends on: P2.T1
   - Acceptance: CH18 and CH9 test cases drawn from USGA published examples all pass; negative indexes and wrap-around cases covered.
 
-- [ ] **Task P2.T3** — Implement per-format allowance logic and match-play normalization (subtract lowest PH → 0). Handle Scramble (35/15 blended), Pinehurst (60/40 blended), Shamble (default 85% per player, configurable), Four-Ball (default 100% per player, configurable, USGA one-click = 90%), Singles (100%). All percentages accepted as configuration inputs, not literals. → Coder | Files: `web/src/lib/engine/allowances.ts`, `web/src/lib/engine/allowances.spec.ts`
+- [x] **Task P2.T3** — Implement per-format allowance logic and match-play normalization (subtract lowest PH → 0). Handle Scramble (35/15 blended), Pinehurst (60/40 blended), Shamble (default 85% per player, configurable), Four-Ball (default 100% per player, configurable, USGA one-click = 90%), Singles (100%). All percentages accepted as configuration inputs, not literals. → Coder | Files: `web/src/lib/engine/allowances.ts`, `web/src/lib/engine/allowances.spec.ts`
   - Depends on: P2.T1, P2.T2
   - Acceptance: Default-config cases and explicit-override cases both pass; Scramble and Pinehurst tests match USGA Appendix C examples; match-play normalization reduces all participants so lowest plays off 0.
 
-- [ ] **Task P2.T4** — Implement stroke allocation per WHS Appendix E: ascending SI order with wrap when `PH > 18`, descending from SI 18 for negative PH, 9-hole sub-match allocation using SI ranks filtered to the played nine. → Coder | Files: `web/src/lib/engine/strokeAllocation.ts`, `web/src/lib/engine/strokeAllocation.spec.ts`
+- [x] **Task P2.T4** — Implement stroke allocation per WHS Appendix E: ascending SI order with wrap when `PH > 18`, descending from SI 18 for negative PH, 9-hole sub-match allocation using SI ranks filtered to the played nine. → Coder | Files: `web/src/lib/engine/strokeAllocation.ts`, `web/src/lib/engine/strokeAllocation.spec.ts`
   - Depends on: P2.T1
   - Acceptance: Allocations for `PH = 10`, `PH = 22`, `PH = -3`, `PH = 36` all verified against Appendix E tables; 9-hole allocations filtered to F9 and B9 separately verified.
 
-- [ ] **Task P2.T5** — Implement Scramble format: single team ball, team gross input, team-PH strokes subtracted by SI allocation, per-hole team net. → Coder | Files: `web/src/lib/engine/formats/scramble.ts`, `web/src/lib/engine/formats/scramble.spec.ts`
+- [x] **Task P2.T5** — Implement Scramble format: single team ball, team gross input, team-PH strokes subtracted by SI allocation, per-hole team net. → Coder | Files: `web/src/lib/engine/formats/scramble.ts`, `web/src/lib/engine/formats/scramble.spec.ts`
   - Depends on: P2.T3, P2.T4
   - Acceptance: Kiawah Cougar Point F9 scramble example from `prd.md` produces correct per-hole team nets; halved holes detected.
 
-- [ ] **Task P2.T6** — Implement Pinehurst / Modified Alt Shot format: same mechanics as Scramble but with 60/40 blended team PH. → Coder | Files: `web/src/lib/engine/formats/pinehurst.ts`, `web/src/lib/engine/formats/pinehurst.spec.ts`
+- [x] **Task P2.T6** — Implement Pinehurst / Modified Alt Shot format: same mechanics as Scramble but with 60/40 blended team PH. → Coder | Files: `web/src/lib/engine/formats/pinehurst.ts`, `web/src/lib/engine/formats/pinehurst.spec.ts`
   - Depends on: P2.T3, P2.T4 (parallel with P2.T5)
   - Acceptance: Osprey Point F9 Pinehurst worked example from `prd.md` passes; verifies blended PH differs from Scramble.
 
-- [ ] **Task P2.T7** — Implement Shamble format: per-player nets, team net = `min(playerA_net, playerB_net)`, picked-up carries partner. → Coder | Files: `web/src/lib/engine/formats/shamble.ts`, `web/src/lib/engine/formats/shamble.spec.ts`
+- [x] **Task P2.T7** — Implement Shamble format: per-player nets, team net = `min(playerA_net, playerB_net)`, picked-up carries partner. → Coder | Files: `web/src/lib/engine/formats/shamble.ts`, `web/src/lib/engine/formats/shamble.spec.ts`
   - Depends on: P2.T3, P2.T4 (parallel with P2.T5, P2.T6)
   - Acceptance: Picked-up + partner-carries case verified; both-pick-up forfeits hole; default 85% and USGA 75% configs both produce correct allocations.
 
-- [ ] **Task P2.T8** — Implement Four-Ball format: per-player nets, team net = `min(...)`, match-play normalization applied. → Coder | Files: `web/src/lib/engine/formats/fourBall.ts`, `web/src/lib/engine/formats/fourBall.spec.ts`
+- [x] **Task P2.T8** — Implement Four-Ball format: per-player nets, team net = `min(...)`, match-play normalization applied. → Coder | Files: `web/src/lib/engine/formats/fourBall.ts`, `web/src/lib/engine/formats/fourBall.spec.ts`
   - Depends on: P2.T3, P2.T4 (parallel with P2.T5–T7)
   - Acceptance: Default 100% config and USGA 90% config both tested; picked-up cases correct.
 
-- [ ] **Task P2.T9** — Implement Singles format: 100% CH per player, match-play normalization. → Coder | Files: `web/src/lib/engine/formats/singles.ts`, `web/src/lib/engine/formats/singles.spec.ts`
+- [x] **Task P2.T9** — Implement Singles format: 100% CH per player, match-play normalization. → Coder | Files: `web/src/lib/engine/formats/singles.ts`, `web/src/lib/engine/formats/singles.spec.ts`
   - Depends on: P2.T3, P2.T4 (parallel with P2.T5–T8)
   - Acceptance: 1v1 cases verified; halved match = T = 0.5/0.5 honored.
 
-- [ ] **Task P2.T10** — Implement match-state state machine: after each hole compute `holesUp`, `holesRemaining`, state (`AS`|`X UP`|`X DN`|`DORMIE`|`CLOSED`|`T`), and close notation (`W&R` like `4&3`). Pure function driven by a sequence of hole-result inputs. → Coder | Files: `web/src/lib/engine/matchState.ts`, `web/src/lib/engine/matchState.spec.ts`
+- [x] **Task P2.T10** — Implement match-state state machine: after each hole compute `holesUp`, `holesRemaining`, state (`AS`|`X UP`|`X DN`|`DORMIE`|`CLOSED`|`T`), and close notation (`W&R` like `4&3`). Pure function driven by a sequence of hole-result inputs. → Coder | Files: `web/src/lib/engine/matchState.ts`, `web/src/lib/engine/matchState.spec.ts`
   - Depends on: P2.T1
   - Acceptance: Dormie detection correct for both 18-hole and 9-hole segments; closed-out detection fires at correct hole; halved-match handling correct.
 
-- [ ] **Task P2.T11** — Implement point-tally engine: takes a set of closed match results and sums to team totals, honoring 0.5/0.5 halves and commissioner overrides. → Coder | Files: `web/src/lib/engine/pointTally.ts`, `web/src/lib/engine/pointTally.spec.ts`
+- [x] **Task P2.T11** — Implement point-tally engine: takes a set of closed match results and sums to team totals, honoring 0.5/0.5 halves and commissioner overrides. → Coder | Files: `web/src/lib/engine/pointTally.ts`, `web/src/lib/engine/pointTally.spec.ts`
   - Depends on: P2.T10
   - Acceptance: 30-point Kiawah scenario (all halved) = 15-15; all-won-by-Team-A = 30-0; mixed scenario with overrides verified.
 
-- [ ] **Task P2.T12** — Implement split-format orchestrator: routes F9 holes through one format, B9 through another, Overall through a third where applicable. Selects Convention 1 (independent 9-hole CH) by default and Convention 2 (halved CH18) when course lacks 9-hole ratings. → Coder | Files: `web/src/lib/engine/splitFormat.ts`, `web/src/lib/engine/splitFormat.spec.ts`
+- [x] **Task P2.T12** — Implement split-format orchestrator: routes F9 holes through one format, B9 through another, Overall through a third where applicable. Selects Convention 1 (independent 9-hole CH) by default and Convention 2 (halved CH18) when course lacks 9-hole ratings. → Coder | Files: `web/src/lib/engine/splitFormat.ts`, `web/src/lib/engine/splitFormat.spec.ts`
   - Depends on: P2.T5, P2.T6, P2.T7, P2.T8, P2.T9, P2.T10
   - Acceptance: Cougar Point (F9 Scramble + B9 Four-Ball) and Ocean Course (F9 + B9 + Overall) both produce correct sub-match points.
 
