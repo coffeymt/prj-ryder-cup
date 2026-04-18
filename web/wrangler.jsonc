@@ -1,15 +1,15 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   // Authoritative infrastructure values are defined in assets/INFRASTRUCTURE.md.
-  "name": "rydercup",
+  "name": "golf",
   "compatibility_date": "2026-04-17",
   "compatibility_flags": ["nodejs_als"],
   "pages_build_output_dir": ".svelte-kit/cloudflare",
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "rydercup-prod",
-      "database_id": "ab56b1d2-b5b1-4652-8d9e-6ad0a5912461",
+      "database_name": "golf-prod",
+      "database_id": "c20f6b85-692b-4930-b822-a2f6f22e3d20",
     },
   ],
   "env": {
@@ -17,8 +17,8 @@
       "d1_databases": [
         {
           "binding": "DB",
-          "database_name": "rydercup-preview",
-          "database_id": "bc4be116-2576-4517-a952-5e35607d752d",
+          "database_name": "golf-preview",
+          "database_id": "7f1bd175-30d0-4e0c-83e2-5b261d114da6",
         },
       ],
     },
@@ -26,8 +26,8 @@
       "d1_databases": [
         {
           "binding": "DB",
-          "database_name": "rydercup-prod",
-          "database_id": "ab56b1d2-b5b1-4652-8d9e-6ad0a5912461",
+          "database_name": "golf-prod",
+          "database_id": "c20f6b85-692b-4930-b822-a2f6f22e3d20",
         },
       ],
     },
