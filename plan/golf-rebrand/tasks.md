@@ -4,7 +4,7 @@
 
 - D1 UUIDs wired and migrated: `golf-prod` = `c20f6b85-692b-4930-b822-a2f6f22e3d20`, `golf-preview` = `7f1bd175-30d0-4e0c-83e2-5b261d114da6`.
 - Pages project target remains `golf`; `wrangler pages project create/list` is currently blocked in this non-interactive shell without `CLOUDFLARE_API_TOKEN`.
-- Initial commissioner seed applied to both new D1s: `coffey.mikey@gmail.com` (global scope + `DEMO26` scoped access).
+- Initial commissioner seed corrected on both new D1s: removed phantom `GLBL00` tournament + global commissioner row; retained only `coffey.mikey@gmail.com` scoped to `DEMO26` (`tournament_id = 420260000001`).
 
 Execution convention: checkboxes track state. Implementation agents flip `- [ ]` → `- [ ]` as they complete tasks. Tasks within a phase that touch **non-overlapping files** are parallelizable; sequential dependencies are noted at phase boundaries. Reference skills: `.github/skills/sql-development.md` (for Task 3.1), `.github/skills/plan-management.md`, `.github/skills/documentation-standards.md` (for Phase 11 doc updates).
 
