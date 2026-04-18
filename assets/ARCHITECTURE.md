@@ -7,7 +7,7 @@
 | Frontend + SSR | SvelteKit (`@sveltejs/adapter-cloudflare`) |
 | Hosting | Cloudflare Pages (Pages Functions for server routes) |
 | Database | Cloudflare D1 (SQLite, accessed via `platform.env.DB`) |
-| Email | Resend (magic-link delivery) |
+| Email | smtp2go HTTP API (magic-link delivery — Workers cannot open raw SMTP sockets) |
 | Offline storage | Dexie (IndexedDB wrapper, browser-only) |
 | Service worker | Workbox (precache + routing strategies) |
 | Styling | Tailwind CSS with semantic design tokens |
@@ -112,5 +112,5 @@ See [`INFRASTRUCTURE.md`](./INFRASTRUCTURE.md) for full resource inventory and v
 | Environment | D1 database | Domain |
 |---|---|---|
 | local | SQLite file (`.wrangler/state/`) | `localhost:5173` |
-| preview | `ryder-cup-preview` | `<branch>.ryder-cup-app.pages.dev` |
-| production | `ryder-cup-prod` | `rydercup.sbcctears.com` |
+| preview | `rydercup-preview` | `<branch>.rydercup.pages.dev` |
+| production | `rydercup-prod` | `rydercup.sbcctears.com` (also `rydercup.pages.dev`) |
