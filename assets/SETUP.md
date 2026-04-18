@@ -15,8 +15,9 @@ All commands target Windows PowerShell because the workspace OS is Windows. bash
 7. [Step 6 — Apply initial migration (preview)](#step-6--apply-initial-migration-preview)
 8. [Step 7 — First preview deploy](#step-7--first-preview-deploy)
 9. [Step 8 — Production cutover](#step-8--production-cutover)
-10. [Rollback / Rotation](#rollback--rotation)
-11. [Troubleshooting](#troubleshooting)
+10. [Development Workflow](#development-workflow)
+11. [Rollback / Rotation](#rollback--rotation)
+12. [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -522,6 +523,63 @@ server: cloudflare
 ```
 
 Certificate: issued by Cloudflare / Google Trust Services, valid, not expired.
+
+---
+
+## Development Workflow
+
+### Running locally
+
+```powershell
+cd web
+pnpm dev               # Start SvelteKit dev server at localhost:5173
+pnpm migrations:apply  # Apply D1 migrations to local D1
+```
+
+Local D1 uses a SQLite file under `web/.wrangler/state/`. No Cloudflare credentials required.
+
+### Running tests
+
+```powershell
+cd web
+pnpm test        # Run all Vitest unit tests
+pnpm test:watch  # Watch mode
+pnpm e2e         # Playwright E2E tests (requires running dev server)
+```
+
+### Building
+
+```powershell
+cd web
+pnpm build    # Build for Cloudflare Pages
+pnpm preview  # Preview production build locally
+```
+
+### Linting and formatting
+
+```powershell
+cd web
+pnpm lint    # ESLint
+pnpm format  # Prettier
+```
+
+### Database migrations
+
+All migrations live in `web/migrations/`. Apply in filename order.
+
+| Target | Command |
+|---|---|
+| Local | `pnpm migrations:apply` (uses `--local` flag) |
+| Remote preview | `wrangler d1 execute DB --remote --env preview --file web/migrations/<file>.sql` |
+| Remote production | `wrangler d1 execute DB --remote --env production --file web/migrations/<file>.sql` |
+
+Current migrations:
+
+| File | Description |
+|---|---|
+| `0001_init.sql` | Full schema — all entity tables and indexes |
+| `0002_seed_kiawah.sql` | 5 Kiawah courses with tees, holes, SI, CR/Slope |
+| `0003_add_match_id_to_processed_ops.sql` | Adds `match_id` column + unique index to `processed_ops` for match-scoped idempotency |
 
 ---
 

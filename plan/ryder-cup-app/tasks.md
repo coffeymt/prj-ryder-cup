@@ -134,23 +134,23 @@ All tasks in this phase write to **non-overlapping** files under `web/src/lib/en
 
 Runs in parallel with Phase 2 (different files) once Phase 1 is done.
 
-- [ ] **Task P3.T1** — Implement HMAC cookie sign/verify helpers. Reads `COOKIE_SIGNING_KEY`, `SPECTATOR_COOKIE_KEY` from SvelteKit `$env/dynamic/private`. No hardcoded keys. → Coder | Files: `web/src/lib/auth/cookies.ts`, `web/src/lib/auth/cookies.spec.ts`
+- [x] **Task P3.T1** — Implement HMAC cookie sign/verify helpers. Reads `COOKIE_SIGNING_KEY`, `SPECTATOR_COOKIE_KEY` from SvelteKit `$env/dynamic/private`. No hardcoded keys. → Coder | Files: `web/src/lib/auth/cookies.ts`, `web/src/lib/auth/cookies.spec.ts`
   - Depends on: P2.T1 (types)
   - Acceptance: Round-trip sign → verify passes; tampered cookies fail verification; replay protection via exp claim.
 
-- [ ] **Task P3.T2** — Implement tournament-code generator: 6-char alphanumeric, excludes `0/O/1/I/L`, retries on collision against `tournaments.code`. → Coder | Files: `web/src/lib/auth/tournamentCode.ts`, `web/src/lib/auth/tournamentCode.spec.ts`
+- [x] **Task P3.T2** — Implement tournament-code generator: 6-char alphanumeric, excludes `0/O/1/I/L`, retries on collision against `tournaments.code`. → Coder | Files: `web/src/lib/auth/tournamentCode.ts`, `web/src/lib/auth/tournamentCode.spec.ts`
   - Depends on: P3.T1
   - Acceptance: 10,000 generations produce no ambiguous chars; collision retry path exercised with mocked DB.
 
-- [ ] **Task P3.T3** — Implement magic-link token lifecycle: generate single-use signed tokens, persist hash in `magic_link_tokens`, consume idempotently, 15-minute expiry. → Coder | Files: `web/src/lib/auth/magicLink.ts`, `web/src/lib/auth/magicLink.spec.ts`
+- [x] **Task P3.T3** — Implement magic-link token lifecycle: generate single-use signed tokens, persist hash in `magic_link_tokens`, consume idempotently, 15-minute expiry. → Coder | Files: `web/src/lib/auth/magicLink.ts`, `web/src/lib/auth/magicLink.spec.ts`
   - Depends on: P3.T1
   - Acceptance: Consumed tokens cannot be reused; expired tokens rejected; second-use returns same result for idempotency window.
 
-- [ ] **Task P3.T4** — Implement Resend email client wrapper: `sendMagicLink({ email, url })`. Reads `RESEND_API_KEY` from secrets. Renders a minimal HTML + plaintext magic-link email. No hardcoded sender address — reads from env. → Coder | Files: `web/src/lib/auth/emailClient.ts`, `web/src/lib/auth/emailClient.spec.ts`
+- [x] **Task P3.T4** — Implement Resend email client wrapper: `sendMagicLink({ email, url })`. Reads `RESEND_API_KEY` from secrets. Renders a minimal HTML + plaintext magic-link email. No hardcoded sender address — reads from env. → Coder | Files: `web/src/lib/auth/emailClient.ts`, `web/src/lib/auth/emailClient.spec.ts`
   - Depends on: P3.T3
   - Acceptance: Unit test mocks `fetch` and asserts Resend request shape; includes failure-mode test (non-200 from Resend → thrown error).
 
-- [ ] **Task P3.T5** — Implement route-middleware for role discrimination. `hooks.server.ts` reads cookies on every request, resolves role (`commissioner`|`player`|`spectator`|`anonymous`), attaches to `event.locals`. Define helper `requireRole()`. → Coder | Files: `web/src/hooks.server.ts`, `web/src/lib/auth/guards.ts`, `web/src/lib/auth/guards.spec.ts`
+- [x] **Task P3.T5** — Implement route-middleware for role discrimination. `hooks.server.ts` reads cookies on every request, resolves role (`commissioner`|`player`|`spectator`|`anonymous`), attaches to `event.locals`. Define helper `requireRole()`. → Coder | Files: `web/src/hooks.server.ts`, `web/src/lib/auth/guards.ts`, `web/src/lib/auth/guards.spec.ts`
   - Depends on: P3.T1
   - Acceptance: Requests with commissioner cookie resolve role `commissioner`; player cookie → `player`; spectator cookie → `spectator`; no cookie → `anonymous`; `requireRole('commissioner')` throws 403 for other roles.
 
@@ -163,47 +163,47 @@ Runs in parallel with Phase 2 (different files) once Phase 1 is done.
 
 All tasks below touch non-overlapping route files and can be parallelized.
 
-- [ ] **Task P4.T1** — Implement D1 repository layer: one file per entity, prepared statements only, no ORM. Export typed functions matching engine types. → Coder | Files: `web/src/lib/db/tournaments.ts`, `web/src/lib/db/teams.ts`, `web/src/lib/db/players.ts`, `web/src/lib/db/courses.ts`, `web/src/lib/db/rounds.ts`, `web/src/lib/db/matches.ts`, `web/src/lib/db/holeScores.ts`, `web/src/lib/db/auditLog.ts`, `web/src/lib/db/processedOps.ts`, `web/src/lib/db/commissioners.ts`, `web/src/lib/db/magicLinks.ts`, `web/src/lib/db/types.ts`
+- [x] **Task P4.T1** — Implement D1 repository layer: one file per entity, prepared statements only, no ORM. Export typed functions matching engine types. → Coder | Files: `web/src/lib/db/tournaments.ts`, `web/src/lib/db/teams.ts`, `web/src/lib/db/players.ts`, `web/src/lib/db/courses.ts`, `web/src/lib/db/rounds.ts`, `web/src/lib/db/matches.ts`, `web/src/lib/db/holeScores.ts`, `web/src/lib/db/auditLog.ts`, `web/src/lib/db/processedOps.ts`, `web/src/lib/db/commissioners.ts`, `web/src/lib/db/magicLinks.ts`, `web/src/lib/db/types.ts`
   - Depends on: P1.T1, P2.T1
   - Acceptance: Each repository has integration tests against a migrated local D1; all queries are parameterized (no string concat).
 
-- [ ] **Task P4.T2** — Implement commissioner auth endpoints: `POST /api/auth/magic-link/request`, `GET /api/auth/magic-link/consume`, `POST /api/auth/logout`. → Coder | Files: `web/src/routes/api/auth/magic-link/request/+server.ts`, `web/src/routes/api/auth/magic-link/consume/+server.ts`, `web/src/routes/api/auth/logout/+server.ts`
+- [x] **Task P4.T2** — Implement commissioner auth endpoints: `POST /api/auth/magic-link/request`, `GET /api/auth/magic-link/consume`, `POST /api/auth/logout`. → Coder | Files: `web/src/routes/api/auth/magic-link/request/+server.ts`, `web/src/routes/api/auth/magic-link/consume/+server.ts`, `web/src/routes/api/auth/logout/+server.ts`
   - Depends on: P3.T3, P3.T4, P4.T1
   - Acceptance: End-to-end flow via curl issues a cookie; logout clears it.
 
-- [ ] **Task P4.T3** — Implement tournament CRUD: `POST/GET/PATCH /api/tournaments`, `POST /api/tournaments/:id/regenerate-code`, `PATCH /api/tournaments/:id/ticker-visibility`. Role-gated to commissioner of that tournament. → Coder | Files: `web/src/routes/api/tournaments/+server.ts`, `web/src/routes/api/tournaments/[id]/+server.ts`, `web/src/routes/api/tournaments/[id]/regenerate-code/+server.ts`, `web/src/routes/api/tournaments/[id]/ticker-visibility/+server.ts`
+- [x] **Task P4.T3** — Implement tournament CRUD: `POST/GET/PATCH /api/tournaments`, `POST /api/tournaments/:id/regenerate-code`, `PATCH /api/tournaments/:id/ticker-visibility`. Role-gated to commissioner of that tournament. → Coder | Files: `web/src/routes/api/tournaments/+server.ts`, `web/src/routes/api/tournaments/[id]/+server.ts`, `web/src/routes/api/tournaments/[id]/regenerate-code/+server.ts`, `web/src/routes/api/tournaments/[id]/ticker-visibility/+server.ts`
   - Depends on: P4.T1, P3.T5
   - Acceptance: Non-commissioner requests return 403; regenerate-code enforces uniqueness; ticker-visibility persists.
 
-- [ ] **Task P4.T4** — Implement team & player CRUD endpoints. Bulk player CSV parse accepted as JSON `{rows: [...]}`. → Coder | Files: `web/src/routes/api/tournaments/[id]/teams/+server.ts`, `web/src/routes/api/tournaments/[id]/teams/[teamId]/+server.ts`, `web/src/routes/api/tournaments/[id]/players/+server.ts`, `web/src/routes/api/tournaments/[id]/players/[playerId]/+server.ts`, `web/src/routes/api/tournaments/[id]/players/bulk/+server.ts`
+- [x] **Task P4.T4** — Implement team & player CRUD endpoints. Bulk player CSV parse accepted as JSON `{rows: [...]}`. → Coder | Files: `web/src/routes/api/tournaments/[id]/teams/+server.ts`, `web/src/routes/api/tournaments/[id]/teams/[teamId]/+server.ts`, `web/src/routes/api/tournaments/[id]/players/+server.ts`, `web/src/routes/api/tournaments/[id]/players/[playerId]/+server.ts`, `web/src/routes/api/tournaments/[id]/players/bulk/+server.ts`
   - Depends on: P4.T1, P3.T5
   - Acceptance: Roster of 10 players can be bulk-created in one request; invalid rows are rejected without partial writes.
 
-- [ ] **Task P4.T5** — Implement course CRUD endpoints with full tee + hole support. → Coder | Files: `web/src/routes/api/courses/+server.ts`, `web/src/routes/api/courses/[id]/+server.ts`, `web/src/routes/api/courses/[id]/tees/+server.ts`, `web/src/routes/api/courses/[id]/tees/[teeId]/+server.ts`, `web/src/routes/api/courses/[id]/holes/+server.ts`
+- [x] **Task P4.T5** — Implement course CRUD endpoints with full tee + hole support. → Coder | Files: `web/src/routes/api/courses/+server.ts`, `web/src/routes/api/courses/[id]/+server.ts`, `web/src/routes/api/courses/[id]/tees/+server.ts`, `web/src/routes/api/courses/[id]/tees/[teeId]/+server.ts`, `web/src/routes/api/courses/[id]/holes/+server.ts`
   - Depends on: P4.T1, P3.T5
   - Acceptance: Create course with 18 holes + 2 tees in one transaction; validation rejects SI outside 1–18 or duplicate SIs.
 
-- [ ] **Task P4.T6** — Implement round & matchup builder endpoints. → Coder | Files: `web/src/routes/api/tournaments/[id]/rounds/+server.ts`, `web/src/routes/api/tournaments/[id]/rounds/[roundId]/+server.ts`, `web/src/routes/api/tournaments/[id]/rounds/[roundId]/matches/+server.ts`, `web/src/routes/api/tournaments/[id]/rounds/[roundId]/matches/[matchId]/+server.ts`
+- [x] **Task P4.T6** — Implement round & matchup builder endpoints. → Coder | Files: `web/src/routes/api/tournaments/[id]/rounds/+server.ts`, `web/src/routes/api/tournaments/[id]/rounds/[roundId]/+server.ts`, `web/src/routes/api/tournaments/[id]/rounds/[roundId]/matches/+server.ts`, `web/src/routes/api/tournaments/[id]/rounds/[roundId]/matches/[matchId]/+server.ts`
   - Depends on: P4.T1, P3.T5
   - Acceptance: Ocean Course three-segment round (F9 + B9 + Overall) with 3 matchups creates 9 match rows; validation catches duplicate player assignments across sides.
 
-- [ ] **Task P4.T7** — Implement idempotent hole-score endpoint: `POST /api/matches/:matchId/holes` with `Idempotency-Key` header. Writes `hole_scores`, updates `match_hole_results`, recomputes match state via engine, writes to `processed_ops`. → Coder | Files: `web/src/routes/api/matches/[matchId]/holes/+server.ts`, `web/src/routes/api/matches/[matchId]/holes/+server.spec.ts`
+- [x] **Task P4.T7** — Implement idempotent hole-score endpoint: `POST /api/matches/:matchId/holes` with `Idempotency-Key` header. Writes `hole_scores`, updates `match_hole_results`, recomputes match state via engine, writes to `processed_ops`. → Coder | Files: `web/src/routes/api/matches/[matchId]/holes/+server.ts`, `web/src/routes/api/matches/[matchId]/holes/+server.spec.ts`
   - Depends on: P4.T1, P2.T5–T12, P3.T5
   - Acceptance: Duplicate `Idempotency-Key` returns identical response without double-writing; concurrent edits resolve via last-write-wins keyed on server `enteredAt`; match state returned in response body for client optimistic update.
 
-- [ ] **Task P4.T8** — Implement concede-hole endpoint: `POST /api/matches/:matchId/holes/:hole/concede` with side parameter. Any authenticated player in the match (either side) can concede. Writes audit_log entry. → Coder | Files: `web/src/routes/api/matches/[matchId]/holes/[hole]/concede/+server.ts`
+- [x] **Task P4.T8** — Implement concede-hole endpoint: `POST /api/matches/:matchId/holes/:hole/concede` with side parameter. Any authenticated player in the match (either side) can concede. Writes audit_log entry. → Coder | Files: `web/src/routes/api/matches/[matchId]/holes/[hole]/concede/+server.ts`
   - Depends on: P4.T7
   - Acceptance: Player A can concede their own hole; player B can also concede their own hole; audit log captures actor.
 
-- [ ] **Task P4.T9** — Implement commissioner override endpoints: edit any score, force-close match, manual point adjustment. Every call writes to `audit_log` with `reason`. → Coder | Files: `web/src/routes/api/matches/[matchId]/override/+server.ts`, `web/src/routes/api/tournaments/[id]/points-adjust/+server.ts`
+- [x] **Task P4.T9** — Implement commissioner override endpoints: edit any score, force-close match, manual point adjustment. Every call writes to `audit_log` with `reason`. → Coder | Files: `web/src/routes/api/matches/[matchId]/override/+server.ts`, `web/src/routes/api/tournaments/[id]/points-adjust/+server.ts`
   - Depends on: P4.T7, P3.T5
   - Acceptance: Only commissioner role succeeds; non-commissioner returns 403; audit log row exists with actor, before/after values, reason.
 
-- [ ] **Task P4.T10** — Implement spectator / live-read endpoints: `GET /api/live/:code` returns aggregated team totals + match statuses + last-updated timestamp. Respects `publicTickerEnabled` setting. → Coder | Files: `web/src/routes/api/live/[code]/+server.ts`, `web/src/routes/api/live/[code]/sse/+server.ts`
+- [x] **Task P4.T10** — Implement spectator / live-read endpoints: `GET /api/live/:code` returns aggregated team totals + match statuses + last-updated timestamp. Respects `publicTickerEnabled` setting. → Coder | Files: `web/src/routes/api/live/[code]/+server.ts`, `web/src/routes/api/live/[code]/sse/+server.ts`
   - Depends on: P4.T1, P2.T11, P3.T5
   - Acceptance: Without `publicTickerEnabled` → spectator cookie required; with → anonymous allowed; SSE stream emits an event within 5s of a hole entry.
 
-- [ ] **Task P4.T11** — Implement join flow endpoints: `POST /api/join/:code/roster` returns roster; `POST /api/join/:code/select-player` issues player cookie. → Coder | Files: `web/src/routes/api/join/[code]/roster/+server.ts`, `web/src/routes/api/join/[code]/select-player/+server.ts`
+- [x] **Task P4.T11** — Implement join flow endpoints: `POST /api/join/:code/roster` returns roster; `POST /api/join/:code/select-player` issues player cookie. → Coder | Files: `web/src/routes/api/join/[code]/roster/+server.ts`, `web/src/routes/api/join/[code]/select-player/+server.ts`
   - Depends on: P4.T1, P3.T1, P3.T5
   - Acceptance: Valid code returns roster; invalid code returns 404; selecting a player issues player cookie.
 
@@ -216,31 +216,31 @@ All tasks below touch non-overlapping route files and can be parallelized.
 
 Runs in parallel with Phase 6 (different routes).
 
-- [ ] **Task P5.T1** — Build manager login page (email input → magic link) and magic-link landing handler. → Coder | Files: `web/src/routes/manage/login/+page.svelte`, `web/src/routes/manage/login/+page.server.ts`, `web/src/routes/manage/magic-link-sent/+page.svelte`
+- [x] **Task P5.T1** — Build manager login page (email input → magic link) and magic-link landing handler. → Coder | Files: `web/src/routes/manage/login/+page.svelte`, `web/src/routes/manage/login/+page.server.ts`, `web/src/routes/manage/magic-link-sent/+page.svelte`
   - Depends on: P4.T2
   - Acceptance: Submitting email triggers Resend send; clicking link from email lands on `/manage` authenticated.
 
-- [ ] **Task P5.T2** — Build manager portal shell with Switch-Tournament selector, top nav, and empty-state landing page when no tournaments exist. → Coder | Files: `web/src/routes/manage/+layout.svelte`, `web/src/routes/manage/+layout.server.ts`, `web/src/routes/manage/+page.svelte`, `web/src/lib/ui/TournamentSwitcher.svelte`
+- [x] **Task P5.T2** — Build manager portal shell with Switch-Tournament selector, top nav, and empty-state landing page when no tournaments exist. → Coder | Files: `web/src/routes/manage/+layout.svelte`, `web/src/routes/manage/+layout.server.ts`, `web/src/routes/manage/+page.svelte`, `web/src/lib/ui/TournamentSwitcher.svelte`
   - Depends on: P5.T1, P4.T3
   - Acceptance: Switcher lists every tournament owned by the signed-in commissioner; selecting one routes to `/manage/tournaments/:id`; "+ New Tournament" always visible.
 
-- [ ] **Task P5.T3** — Build tournament creation + settings screens (name, dates, points-to-win, team colors, ticker visibility, per-format allowance defaults with USGA one-click). → Coder | Files: `web/src/routes/manage/tournaments/new/+page.svelte`, `web/src/routes/manage/tournaments/new/+page.server.ts`, `web/src/routes/manage/tournaments/[id]/settings/+page.svelte`, `web/src/routes/manage/tournaments/[id]/settings/+page.server.ts`, `web/src/lib/ui/AllowanceField.svelte`
+- [x] **Task P5.T3** — Build tournament creation + settings screens (name, dates, points-to-win, team colors, ticker visibility, per-format allowance defaults with USGA one-click). → Coder | Files: `web/src/routes/manage/tournaments/new/+page.svelte`, `web/src/routes/manage/tournaments/new/+page.server.ts`, `web/src/routes/manage/tournaments/[id]/settings/+page.svelte`, `web/src/routes/manage/tournaments/[id]/settings/+page.server.ts`, `web/src/lib/ui/AllowanceField.svelte`
   - Depends on: P5.T2
   - Acceptance: Creating a new tournament generates a 6-char code; allowance fields show defaults and "Use USGA standard" buttons pre-fill correctly.
 
-- [ ] **Task P5.T4** — Build team & player management screens with CSV-paste bulk import and color picker per team. → Coder | Files: `web/src/routes/manage/tournaments/[id]/teams/+page.svelte`, `web/src/routes/manage/tournaments/[id]/teams/+page.server.ts`, `web/src/routes/manage/tournaments/[id]/players/+page.svelte`, `web/src/routes/manage/tournaments/[id]/players/+page.server.ts`, `web/src/lib/ui/ColorPicker.svelte`
+- [x] **Task P5.T4** — Build team & player management screens with CSV-paste bulk import and color picker per team. → Coder | Files: `web/src/routes/manage/tournaments/[id]/teams/+page.svelte`, `web/src/routes/manage/tournaments/[id]/teams/+page.server.ts`, `web/src/routes/manage/tournaments/[id]/players/+page.svelte`, `web/src/routes/manage/tournaments/[id]/players/+page.server.ts`, `web/src/lib/ui/ColorPicker.svelte`
   - Depends on: P5.T2, P4.T4
   - Acceptance: Pasting 10-row CSV creates 10 players; drag-drop or dropdown assigns players to teams; captain toggle works.
 
-- [ ] **Task P5.T5** — Build course library screens: browse seeded courses, admin add/edit course form with per-tee CR/Slope/par (18 + 9F + 9B) and per-hole par + SI grid. → Coder | Files: `web/src/routes/manage/courses/+page.svelte`, `web/src/routes/manage/courses/+page.server.ts`, `web/src/routes/manage/courses/new/+page.svelte`, `web/src/routes/manage/courses/[id]/+page.svelte`, `web/src/routes/manage/courses/[id]/+page.server.ts`
+- [x] **Task P5.T5** — Build course library screens: browse seeded courses, admin add/edit course form with per-tee CR/Slope/par (18 + 9F + 9B) and per-hole par + SI grid. → Coder | Files: `web/src/routes/manage/courses/+page.svelte`, `web/src/routes/manage/courses/+page.server.ts`, `web/src/routes/manage/courses/new/+page.svelte`, `web/src/routes/manage/courses/[id]/+page.svelte`, `web/src/routes/manage/courses/[id]/+page.server.ts`
   - Depends on: P5.T2, P4.T5
   - Acceptance: 5 Kiawah courses render in the library; editing the Ocean Course par-72 to par-71 persists; validation prevents duplicate SIs.
 
-- [ ] **Task P5.T6** — Build round & matchup builder: course/tee/date picker, segment configurator (single 18 / split F9+B9 / F9+B9+Overall), per-segment format + point allocation + allowance override, matchup editor (pairings as rows with player dropdowns per side). Live running-total banner shows cumulative tournament points. → Coder | Files: `web/src/routes/manage/tournaments/[id]/rounds/+page.svelte`, `web/src/routes/manage/tournaments/[id]/rounds/+page.server.ts`, `web/src/routes/manage/tournaments/[id]/rounds/new/+page.svelte`, `web/src/routes/manage/tournaments/[id]/rounds/[roundId]/+page.svelte`, `web/src/routes/manage/tournaments/[id]/rounds/[roundId]/+page.server.ts`, `web/src/lib/ui/MatchupBuilder.svelte`, `web/src/lib/ui/SegmentConfig.svelte`
+- [x] **Task P5.T6** — Build round & matchup builder: course/tee/date picker, segment configurator (single 18 / split F9+B9 / F9+B9+Overall), per-segment format + point allocation + allowance override, matchup editor (pairings as rows with player dropdowns per side). Live running-total banner shows cumulative tournament points. → Coder | Files: `web/src/routes/manage/tournaments/[id]/rounds/+page.svelte`, `web/src/routes/manage/tournaments/[id]/rounds/+page.server.ts`, `web/src/routes/manage/tournaments/[id]/rounds/new/+page.svelte`, `web/src/routes/manage/tournaments/[id]/rounds/[roundId]/+page.svelte`, `web/src/routes/manage/tournaments/[id]/rounds/[roundId]/+page.server.ts`, `web/src/lib/ui/MatchupBuilder.svelte`, `web/src/lib/ui/SegmentConfig.svelte`
   - Depends on: P5.T2, P4.T6, P5.T5
   - Acceptance: Full Kiawah event (5 rounds, 30 points) built from scratch in under 30 minutes; Oak Point round can be created with 2 matchups using only 8 of 10 players; split-format warning appears when course lacks 9-hole ratings.
 
-- [ ] **Task P5.T7** — Build commissioner-overrides screen: edit any hole score, force-close match, manual point adjustment, audit log viewer. → Coder | Files: `web/src/routes/manage/tournaments/[id]/overrides/+page.svelte`, `web/src/routes/manage/tournaments/[id]/overrides/+page.server.ts`, `web/src/routes/manage/tournaments/[id]/audit-log/+page.svelte`
+- [x] **Task P5.T7** — Build commissioner-overrides screen: edit any hole score, force-close match, manual point adjustment, audit log viewer. → Coder | Files: `web/src/routes/manage/tournaments/[id]/overrides/+page.svelte`, `web/src/routes/manage/tournaments/[id]/overrides/+page.server.ts`, `web/src/routes/manage/tournaments/[id]/audit-log/+page.svelte`
   - Depends on: P5.T2, P4.T9
   - Acceptance: Editing a score requires a reason; audit log shows all overrides with actor and timestamp.
 
@@ -253,19 +253,19 @@ Runs in parallel with Phase 6 (different routes).
 
 Runs in parallel with Phase 5 (different routes).
 
-- [ ] **Task P6.T1** — Build public landing page + code-entry flow (`/` and `/join`). → Coder | Files: `web/src/routes/+page.svelte`, `web/src/routes/+page.server.ts`, `web/src/routes/join/+page.svelte`, `web/src/routes/join/+page.server.ts`, `web/src/routes/join/[code]/+page.svelte`, `web/src/routes/join/[code]/+page.server.ts`
+- [x] **Task P6.T1** — Build public landing page + code-entry flow (`/` and `/join`). → Coder | Files: `web/src/routes/+page.svelte`, `web/src/routes/+page.server.ts`, `web/src/routes/join/+page.svelte`, `web/src/routes/join/+page.server.ts`, `web/src/routes/join/[code]/+page.svelte`, `web/src/routes/join/[code]/+page.server.ts`
   - Depends on: P4.T11
   - Acceptance: Entering a valid code shows the roster; tapping a name issues the player cookie and routes to `/t/:code`.
 
-- [ ] **Task P6.T2** — Build player-facing tournament layout + dashboard (today's round, my matches, team totals). → Coder | Files: `web/src/routes/t/[code]/+layout.svelte`, `web/src/routes/t/[code]/+layout.server.ts`, `web/src/routes/t/[code]/+page.svelte`, `web/src/routes/t/[code]/+page.server.ts`
+- [x] **Task P6.T2** — Build player-facing tournament layout + dashboard (today's round, my matches, team totals). → Coder | Files: `web/src/routes/t/[code]/+layout.svelte`, `web/src/routes/t/[code]/+layout.server.ts`, `web/src/routes/t/[code]/+page.svelte`, `web/src/routes/t/[code]/+page.server.ts`
   - Depends on: P6.T1
   - Acceptance: Dashboard shows the player's name, team color accent, today's matches, and team totals to date.
 
-- [ ] **Task P6.T3** — Build one-hole-per-screen score-entry UI with large +/- steppers, stroke dots per player, conceded-hole button, picked-up button, format-change interstitial between F9 and B9, back/next navigation. → Coder | Files: `web/src/routes/t/[code]/matches/[matchId]/+page.svelte`, `web/src/routes/t/[code]/matches/[matchId]/+page.server.ts`, `web/src/routes/t/[code]/matches/[matchId]/hole/[n]/+page.svelte`, `web/src/lib/ui/HoleStepper.svelte`, `web/src/lib/ui/MatchStatusHeader.svelte`, `web/src/lib/ui/StrokeDots.svelte`, `web/src/lib/ui/FormatInterstitial.svelte`
+- [x] **Task P6.T3** — Build one-hole-per-screen score-entry UI with large +/- steppers, stroke dots per player, conceded-hole button, picked-up button, format-change interstitial between F9 and B9, back/next navigation. → Coder | Files: `web/src/routes/t/[code]/matches/[matchId]/+page.svelte`, `web/src/routes/t/[code]/matches/[matchId]/+page.server.ts`, `web/src/routes/t/[code]/matches/[matchId]/hole/[n]/+page.svelte`, `web/src/lib/ui/HoleStepper.svelte`, `web/src/lib/ui/MatchStatusHeader.svelte`, `web/src/lib/ui/StrokeDots.svelte`, `web/src/lib/ui/FormatInterstitial.svelte`
   - Depends on: P6.T2, P4.T7, P4.T8, P2.T5–T12
   - Acceptance: Full Four-Ball 18 holes enters correctly on a 360px-wide viewport; stroke dots reflect current allowance/PH/SI; match-status header updates after each submit; format interstitial appears between hole 9 and 10 on split-format rounds; concede button always enabled for both sides.
 
-- [ ] **Task P6.T4** — Build online/offline pill + pending-syncs badge in the player layout header. (Pure UI; actual outbox logic ships in Phase 8.) → Coder | Files: `web/src/lib/ui/OnlineOfflinePill.svelte`, `web/src/lib/ui/PendingSyncBadge.svelte`
+- [x] **Task P6.T4** — Build online/offline pill + pending-syncs badge in the player layout header. (Pure UI; actual outbox logic ships in Phase 8.) → Coder | Files: `web/src/lib/ui/OnlineOfflinePill.svelte`, `web/src/lib/ui/PendingSyncBadge.svelte`
   - Depends on: P6.T2 (parallel with P6.T3)
   - Acceptance: Pill toggles via `navigator.onLine` events; badge renders a count passed in as a prop.
 
@@ -276,7 +276,7 @@ Runs in parallel with Phase 5 (different routes).
 **Entry criteria:** Phase 4 complete.
 **Exit criteria:** Anyone with the event code (or, if public-ticker toggle is on, anyone with the URL) sees a live-updating Ryder-Cup-style ticker showing team totals + all match cards with auto-refresh ≤5s.
 
-- [ ] **Task P7.T1** — Build public ticker route with SSE/polling data hook, team totals header with progress-to-win bar, collapsed finished-match cards, expanded in-progress cards, dark-mode default. Honors `publicTickerEnabled` toggle: requires spectator cookie when false. → Coder | Files: `web/src/routes/t/[code]/live/+page.svelte`, `web/src/routes/t/[code]/live/+page.server.ts`, `web/src/lib/ui/TickerHeader.svelte`, `web/src/lib/ui/MatchCard.svelte`, `web/src/lib/hooks/useLiveFeed.ts`
+- [x] **Task P7.T1** — Build public ticker route with SSE/polling data hook, team totals header with progress-to-win bar, collapsed finished-match cards, expanded in-progress cards, dark-mode default. Honors `publicTickerEnabled` toggle: requires spectator cookie when false. → Coder | Files: `web/src/routes/t/[code]/live/+page.svelte`, `web/src/routes/t/[code]/live/+page.server.ts`, `web/src/lib/ui/TickerHeader.svelte`, `web/src/lib/ui/MatchCard.svelte`, `web/src/lib/hooks/useLiveFeed.ts`
   - Depends on: P4.T10, P6.T2 (shared layout patterns)
   - Acceptance: Simulated full-event data renders correctly; status updates within 5s of a score write; honors spectator gating.
 
@@ -287,19 +287,19 @@ Runs in parallel with Phase 5 (different routes).
 **Entry criteria:** Phases 6 and 7 complete (UI surfaces for the outbox badge exist).
 **Exit criteria:** App is installable; Lighthouse PWA score ≥90; score entry works in airplane mode and syncs on reconnect.
 
-- [ ] **Task P8.T1** — Author PWA manifest and iconography (launcher icons, maskable icons, Apple touch icons). Placeholder visuals acceptable until Phase 9 polish pass. → Coder | Files: `web/static/manifest.webmanifest`, `web/static/icons/icon-192.png`, `web/static/icons/icon-512.png`, `web/static/icons/apple-touch-icon.png`, `web/static/icons/maskable-512.png`, `web/src/app.html` (link tags)
+- [x] **Task P8.T1** — Author PWA manifest and iconography (launcher icons, maskable icons, Apple touch icons). Placeholder visuals acceptable until Phase 9 polish pass. → Coder | Files: `web/static/manifest.webmanifest`, `web/static/icons/icon-192.png`, `web/static/icons/icon-512.png`, `web/static/icons/apple-touch-icon.png`, `web/static/icons/maskable-512.png`, `web/src/app.html` (link tags)
   - Depends on: P7.T1
   - Acceptance: Manifest validates; install prompt appears in Chrome Android on the staging URL.
 
-- [ ] **Task P8.T2** — Implement service worker with Workbox: app-shell precache, stale-while-revalidate for course/round/match metadata reads, skip-waiting on activate. Register via SvelteKit-compatible pattern. → Coder | Files: `web/src/service-worker.ts`, `web/src/lib/pwa/register.ts`, `web/src/routes/+layout.svelte` (register hook)
+- [x] **Task P8.T2** — Implement service worker with Workbox: app-shell precache, stale-while-revalidate for course/round/match metadata reads, skip-waiting on activate. Register via SvelteKit-compatible pattern. → Coder | Files: `web/src/service-worker.ts`, `web/src/lib/pwa/register.ts`, `web/src/routes/+layout.svelte` (register hook)
   - Depends on: P8.T1
   - Acceptance: Second load of any route serves from cache offline; cache busted correctly on new deploy.
 
-- [ ] **Task P8.T3** — Implement Dexie-backed outbox: enqueue on score mutation, attempt POST with `Idempotency-Key`, retry with exponential backoff on online events. Wires into `OnlineOfflinePill` and `PendingSyncBadge` from Phase 6. → Coder | Files: `web/src/lib/outbox/db.ts`, `web/src/lib/outbox/queue.ts`, `web/src/lib/outbox/sync.ts`, `web/src/lib/outbox/queue.spec.ts`, `web/src/lib/outbox/sync.spec.ts`
+- [x] **Task P8.T3** — Implement Dexie-backed outbox: enqueue on score mutation, attempt POST with `Idempotency-Key`, retry with exponential backoff on online events. Wires into `OnlineOfflinePill` and `PendingSyncBadge` from Phase 6. → Coder | Files: `web/src/lib/outbox/db.ts`, `web/src/lib/outbox/queue.ts`, `web/src/lib/outbox/sync.ts`, `web/src/lib/outbox/queue.spec.ts`, `web/src/lib/outbox/sync.spec.ts`
   - Depends on: P6.T3, P6.T4, P4.T7
   - Acceptance: With DevTools offline throttling, 9 holes of scores enqueue; reconnect drains queue in order; duplicate replays are no-ops (verified via `processed_ops`).
 
-- [ ] **Task P8.T4** — Wire outbox into score-entry form: optimistic UI update, hole confirmed locally before server ACK, reconciliation on sync. → Coder | Files: `web/src/routes/t/[code]/matches/[matchId]/hole/[n]/+page.svelte` (integration), `web/src/lib/outbox/useOutbox.ts`
+- [x] **Task P8.T4** — Wire outbox into score-entry form: optimistic UI update, hole confirmed locally before server ACK, reconciliation on sync. → Coder | Files: `web/src/routes/t/[code]/matches/[matchId]/hole/[n]/+page.svelte` (integration), `web/src/lib/outbox/useOutbox.ts`
   - Depends on: P8.T3
   - Acceptance: Entering hole 5 offline immediately advances to hole 6 with badge "1 pending"; reconnection clears badge and updates server-authoritative state.
 
@@ -310,19 +310,19 @@ Runs in parallel with Phase 5 (different routes).
 **Entry criteria:** Phases 5, 6, and 7 functionally complete.
 **Exit criteria:** Consistent visual theme applied across commissioner, player, and spectator screens; team colors flow through as accents; passes accessibility checks.
 
-- [ ] **Task P9.T1** — Design default theme: color tokens (light + dark, team-color accent slots), typography scale, spacing scale, component patterns for buttons, steppers, cards, badges, progress bars, pills, tables. Deliver as Tailwind config + component-pattern documentation. → Designer | Files: `web/tailwind.config.ts` (theme tokens), `web/src/app.css` (CSS variables), `assets/DESIGN_SYSTEM.md`
+- [x] **Task P9.T1** — Design default theme: color tokens (light + dark, team-color accent slots), typography scale, spacing scale, component patterns for buttons, steppers, cards, badges, progress bars, pills, tables. Deliver as Tailwind config + component-pattern documentation. → Designer | Files: `web/tailwind.config.ts` (theme tokens), `web/src/app.css` (CSS variables), `assets/DESIGN_SYSTEM.md`
   - Depends on: P5.T1, P6.T1, P7.T1
   - Acceptance: Every token named semantically (`--color-accent-team-a`, not `--color-red-500`); dark mode token parity; all patterns documented in `DESIGN_SYSTEM.md`.
 
-- [ ] **Task P9.T2** — Apply design system across commissioner screens. → Designer | Files: all `.svelte` files under `web/src/routes/manage/**`, `web/src/lib/ui/ColorPicker.svelte`, `web/src/lib/ui/TournamentSwitcher.svelte`, `web/src/lib/ui/AllowanceField.svelte`, `web/src/lib/ui/MatchupBuilder.svelte`, `web/src/lib/ui/SegmentConfig.svelte`
+- [x] **Task P9.T2** — Apply design system across commissioner screens. → Designer | Files: all `.svelte` files under `web/src/routes/manage/**`, `web/src/lib/ui/ColorPicker.svelte`, `web/src/lib/ui/TournamentSwitcher.svelte`, `web/src/lib/ui/AllowanceField.svelte`, `web/src/lib/ui/MatchupBuilder.svelte`, `web/src/lib/ui/SegmentConfig.svelte`
   - Depends on: P9.T1
   - Acceptance: Every manager screen uses the theme tokens; no inline color hexes remain.
 
-- [ ] **Task P9.T3** — Apply design system across player screens; implement team-color accents driven by data. → Designer | Files: all `.svelte` files under `web/src/routes/t/[code]/**` (excluding `live/`), `web/src/lib/ui/HoleStepper.svelte`, `web/src/lib/ui/MatchStatusHeader.svelte`, `web/src/lib/ui/StrokeDots.svelte`, `web/src/lib/ui/FormatInterstitial.svelte`, `web/src/lib/ui/OnlineOfflinePill.svelte`, `web/src/lib/ui/PendingSyncBadge.svelte`
+- [x] **Task P9.T3** — Apply design system across player screens; implement team-color accents driven by data. → Designer | Files: all `.svelte` files under `web/src/routes/t/[code]/**` (excluding `live/`), `web/src/lib/ui/HoleStepper.svelte`, `web/src/lib/ui/MatchStatusHeader.svelte`, `web/src/lib/ui/StrokeDots.svelte`, `web/src/lib/ui/FormatInterstitial.svelte`, `web/src/lib/ui/OnlineOfflinePill.svelte`, `web/src/lib/ui/PendingSyncBadge.svelte`
   - Depends on: P9.T1 (parallel with P9.T2)
   - Acceptance: Team color accents derive from `team.color`; color-independent state cues present (pill + icon for every state).
 
-- [ ] **Task P9.T4** — Apply design system to spectator ticker with dark-mode default, tuned for phone and large-format (TV / iPad propped on kitchen counter). → Designer | Files: `web/src/routes/t/[code]/live/+page.svelte`, `web/src/lib/ui/TickerHeader.svelte`, `web/src/lib/ui/MatchCard.svelte`
+- [x] **Task P9.T4** — Apply design system to spectator ticker with dark-mode default, tuned for phone and large-format (TV / iPad propped on kitchen counter). → Designer | Files: `web/src/routes/t/[code]/live/+page.svelte`, `web/src/lib/ui/TickerHeader.svelte`, `web/src/lib/ui/MatchCard.svelte`
   - Depends on: P9.T1 (parallel with P9.T2, P9.T3)
   - Acceptance: Ticker renders legibly at 1920px-wide TV resolution and at 360px phone width.
 

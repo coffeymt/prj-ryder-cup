@@ -1,3 +1,119 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    /* Surface */
+    --color-bg: #ffffff;
+    --color-surface: #f9fafb;
+    --color-surface-raised: #ffffff;
+    --color-border: #e5e7eb;
+
+    /* Text */
+    --color-text-primary: #111827;
+    --color-text-secondary: #6b7280;
+    --color-text-muted: #9ca3af;
+
+    /* Interactive */
+    --color-accent: #1d4ed8;
+    --color-accent-hover: #1e40af;
+    --color-accent-text: #ffffff;
+
+    /* Status */
+    --color-status-up: #16a34a;
+    --color-status-down: #dc2626;
+    --color-status-halved: #d97706;
+    --color-status-closed: #6b7280;
+
+    /* Online/offline */
+    --color-online: #16a34a;
+    --color-offline: #d97706;
+
+    /* Team accents (default fallbacks) */
+    --color-team-a: #1d4ed8;
+    --color-team-b: #dc2626;
+
+    /* Commissioner palette presets */
+    --color-preset-red: #b91c1c;
+    --color-preset-blue: #1d4ed8;
+    --color-preset-green: #15803d;
+    --color-preset-gold: #ca8a04;
+    --color-preset-navy: #1e3a8a;
+    --color-preset-white: #ffffff;
+    --color-preset-black: #111827;
+    --color-preset-orange: #ea580c;
+    --color-preset-purple: #7e22ce;
+    --color-preset-teal: #0f766e;
+    --color-preset-mint: #14b8a6;
+    --color-preset-maroon: #881337;
+
+    /* Typography */
+    --font-display: system-ui, -apple-system, sans-serif;
+    --font-body: system-ui, -apple-system, sans-serif;
+    --text-xs: 0.75rem;
+    --text-sm: 0.875rem;
+    --text-base: 1rem;
+    --text-lg: 1.125rem;
+    --text-xl: 1.25rem;
+    --text-2xl: 1.5rem;
+    --text-3xl: 1.875rem;
+    --text-4xl: 2.25rem;
+    --leading-tight: 1.25;
+    --leading-normal: 1.5;
+
+    /* Spacing */
+    --touch-target-min: 44px;
+    --stepper-min: 56px;
+    --card-padding: 1rem;
+    --nav-height: 56px;
+  }
+
+  [data-theme="dark"] {
+    /* Surface */
+    --color-bg: #111827;
+    --color-surface: #1f2937;
+    --color-surface-raised: #374151;
+    --color-border: #374151;
+
+    /* Text */
+    --color-text-primary: #f9fafb;
+    --color-text-secondary: #9ca3af;
+    --color-text-muted: #6b7280;
+
+    /* Interactive */
+    --color-accent: #3b82f6;
+    --color-accent-hover: #2563eb;
+    --color-accent-text: #ffffff;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      /* Surface */
+      --color-bg: #111827;
+      --color-surface: #1f2937;
+      --color-surface-raised: #374151;
+      --color-border: #374151;
+
+      /* Text */
+      --color-text-primary: #f9fafb;
+      --color-text-secondary: #9ca3af;
+      --color-text-muted: #6b7280;
+
+      /* Interactive */
+      --color-accent: #3b82f6;
+      --color-accent-hover: #2563eb;
+      --color-accent-text: #ffffff;
+    }
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-text-primary);
+    font-family: var(--font-body);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+  }
+}

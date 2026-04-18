@@ -10,12 +10,10 @@ declare global {
     }
 
     interface Locals {
-      // set by auth hooks in Phase 3
-      session?: {
-        tournamentId: string;
-        playerId: string;
-        role: 'commissioner' | 'player' | 'spectator';
-      };
+      role: 'commissioner' | 'player' | 'spectator' | 'anonymous';
+      tournamentId: string | null;
+      playerId: string | null;
+      userId: string | null;
     }
 
     // interface Error {}
