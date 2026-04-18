@@ -1,4 +1,4 @@
-const RESEND_EMAILS_ENDPOINT = 'https://api.resend.com/emails';
+const SMTP2GO_EMAILS_ENDPOINT = 'https://api.smtp2go.com/v3/email/send';
 const MAGIC_LINK_SUBJECT = 'Your Ryder Cup sign-in link';
 const ONE_MINUTE_MS = 60 * 1000;
 
@@ -6,7 +6,7 @@ type SendMagicLinkParams = {
   to: string;
   magicLinkUrl: string;
   expiresAt: Date;
-  resendApiKey: string;
+  emailApiKey: string;
   fromEmail: string;
 };
 
@@ -53,18 +53,16 @@ export async function sendMagicLink(params: SendMagicLinkParams): Promise<void> 
     expiresAt: params.expiresAt,
   });
 
-  const response = await fetch(RESEND_EMAILS_ENDPOINT, {
+  const response = await fetch(SMTP2GO_EMAILS_ENDPOINT, {
     method: 'POST',
-    headers: {
-      Authorization: `Bearer ${params.resendApiKey}`,
-      'Content-Type': 'application/json',
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      from: params.fromEmail,
+      api_key: params.emailApiKey,
+      sender: params.fromEmail,
       to: [params.to],
       subject: MAGIC_LINK_SUBJECT,
-      html: content.html,
-      text: content.text,
+      html_body: content.html,
+      text_body: content.text,
     }),
   });
 
@@ -73,5 +71,5 @@ export async function sendMagicLink(params: SendMagicLinkParams): Promise<void> 
   }
 
   const responseBody = await response.text();
-  throw new Error(`Resend email send failed with status ${response.status}: ${responseBody}`);
+  throw new Error(`smtp2go email send failed with status ${response.status}: ${responseBody}`);
 }

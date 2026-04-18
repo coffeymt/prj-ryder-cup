@@ -1,17 +1,15 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   // Authoritative infrastructure values are defined in assets/INFRASTRUCTURE.md.
-  "name": "ryder-cup-app",
+  "name": "rydercup",
   "compatibility_date": "2026-04-17",
   "compatibility_flags": ["nodejs_als"],
   "pages_build_output_dir": ".svelte-kit/cloudflare",
-  // Placeholder IDs must be replaced with real preview/production D1 IDs before
-  // any --remote d1 commands can succeed.
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "ryder-cup-local",
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_name": "rydercup-prod",
+      "database_id": "ab56b1d2-b5b1-4652-8d9e-6ad0a5912461",
     },
   ],
   "env": {
@@ -19,8 +17,8 @@
       "d1_databases": [
         {
           "binding": "DB",
-          "database_name": "ryder-cup-preview",
-          "database_id": "00000000-0000-0000-0000-000000000000",
+          "database_name": "rydercup-preview",
+          "database_id": "bc4be116-2576-4517-a952-5e35607d752d",
         },
       ],
     },
@@ -28,8 +26,8 @@
       "d1_databases": [
         {
           "binding": "DB",
-          "database_name": "ryder-cup-prod",
-          "database_id": "00000000-0000-0000-0000-000000000000",
+          "database_name": "rydercup-prod",
+          "database_id": "ab56b1d2-b5b1-4652-8d9e-6ad0a5912461",
         },
       ],
     },
@@ -38,5 +36,6 @@
   // wrangler secret put COOKIE_SIGNING_KEY --env <preview|production>
   // wrangler secret put SPECTATOR_COOKIE_KEY --env <preview|production>
   // wrangler secret put MAGIC_LINK_KEY --env <preview|production>
-  // wrangler secret put RESEND_API_KEY --env <preview|production>
+  // wrangler secret put EMAIL_API_KEY --env <preview|production>
+  // wrangler secret put FROM_EMAIL --env <preview|production>
 }

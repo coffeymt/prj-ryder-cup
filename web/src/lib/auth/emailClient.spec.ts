@@ -2,19 +2,20 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { sendMagicLink } from './emailClient';
 
 type EmailRequestPayload = {
-  from: string;
+  api_key: string;
+  sender: string;
   to: string[];
   subject: string;
-  html: string;
-  text: string;
+  html_body: string;
+  text_body: string;
 };
 
 const testParams = {
   to: 'captain@example.com',
   magicLinkUrl: 'https://rydercup.sbcctears.com/manage/consume?token=test-token',
   expiresAt: new Date('2026-04-17T12:15:00.000Z'),
-  resendApiKey: 'test-key',
-  fromEmail: 'Ryder Cup <noreply@mail.rydercup.sbcctears.com>',
+  emailApiKey: 'test-key',
+  fromEmail: 'SBCC Tears <michael@sbcctears.com>',
 } as const;
 
 function assertRequestPayload(requestInit: RequestInit | undefined): EmailRequestPayload {
@@ -37,9 +38,9 @@ describe('sendMagicLink', () => {
     vi.unstubAllGlobals();
   });
 
-  it('sends a Resend email with expected request shape on success', async () => {
+  it('sends an smtp2go email with expected request shape on success', async () => {
     fetchMock.mockResolvedValue(
-      new Response(JSON.stringify({ id: 'email_123' }), {
+      new Response(JSON.stringify({ request_id: 'email_123', data: { succeeded: 1 } }), {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
       })
@@ -53,15 +54,17 @@ describe('sendMagicLink', () => {
     const payload = assertRequestPayload(requestInit);
     const headers = new Headers(requestInit?.headers);
 
-    expect(requestUrl).toBe('https://api.resend.com/emails');
+    expect(requestUrl).toBe('https://api.smtp2go.com/v3/email/send');
     expect(requestInit?.method).toBe('POST');
-    expect(headers.get('Authorization')).toBe('Bearer test-key');
+    expect(headers.get('Content-Type')).toBe('application/json');
+    expect(payload.api_key).toBe('test-key');
+    expect(payload.sender).toBe('SBCC Tears <michael@sbcctears.com>');
     expect(payload.to).toEqual(['captain@example.com']);
     expect(payload.subject).toBe('Your Ryder Cup sign-in link');
-    expect(payload.html).toContain(testParams.magicLinkUrl);
+    expect(payload.html_body).toContain(testParams.magicLinkUrl);
   });
 
-  it('throws an error that includes status code when Resend returns non-2xx', async () => {
+  it('throws an error that includes status code when smtp2go returns non-2xx', async () => {
     fetchMock.mockResolvedValue(new Response('invalid recipient', { status: 422 }));
 
     await expect(sendMagicLink({ ...testParams })).rejects.toThrow(/422/u);

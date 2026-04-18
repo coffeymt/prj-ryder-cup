@@ -17,15 +17,15 @@ function getDb(event: RequestEvent): D1Database {
   return db;
 }
 
-function getAuthConfig(): { magicLinkKey: string; resendApiKey: string; fromEmail: string } {
+function getAuthConfig(): { magicLinkKey: string; emailApiKey: string; fromEmail: string } {
   const missingKeys: string[] = [];
 
   if (!env.MAGIC_LINK_KEY) {
     missingKeys.push('MAGIC_LINK_KEY');
   }
 
-  if (!env.RESEND_API_KEY) {
-    missingKeys.push('RESEND_API_KEY');
+  if (!env.EMAIL_API_KEY) {
+    missingKeys.push('EMAIL_API_KEY');
   }
 
   if (!env.FROM_EMAIL) {
@@ -42,7 +42,7 @@ function getAuthConfig(): { magicLinkKey: string; resendApiKey: string; fromEmai
 
   return {
     magicLinkKey: env.MAGIC_LINK_KEY,
-    resendApiKey: env.RESEND_API_KEY,
+    emailApiKey: env.EMAIL_API_KEY,
     fromEmail: env.FROM_EMAIL,
   };
 }
@@ -78,7 +78,7 @@ export const POST: RequestHandler = async (event) => {
   }
 
   const db = getDb(event);
-  const { magicLinkKey, resendApiKey, fromEmail } = getAuthConfig();
+  const { magicLinkKey, emailApiKey, fromEmail } = getAuthConfig();
 
   let commissioner = await getCommissionerByEmail(db, email);
 
@@ -104,7 +104,7 @@ export const POST: RequestHandler = async (event) => {
       to: commissioner.email,
       magicLinkUrl,
       expiresAt,
-      resendApiKey,
+      emailApiKey,
       fromEmail,
     });
   } catch (sendError) {
