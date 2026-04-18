@@ -1,5 +1,6 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
+  import type { SubmitFunction } from '@sveltejs/kit';
   import AllowanceField from '$lib/ui/AllowanceField.svelte';
   import type { ActionData, PageData } from './$types';
 
@@ -27,14 +28,14 @@
     (allowanceField) => Boolean((formErrors as Record<string, string | undefined>)[allowanceField.key])
   );
 
-  const createTournamentEnhance = enhance(() => {
+  const createTournamentEnhance: SubmitFunction = () => {
     isSubmitting = true;
 
     return async ({ update }) => {
       isSubmitting = false;
       await update({ reset: false });
     };
-  });
+  };
 
   function toNumberOrNull(rawValue: string | undefined): number | null {
     if (!rawValue) {
@@ -65,7 +66,7 @@
       </p>
     {/if}
 
-    <form method="POST" use:createTournamentEnhance class="space-y-6">
+    <form method="POST" use:enhance={createTournamentEnhance} class="space-y-6">
       <div class="grid gap-4 sm:grid-cols-2">
         <div class="sm:col-span-2">
           <label for="name" class="text-sm font-semibold text-text-primary">Tournament name</label>

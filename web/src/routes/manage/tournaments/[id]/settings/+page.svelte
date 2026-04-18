@@ -1,5 +1,6 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
+  import type { SubmitFunction } from '@sveltejs/kit';
   import AllowanceField from '$lib/ui/AllowanceField.svelte';
   import type { ActionData, PageData } from './$types';
 
@@ -32,32 +33,32 @@
     (allowanceField) => Boolean(saveErrors[allowanceField.key])
   );
 
-  const saveEnhance = enhance(() => {
+  const saveEnhance: SubmitFunction = () => {
     isSaving = true;
 
     return async ({ update }) => {
       isSaving = false;
       await update({ reset: false });
     };
-  });
+  };
 
-  const regenerateEnhance = enhance(() => {
+  const regenerateEnhance: SubmitFunction = () => {
     isRegenerating = true;
 
     return async ({ update }) => {
       isRegenerating = false;
       await update({ reset: false });
     };
-  });
+  };
 
-  const archiveEnhance = enhance(() => {
+  const archiveEnhance: SubmitFunction = () => {
     isArchiving = true;
 
     return async ({ update }) => {
       isArchiving = false;
       await update({ reset: false });
     };
-  });
+  };
 
   function toNumberOrNull(rawValue: string | undefined): number | null {
     if (!rawValue) {
@@ -100,7 +101,7 @@
         <p class="text-2xl font-semibold tracking-widest text-text-primary">{eventCode}</p>
       </div>
 
-      <form method="POST" action="?/regenerate" use:regenerateEnhance>
+      <form method="POST" action="?/regenerate" use:enhance={regenerateEnhance}>
         <button
           type="submit"
           class="inline-flex min-h-touch w-full items-center justify-center rounded-lg border border-border bg-transparent px-4 text-sm font-semibold text-text-primary transition hover:bg-surface-raised disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
@@ -114,7 +115,7 @@
   </div>
 
   <div class="rounded-2xl border border-border bg-surface p-card-padding shadow-sm sm:p-6">
-    <form method="POST" action="?/save" use:saveEnhance class="space-y-6">
+    <form method="POST" action="?/save" use:enhance={saveEnhance} class="space-y-6">
       <div class="grid gap-4 sm:grid-cols-2">
         <div class="sm:col-span-2">
           <label for="name" class="text-sm font-semibold text-text-primary">Tournament name</label>
@@ -267,7 +268,7 @@
       Archiving removes this tournament from active management workflows.
     </p>
 
-    <form method="POST" action="?/archive" use:archiveEnhance class="mt-4">
+    <form method="POST" action="?/archive" use:enhance={archiveEnhance} class="mt-4">
       <button
         type="submit"
         class="inline-flex min-h-touch w-full items-center justify-center rounded-lg bg-status-down px-4 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:px-6"

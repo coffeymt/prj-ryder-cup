@@ -1,5 +1,6 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
+  import type { SubmitFunction } from '@sveltejs/kit';
   import type { ActionData } from './$types';
 
   export let form: ActionData | undefined;
@@ -172,7 +173,7 @@
     return validateTees() ?? validateHoles();
   }
 
-  const createCourseEnhance = enhance(({ cancel, formData }) => {
+  const createCourseEnhance: SubmitFunction = ({ cancel, formData }) => {
     localError = null;
     const validationError = validateForm();
 
@@ -198,11 +199,11 @@
 
       await update();
     };
-  });
+  };
 </script>
 
 <svelte:head>
-  <title>Add Course | Ryder Cup Manager</title>
+  <title>Add Course | Golf Manager</title>
 </svelte:head>
 
 <section class="mx-auto w-full max-w-6xl space-y-6">
@@ -220,7 +221,7 @@
     </p>
   {/if}
 
-  <form method="POST" use:createCourseEnhance class="space-y-8">
+  <form method="POST" use:enhance={createCourseEnhance} class="space-y-8">
     <input type="hidden" name="teesJson" value={teesJson} />
     <input type="hidden" name="holesJson" value={holesJson} />
 

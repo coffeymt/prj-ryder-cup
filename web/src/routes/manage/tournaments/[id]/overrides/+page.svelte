@@ -1,5 +1,6 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
+  import type { SubmitFunction } from '@sveltejs/kit';
   import { onDestroy } from 'svelte';
   import type { ActionData, PageData } from './$types';
 
@@ -84,32 +85,32 @@
     showToast(formState.toast.kind, formState.toast.message);
   }
 
-  const editEnhance = enhance(() => {
+  const editEnhance: SubmitFunction = () => {
     submittingPanel = 'editScore';
 
     return async ({ update }) => {
       submittingPanel = null;
       await update({ reset: false });
     };
-  });
+  };
 
-  const forceCloseEnhance = enhance(() => {
+  const forceCloseEnhance: SubmitFunction = () => {
     submittingPanel = 'forceClose';
 
     return async ({ update }) => {
       submittingPanel = null;
       await update({ reset: false });
     };
-  });
+  };
 
-  const pointsAdjustEnhance = enhance(() => {
+  const pointsAdjustEnhance: SubmitFunction = () => {
     submittingPanel = 'pointsAdjust';
 
     return async ({ update }) => {
       submittingPanel = null;
       await update({ reset: false });
     };
-  });
+  };
 
   function toFiniteNumber(rawValue: string): number | null {
     const normalized = rawValue.trim();
@@ -153,7 +154,7 @@
 </script>
 
 <svelte:head>
-  <title>{data.tournament.name} Overrides | Ryder Cup Manager</title>
+  <title>{data.tournament.name} Overrides | Golf Manager</title>
 </svelte:head>
 
 {#if toast}
@@ -198,7 +199,7 @@
       </p>
     </div>
 
-    <form method="POST" action="?/editScore" use:editEnhance class="mt-5 space-y-4">
+    <form method="POST" action="?/editScore" use:enhance={editEnhance} class="mt-5 space-y-4">
       <div class="grid gap-4 sm:grid-cols-2">
         <div class="sm:col-span-2">
           <label for="edit-match" class="text-sm font-semibold text-text-primary">Match</label>
@@ -357,7 +358,7 @@
       </p>
     </div>
 
-    <form method="POST" action="?/forceClose" use:forceCloseEnhance class="mt-5 space-y-4">
+    <form method="POST" action="?/forceClose" use:enhance={forceCloseEnhance} class="mt-5 space-y-4">
       <div class="grid gap-4 sm:grid-cols-2">
         <div class="sm:col-span-2">
           <label for="force-match" class="text-sm font-semibold text-text-primary">Open / in-progress match</label>
@@ -472,7 +473,7 @@
       </p>
     </div>
 
-    <form method="POST" action="?/pointsAdjust" use:pointsAdjustEnhance class="mt-5 space-y-4">
+    <form method="POST" action="?/pointsAdjust" use:enhance={pointsAdjustEnhance} class="mt-5 space-y-4">
       <div class="grid gap-4 sm:grid-cols-2">
         <div class="sm:col-span-2">
           <label for="adjust-team" class="text-sm font-semibold text-text-primary">Team</label>
