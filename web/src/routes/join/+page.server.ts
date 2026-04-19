@@ -24,10 +24,6 @@ function normalizeCode(rawCode: FormDataEntryValue | null): string {
 }
 
 export const load: PageServerLoad = async (event) => {
-  if (event.locals.role === 'commissioner') {
-    throw redirect(302, '/manage');
-  }
-
   if (event.locals.role === 'player' && event.locals.tournamentId) {
     const db = getDatabaseBinding(event.platform);
     const tournament = await getTournamentById(db, event.locals.tournamentId);

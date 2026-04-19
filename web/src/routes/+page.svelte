@@ -48,7 +48,7 @@
           </a>
           <a
             href="/join"
-            class="min-h-touch border-border text-text-secondary hover:text-text-primary hover:bg-surface-alt focus-visible:outline-accent flex w-full items-center justify-center rounded-xl border px-6 text-base font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+            class="min-h-touch border-border text-text-primary hover:bg-surface-raised focus-visible:outline-accent flex w-full items-center justify-center rounded-xl border px-6 text-base font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
           >
             Enter Event Code
           </a>

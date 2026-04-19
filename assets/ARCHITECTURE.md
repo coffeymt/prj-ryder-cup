@@ -50,7 +50,9 @@ Three roles, each identified by a signed HMAC cookie:
 | `spectator` | Signed with `SPECTATOR_COOKIE_KEY` | Spectator join flow |
 | `anonymous` | — | No cookie present |
 
-`hooks.server.ts` resolves the role on every request and attaches it to `event.locals`. Route handlers call `requireRole()` to gate access. Magic links are single-use, HMAC-signed, stored as a hash in `magic_link_tokens`, and expire after 15 minutes.
+`hooks.server.ts` resolves the role on every request and attaches it to `event.locals`. When both `rc_commissioner` and `rc_player` cookies are present, `rc_commissioner` takes priority — the resolved role is `commissioner`. Route handlers call `requireRole()` to gate access. Magic links are single-use, HMAC-signed, stored as a hash in `magic_link_tokens`, and expire after 15 minutes.
+
+Commissioners may enter a tournament code from the home page to join as a player via the standard join flow (`/join`). The join routes do not redirect commissioners. When a commissioner completes the join flow, an `rc_player` cookie is set, but the commissioner role remains active due to cookie priority.
 
 ## Data Flow
 

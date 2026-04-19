@@ -86,10 +86,6 @@ function parsePlayerCookie(
 }
 
 export const load: PageServerLoad = async (event) => {
-  if (event.locals.role === 'commissioner') {
-    throw redirect(302, '/manage');
-  }
-
   const tournamentCode = normalizeCode(event.params.code);
 
   if (!CODE_PATTERN.test(tournamentCode)) {
