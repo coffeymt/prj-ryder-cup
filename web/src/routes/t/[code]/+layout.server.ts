@@ -36,21 +36,35 @@ async function loadCurrentPlayer(
   locals: App.Locals,
   tournament: Tournament
 ): Promise<Player | null> {
-  if (locals.role !== 'player') {
-    return null;
+  if (locals.role === 'player') {
+    if (!locals.playerId || locals.tournamentId !== tournament.id) {
+      redirectToJoinRoot();
+    }
+
+    const player = await getPlayerById(db, locals.playerId);
+
+    if (!player || player.tournament_id !== tournament.id) {
+      redirectToJoinWithCode(tournament.code);
+    }
+
+    return player;
   }
 
-  if (!locals.playerId || locals.tournamentId !== tournament.id) {
-    redirectToJoinRoot();
+  if (locals.role === 'commissioner') {
+    if (!locals.playerId || locals.playerTournamentId !== tournament.id) {
+      return null;
+    }
+
+    const player = await getPlayerById(db, locals.playerId);
+
+    if (!player || player.tournament_id !== tournament.id) {
+      return null;
+    }
+
+    return player;
   }
 
-  const player = await getPlayerById(db, locals.playerId);
-
-  if (!player || player.tournament_id !== tournament.id) {
-    redirectToJoinWithCode(tournament.code);
-  }
-
-  return player;
+  return null;
 }
 
 async function loadCurrentTeam(db: D1Database, player: Player | null): Promise<Team | null> {
@@ -62,10 +76,6 @@ async function loadCurrentTeam(db: D1Database, player: Player | null): Promise<T
 }
 
 export const load: LayoutServerLoad = async (event) => {
-  if (event.locals.role === 'commissioner') {
-    throw redirect(302, '/manage');
-  }
-
   const db = getDatabaseBinding(event.platform);
   const code = normalizeCode(event.params.code);
   const tournament = await getTournamentByCode(db, code);

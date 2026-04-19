@@ -19,6 +19,7 @@ declare global {
       role: 'commissioner' | 'player' | 'spectator' | 'anonymous';
       tournamentId: string | null;
       playerId: string | null;
+      playerTournamentId: string | null;
       userId: string | null;
     }
 

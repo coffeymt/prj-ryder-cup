@@ -20,11 +20,26 @@ export const load: PageServerLoad = async (event) => {
   const isCommissioner = event.locals.role === 'commissioner';
 
   if (isCommissioner) {
+    let playerTournament: { code: string; name: string } | null = null;
+
+    if (
+      event.locals.playerId &&
+      event.locals.playerTournamentId &&
+      event.locals.playerTournamentId === event.locals.tournamentId
+    ) {
+      const db = getDatabaseBinding(event.platform);
+      const tournament = await getTournamentById(db, event.locals.playerTournamentId);
+      if (tournament) {
+        playerTournament = { code: tournament.code, name: tournament.name };
+      }
+    }
+
     return {
       isCommissioner,
       primaryAction: {
         type: 'manage',
       } satisfies LandingPrimaryAction,
+      playerTournament,
     };
   }
 
@@ -34,6 +49,7 @@ export const load: PageServerLoad = async (event) => {
       primaryAction: {
         type: 'join',
       } satisfies LandingPrimaryAction,
+      playerTournament: null,
     };
   }
 
@@ -46,6 +62,7 @@ export const load: PageServerLoad = async (event) => {
       primaryAction: {
         type: 'join',
       } satisfies LandingPrimaryAction,
+      playerTournament: null,
     };
   }
 
@@ -56,5 +73,6 @@ export const load: PageServerLoad = async (event) => {
       tournamentCode: tournament.code,
       tournamentName: tournament.name,
     } satisfies LandingPrimaryAction,
+    playerTournament: null,
   };
 };

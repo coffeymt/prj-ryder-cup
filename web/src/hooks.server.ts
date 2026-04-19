@@ -1,18 +1,19 @@
 import type { Handle } from '@sveltejs/kit';
 import { verifyCookie, type CookiePayload } from '$lib/auth/cookies';
 
-type ResolvedIdentity = Pick<App.Locals, 'role' | 'tournamentId' | 'playerId' | 'userId'>;
-
 type CookieIdentityAttempt = {
   cookieName: 'rc_commissioner' | 'rc_player' | 'rc_spectator';
   expectedRole: CookiePayload['role'];
   signingKey: string | undefined;
 };
 
+type ResolvedIdentity = Pick<App.Locals, 'role' | 'tournamentId' | 'playerId' | 'playerTournamentId' | 'userId'>;
+
 const ANONYMOUS_IDENTITY: ResolvedIdentity = {
   role: 'anonymous',
   tournamentId: null,
   playerId: null,
+  playerTournamentId: null,
   userId: null,
 };
 
@@ -73,6 +74,7 @@ async function resolveIdentity(
     role: expectedRole,
     tournamentId: verifiedPayload.tournamentId,
     playerId: expectedRole === 'player' ? (verifiedPayload.playerId ?? null) : null,
+    playerTournamentId: null,
     userId: expectedRole === 'commissioner' ? (verifiedPayload.userId ?? null) : null,
   };
 }
@@ -112,6 +114,16 @@ export const handle: Handle = async ({ event, resolve }) => {
 
     Object.assign(event.locals, identity);
     break;
+  }
+
+  // Dual-role: if resolved as commissioner, also try to resolve rc_player
+  if (event.locals.role === 'commissioner') {
+    const playerCookieValue = event.cookies.get('rc_player');
+    const playerIdentity = await resolveIdentity(playerCookieValue, cookieSigningKey, 'player');
+    if (playerIdentity) {
+      event.locals.playerId = playerIdentity.playerId;
+      event.locals.playerTournamentId = playerIdentity.tournamentId;
+    }
   }
 
   return resolve(event);

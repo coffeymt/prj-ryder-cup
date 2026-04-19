@@ -40,18 +40,39 @@
             Continue to {data.primaryAction.tournamentName}
           </a>
         {:else if data.primaryAction.type === 'manage'}
-          <a
-            href="/manage"
-            class="min-h-touch bg-accent text-accent-text hover:bg-accent-hover focus-visible:outline-accent flex w-full items-center justify-center rounded-xl px-6 text-base font-semibold shadow-md transition hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-          >
-            Go to Manager Portal
-          </a>
-          <a
-            href="/join"
-            class="min-h-touch border-border text-text-primary hover:bg-surface-raised focus-visible:outline-accent flex w-full items-center justify-center rounded-xl border px-6 text-base font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-          >
-            Enter Event Code
-          </a>
+          {#if data.playerTournament}
+            <a
+              href={`/t/${data.playerTournament.code}`}
+              class="min-h-touch bg-accent text-accent-text hover:bg-accent-hover focus-visible:outline-accent flex w-full items-center justify-center rounded-xl px-6 text-base font-semibold shadow-md transition hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+            >
+              Continue to {data.playerTournament.name}
+            </a>
+            <a
+              href="/manage"
+              class="min-h-touch border-border text-text-primary hover:bg-surface-raised focus-visible:outline-accent flex w-full items-center justify-center rounded-xl border px-6 text-base font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+            >
+              Go to Manager Portal
+            </a>
+            <a
+              href="/join"
+              class="min-h-touch text-text-secondary hover:text-text-primary focus-visible:outline-accent inline-flex w-full items-center justify-center text-sm font-medium underline underline-offset-4 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+            >
+              Enter Event Code
+            </a>
+          {:else}
+            <a
+              href="/manage"
+              class="min-h-touch bg-accent text-accent-text hover:bg-accent-hover focus-visible:outline-accent flex w-full items-center justify-center rounded-xl px-6 text-base font-semibold shadow-md transition hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+            >
+              Go to Manager Portal
+            </a>
+            <a
+              href="/join"
+              class="min-h-touch border-border text-text-primary hover:bg-surface-raised focus-visible:outline-accent flex w-full items-center justify-center rounded-xl border px-6 text-base font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+            >
+              Enter Event Code
+            </a>
+          {/if}
         {:else}
           <a
             href="/join"

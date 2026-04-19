@@ -50,9 +50,9 @@ Three roles, each identified by a signed HMAC cookie:
 | `spectator` | Signed with `SPECTATOR_COOKIE_KEY` | Spectator join flow |
 | `anonymous` | — | No cookie present |
 
-`hooks.server.ts` resolves the role on every request and attaches it to `event.locals`. When both `rc_commissioner` and `rc_player` cookies are present, `rc_commissioner` takes priority — the resolved role is `commissioner`. Route handlers call `requireRole()` to gate access. Magic links are single-use, HMAC-signed, stored as a hash in `magic_link_tokens`, and expire after 15 minutes.
+`hooks.server.ts` resolves the role on every request and attaches it to `event.locals`. When both `rc_commissioner` and `rc_player` cookies are present, `rc_commissioner` takes priority — the resolved role is `commissioner`. The hook then also resolves the `rc_player` cookie: if valid, `event.locals.playerId` and `event.locals.playerTournamentId` are set as supplementary fields. Route handlers call `requireRole()` to gate access. Magic links are single-use, HMAC-signed, stored as a hash in `magic_link_tokens`, and expire after 15 minutes.
 
-Commissioners may enter a tournament code from the home page to join as a player via the standard join flow (`/join`). The join routes do not redirect commissioners. When a commissioner completes the join flow, an `rc_player` cookie is set, but the commissioner role remains active due to cookie priority.
+**Dual-role (commissioner + player):** Commissioners may join a tournament as a player via the standard join flow (`/join`); the join routes do not redirect commissioners. The resulting `rc_player` cookie coexists with `rc_commissioner`; role remains `commissioner`. `App.Locals` carries `playerTournamentId` separately from `tournamentId` to avoid conflicts. The `/t/[code]` layout no longer hard-redirects commissioners to `/manage`; `loadCurrentPlayer()` uses `locals.playerTournamentId || locals.tournamentId` to authorize the commissioner into the player view for the same tournament. Cross-tournament access is blocked at the home page level: the dual "Continue to [Tournament]" / "Go to Manager Portal" CTAs only render when the player tournament matches the commissioner tournament. Commissioner score-entry override is preserved and not restricted to a specific side.
 
 ## Data Flow
 
