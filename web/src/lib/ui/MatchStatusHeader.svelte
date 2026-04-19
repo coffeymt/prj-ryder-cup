@@ -67,18 +67,18 @@
     const tone = stateTone(label);
 
     if (tone === 'down') {
-      return 'border border-status-down bg-surface-raised text-status-down';
+      return 'bg-status-down/10 text-status-down';
     }
 
     if (tone === 'up') {
-      return 'border border-status-up bg-surface-raised text-status-up';
+      return 'bg-status-up/10 text-status-up';
     }
 
     if (tone === 'halved') {
-      return 'border border-status-halved bg-surface-raised text-status-halved';
+      return 'bg-status-halved/10 text-status-halved';
     }
 
-    return 'border border-status-closed bg-surface-raised text-status-closed';
+    return 'bg-status-closed/10 text-status-closed';
   }
 </script>
 

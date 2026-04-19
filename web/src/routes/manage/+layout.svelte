@@ -124,8 +124,8 @@
             {/if}
           </button>
 
-          <a href="/manage" class="text-text-primary text-lg font-semibold tracking-tight"
-            >Kiawah Golf</a
+          <a href="/" class="text-text-primary text-lg font-semibold tracking-tight"
+            >Tears Tourneys ⛳</a
           >
         </div>
 

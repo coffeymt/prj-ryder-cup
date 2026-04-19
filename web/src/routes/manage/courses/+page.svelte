@@ -17,7 +17,7 @@
     <div>
       <h1 class="text-text-primary text-2xl font-semibold tracking-tight">Course Library</h1>
       <p class="text-text-secondary mt-1 text-sm">
-        Manage seeded Kiawah courses and custom course setups.
+        Manage seeded courses and custom course setups.
       </p>
     </div>
     <a
@@ -57,7 +57,7 @@
                 <span
                   class="bg-status-up/10 text-status-up inline-flex min-h-8 items-center rounded-full px-3 text-xs font-semibold tracking-wide uppercase"
                 >
-                  Kiawah
+                  Seeded
                 </span>
               {/if}
             </div>

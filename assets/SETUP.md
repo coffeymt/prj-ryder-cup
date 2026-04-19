@@ -1,7 +1,7 @@
-# Golf App — One-Time Setup Guide
+# Tears Tourneys — One-Time Setup Guide
 
 ## Overview
-This runbook provisions every piece of infrastructure the Golf app requires on a fresh Cloudflare account. It is the operator-facing complement to [`INFRASTRUCTURE.md`](./INFRASTRUCTURE.md): the blueprint declares *what* must exist; this guide prescribes *how* to create it. Run it once before the first deploy and again only to rotate a rotated resource (new account, new secret, new sending domain).
+This runbook provisions every piece of infrastructure the Tears Tourneys app requires on a fresh Cloudflare account. It is the operator-facing complement to [`INFRASTRUCTURE.md`](./INFRASTRUCTURE.md): the blueprint declares *what* must exist; this guide prescribes *how* to create it. Run it once before the first deploy and again only to rotate a rotated resource (new account, new secret, new sending domain).
 
 All commands target Windows PowerShell because the workspace OS is Windows. bash/zsh equivalents are shown inline where the command differs.
 

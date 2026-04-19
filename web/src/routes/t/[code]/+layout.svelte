@@ -49,7 +49,7 @@
 </script>
 
 <svelte:head>
-  <title>{data.tournament.name} | Golf</title>
+  <title>{data.tournament.name} | Tears Tourneys</title>
   <meta name="description" content="Live player dashboard and scoring for your tournament." />
 </svelte:head>
 
@@ -62,11 +62,34 @@
     <div
       class="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6"
     >
-      <div class="min-w-0 space-y-1">
-        <p class="text-text-muted text-xs font-semibold tracking-[0.22em] uppercase">Tournament</p>
-        <h1 class="font-display text-text-primary truncate text-lg font-semibold tracking-tight">
-          {data.tournament.name}
-        </h1>
+      <div class="flex min-w-0 items-center gap-3">
+        <a
+          href="/"
+          class="border-border bg-surface-raised text-text-primary hover:bg-surface focus-visible:outline-accent inline-flex min-h-touch items-center gap-1.5 rounded-lg border px-3 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+          aria-label="Home"
+          title="Back to home"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            class="h-4 w-4"
+            aria-hidden="true"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M9.293 2.293a1 1 0 011.414 0l7 7A1 1 0 0117 11h-1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-3a1 1 0 00-1-1H9a1 1 0 00-1 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1v-6H3a1 1 0 01-.707-1.707l7-7z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          Exit
+        </a>
+        <div class="min-w-0 space-y-1">
+          <p class="text-text-muted text-xs font-semibold tracking-[0.22em] uppercase">Tournament</p>
+          <h1 class="font-display text-text-primary truncate text-lg font-semibold tracking-tight">
+            {data.tournament.name}
+          </h1>
+        </div>
       </div>
 
       <div class="ml-auto flex flex-wrap items-center gap-3 sm:gap-4">

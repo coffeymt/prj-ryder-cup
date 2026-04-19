@@ -44,7 +44,7 @@
     <div
       class="border-border bg-surface p-card-padding animate-slide-up-fade w-full rounded-3xl border shadow-lg sm:p-8"
     >
-      <h1 class="text-text-primary text-2xl font-semibold tracking-tight">Kiawah Golf Manager</h1>
+      <h1 class="text-text-primary text-2xl font-semibold tracking-tight">Tournament Manager</h1>
       <p class="text-text-secondary mt-2 text-sm">
         Enter your email to receive a magic sign-in link.
       </p>

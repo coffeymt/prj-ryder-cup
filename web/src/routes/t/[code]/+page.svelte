@@ -43,40 +43,40 @@
 
   function roundStatusClasses(status: string): string {
     if (status === 'Final') {
-      return 'border border-status-closed bg-surface-raised text-status-closed';
+      return 'bg-status-closed/10 text-status-closed';
     }
 
     if (status === 'In progress') {
-      return 'border border-status-halved bg-surface-raised text-status-halved';
+      return 'bg-status-halved/10 text-status-halved';
     }
 
-    return 'border border-status-closed bg-surface-raised text-status-closed';
+    return 'bg-status-closed/10 text-status-closed';
   }
 
   function matchStateClasses(label: string): string {
     const normalized = label.toUpperCase();
 
     if (normalized.includes(' DN')) {
-      return 'border border-status-down bg-surface-raised text-status-down';
+      return 'bg-status-down/10 text-status-down';
     }
 
     if (normalized.includes(' UP')) {
-      return 'border border-status-up bg-surface-raised text-status-up';
+      return 'bg-status-up/10 text-status-up';
     }
 
     if (normalized.includes('AS') || normalized.includes('HALVED') || normalized.startsWith('T')) {
-      return 'border border-status-halved bg-surface-raised text-status-halved';
+      return 'bg-status-halved/10 text-status-halved';
     }
 
-    return 'border border-status-closed bg-surface-raised text-status-closed';
+    return 'bg-status-closed/10 text-status-closed';
   }
 
   function leadingTeamClasses(): string {
     if (teamsAreTied) {
-      return 'border border-status-halved bg-surface-raised text-status-halved';
+      return 'bg-status-halved/10 text-status-halved';
     }
 
-    return 'border border-status-up bg-surface-raised text-status-up';
+    return 'bg-status-up/10 text-status-up';
   }
 </script>
 
@@ -85,7 +85,7 @@
   <meta name="description" content="Team totals, today's rounds, and your live scoring matches." />
 </svelte:head>
 
-<div class="animate-fade-in space-y-6">
+<div class="animate-fade-in space-y-10 px-4 pb-8 sm:px-6">
   <!-- Team Totals Hero Section -->
   <section class="bg-surface-raised border-border rounded-2xl border p-6 shadow-lg">
     <div class="mb-6 text-center">
@@ -105,20 +105,23 @@
     <div class="flex items-center justify-between">
       <!-- Team A -->
       <div
-        class="flex min-w-0 flex-1 flex-col items-center"
+        class={`flex min-w-0 flex-1 flex-col items-center rounded-2xl p-4 transition-colors ${data.team?.name === teamA.name ? 'bg-[var(--team-color)]/5' : ''}`}
         style={teamColorStyle(teamA.color, '--color-team-a')}
       >
         <div
-          class="mb-2 h-4 w-4 rounded-full bg-[var(--team-color)] shadow-sm"
+          class={`mb-2 h-4 w-4 rounded-full bg-[var(--team-color)] shadow-sm ${data.team?.name === teamA.name ? 'ring-2 ring-[var(--team-color)] ring-offset-2 ring-offset-surface-raised' : ''}`}
           aria-hidden="true"
         ></div>
         <h3
-          class="font-display text-text-primary w-full truncate px-1 text-center text-base font-bold sm:text-xl"
+          class="font-display text-team-a w-full truncate px-1 text-center text-base font-bold sm:text-xl"
         >
           {teamA.name || 'Team A'}
+          {#if data.team?.name === teamA.name}
+            <span class="block text-xs font-normal opacity-75">(Your Team)</span>
+          {/if}
         </h3>
         <span
-          class="font-display text-text-primary mt-1 text-3xl font-bold tracking-tight tabular-nums"
+          class="font-display text-team-a mt-1 text-3xl font-bold tracking-tight tabular-nums"
           >{formatPoints(teamA.points)}</span
         >
       </div>
@@ -128,20 +131,23 @@
 
       <!-- Team B -->
       <div
-        class="flex min-w-0 flex-1 flex-col items-center"
+        class={`flex min-w-0 flex-1 flex-col items-center rounded-2xl p-4 transition-colors ${data.team?.name === teamB.name ? 'bg-[var(--team-color)]/5' : ''}`}
         style={teamColorStyle(teamB.color, '--color-team-b')}
       >
         <div
-          class="mb-2 h-4 w-4 rounded-full bg-[var(--team-color)] shadow-sm"
+          class={`mb-2 h-4 w-4 rounded-full bg-[var(--team-color)] shadow-sm ${data.team?.name === teamB.name ? 'ring-2 ring-[var(--team-color)] ring-offset-2 ring-offset-surface-raised' : ''}`}
           aria-hidden="true"
         ></div>
         <h3
-          class="font-display text-text-primary w-full truncate px-1 text-center text-base font-bold sm:text-xl"
+          class="font-display text-team-b w-full truncate px-1 text-center text-base font-bold sm:text-xl"
         >
           {teamB.name || 'Team B'}
+          {#if data.team?.name === teamB.name}
+            <span class="block text-xs font-normal opacity-75">(Your Team)</span>
+          {/if}
         </h3>
         <span
-          class="font-display text-text-primary mt-1 text-3xl font-bold tracking-tight tabular-nums"
+          class="font-display text-team-b mt-1 text-3xl font-bold tracking-tight tabular-nums"
           >{formatPoints(teamB.points)}</span
         >
       </div>
@@ -149,7 +155,7 @@
 
     <div class="mt-8 flex justify-center">
       <span
-        class={`rounded-full px-4 py-1.5 text-xs font-semibold shadow-sm ${leadingTeamClasses()}`}
+        class={`rounded-full px-4 py-1.5 text-xs font-semibold ${leadingTeamClasses()}`}
       >
         {#if teamsAreTied}
           All Square
@@ -161,9 +167,9 @@
   </section>
 
   <!-- Today's Rounds Section -->
-  <section class="space-y-4">
-    <div class="flex items-center justify-between">
-      <h2 class="text-text-muted text-xs font-bold tracking-widest uppercase">Today's Rounds</h2>
+  <section class="space-y-6">
+    <div class="border-b border-border flex items-center justify-between pb-3">
+      <h2 class="text-text-primary text-sm font-bold tracking-[0.15em] uppercase">Today's Rounds</h2>
       {#if data.player}
         <span class="text-text-secondary text-xs font-semibold">{data.player.name}</span>
       {/if}
@@ -189,7 +195,7 @@
                 </p>
               </div>
               <span
-                class={`rounded-full px-3 py-1 text-xs font-semibold shadow-sm ${roundStatusClasses(round.status)}`}
+                class={`rounded-full px-3 py-1 text-xs font-semibold ${roundStatusClasses(round.status)}`}
               >
                 {round.status}
               </span>
@@ -221,7 +227,7 @@
                           </p>
                         </div>
                         <span
-                          class={`rounded-full px-2.5 py-1 text-xs font-semibold shadow-sm ${matchStateClasses(match.statusLabel)}`}
+                          class={`rounded-full px-2.5 py-1 text-xs font-semibold ${matchStateClasses(match.statusLabel)}`}
                         >
                           {match.statusLabel}
                         </span>
@@ -237,12 +243,12 @@
                             )}
                           >
                             <span
-                              class="border-border h-3 w-3 rounded-full border bg-[var(--team-color)] shadow-sm"
+                              class="h-3 w-3 rounded-full bg-[var(--team-color)] shadow-sm"
                               aria-hidden="true"
                             ></span>
                             <div class="min-w-0">
                               <p
-                                class="text-text-primary truncate text-sm leading-tight font-semibold"
+                                class={`truncate text-sm leading-tight font-semibold ${side.sideLabel === 'A' ? 'text-team-a' : 'text-team-b'}`}
                               >
                                 {side.teamName || `Side ${side.sideLabel}`}
                               </p>
@@ -274,9 +280,9 @@
   </section>
 
   <!-- All Rounds Section -->
-  <section class="space-y-4">
-    <div class="flex items-center justify-between">
-      <h2 class="text-text-muted text-xs font-bold tracking-widest uppercase">All Rounds</h2>
+  <section class="space-y-6">
+    <div class="border-b border-border flex items-center justify-between pb-3">
+      <h2 class="text-text-primary text-sm font-bold tracking-[0.15em] uppercase">All Rounds</h2>
       <span
         class="border-border bg-surface-raised text-text-secondary rounded-full border px-2.5 py-0.5 text-xs font-semibold"
       >
@@ -305,7 +311,7 @@
               </p>
             </div>
             <span
-              class={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold shadow-sm ${roundStatusClasses(round.status)}`}
+              class={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${roundStatusClasses(round.status)}`}
             >
               {round.status}
             </span>

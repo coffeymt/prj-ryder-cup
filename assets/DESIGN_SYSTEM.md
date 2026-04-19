@@ -1,6 +1,6 @@
-# Golf App — Design System
+# Tears Tourneys — Design System
 
-Visual identity and component guidelines for the Kiawah Golf SvelteKit web app. All tokens are defined in `web/src/app.css`; Tailwind extensions in `web/tailwind.config.ts`.
+Visual identity and component guidelines for the Tears Tourneys ⛳ SvelteKit web app. All tokens are defined in `web/src/app.css`; Tailwind extensions in `web/tailwind.config.ts`.
 
 ## 1. Tokens & Theming
 
@@ -113,6 +113,7 @@ Cards use a shadow-based depth hierarchy. See [Shadow Hierarchy](#6-shadow-hiera
   - DN: `bg-status-down/10 text-status-down`
   - AS: `bg-status-halved/10 text-status-halved`
   - Closed: `bg-status-closed/10 text-status-closed`
+  - Do **not** add a `border` to status pills — the opacity background alone provides the contrast; a border creates a visual clash.
 - **Team Badge:** `flex items-center gap-2 rounded-full border border-border bg-surface px-2 py-1` with a colored dot `<span class="h-2.5 w-2.5 rounded-full bg-team-a"></span>`
 - **Online/Offline Pill:** Online state renders as a small unobtrusive dot; offline state shows a full pill with `animate-pulse-soft` to signal attention. Both keep `role="status"`, `aria-live="polite"`.
 
@@ -169,8 +170,18 @@ The fill bar uses `shadow-[0_0_12px_var(--color-team-a)]` to emit a team-colored
 
 ## 3. Branding
 
+- **App name:** **Tears Tourneys ⛳** — used in all user-facing copy: email subjects, email bodies, page `<title>` tags, and headings.
 - **Favicon:** Golf-themed SVG at `web/src/lib/assets/favicon.svg`. Uses emerald (`#059669`) as the primary fill. Hex is acceptable in the SVG since it is a static asset, not a Svelte component.
 - **Web font:** Inter loaded via `<link rel="preconnect">` + `<link rel="stylesheet">` in `web/src/app.html`. Uses `font-display: swap` to avoid blocking first paint.
+
+### Navigation Home Links
+
+Both global layouts provide a clear path back to `/`:
+
+| Layout | Pattern |
+|---|---|
+| `routes/manage/+layout.svelte` | "Tears Tourneys ⛳" text link in the top-left header |
+| `routes/t/[code]/+layout.svelte` | Labelled "Exit" button (home icon + text) in the top-left header |
 
 ## 4. Motion
 

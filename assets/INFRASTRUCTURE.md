@@ -1,4 +1,4 @@
-# Golf App — Infrastructure Blueprint
+# Tears Tourneys — Infrastructure Blueprint
 
 ## Overview
 This document enumerates every Cloudflare resource, Workers secret, DNS record, and third-party account the Golf web app requires across local, preview, and production environments. It is the canonical reference for provisioning, post-deploy verification, and the user-facing setup runbook (`assets/SETUP.md`). Product context and the rationale behind the Cloudflare + D1 + smtp2go stack live in `plan/golf-rebrand/prd.md` under **Hosting & Infrastructure**.

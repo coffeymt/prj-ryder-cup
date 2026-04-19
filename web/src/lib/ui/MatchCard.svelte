@@ -16,11 +16,6 @@
     return Number.isInteger(value) ? String(value) : value.toFixed(1);
   }
 
-  function teamStyle(color: string): string {
-    const trimmed = color?.trim();
-    return `--team-color: ${trimmed && trimmed.length > 0 ? trimmed : 'var(--color-text-primary)'}`;
-  }
-
   function statusLabel(status: MatchCardData['status']): string {
     if (status === 'inProgress') {
       return 'In Progress';
@@ -35,14 +30,14 @@
 
   function statusClasses(status: MatchCardData['status']): string {
     if (status === 'inProgress') {
-      return 'border-status-halved bg-surface-raised text-status-halved';
+      return 'bg-status-halved/10 text-status-halved';
     }
 
     if (status === 'closed') {
-      return 'border-status-up bg-surface-raised text-status-up';
+      return 'bg-status-up/10 text-status-up';
     }
 
-    return 'border-status-closed bg-surface-raised text-status-closed';
+    return 'bg-status-closed/10 text-status-closed';
   }
 
   function closedResultLabel(value: MatchCardData): string {
@@ -59,6 +54,7 @@
 </script>
 
 <article
+  style={`${match.sideA.teamColor ? `--color-team-a: ${match.sideA.teamColor};` : ''} ${match.sideB.teamColor ? `--color-team-b: ${match.sideB.teamColor};` : ''}`.trim() || undefined}
   class={`border-border bg-surface p-card-padding duration-base ease-standard space-y-3 rounded-2xl border transition-all min-[1920px]:space-y-6 min-[1920px]:rounded-3xl min-[1920px]:p-8 sm:space-y-4 sm:p-5 ${
     match.status === 'notStarted'
       ? 'opacity-80 shadow-sm'
@@ -88,7 +84,7 @@
     </div>
 
     <span
-      class={`rounded-full border px-2.5 py-1 text-xs font-semibold min-[1920px]:px-4 min-[1920px]:py-2 min-[1920px]:text-lg sm:text-sm ${statusClasses(match.status)}`}
+      class={`rounded-full px-2.5 py-1 text-xs font-semibold min-[1920px]:px-4 min-[1920px]:py-2 min-[1920px]:text-lg sm:text-sm ${statusClasses(match.status)}`}
     >
       {statusLabel(match.status)}
     </span>
@@ -96,11 +92,10 @@
 
   <div class="space-y-2 min-[1920px]:space-y-4">
     <div
-      style={teamStyle(match.sideA.teamColor)}
-      class="border-border bg-surface-raised rounded-xl border p-3 min-[1920px]:rounded-2xl min-[1920px]:p-6 sm:p-4"
+      class="border-y-border border-r-border border-l-team-a bg-team-a/5 rounded-xl border-y border-r border-l-4 p-3 min-[1920px]:rounded-2xl min-[1920px]:p-6 sm:p-4"
     >
       <div class="flex items-center justify-between gap-2">
-        <p class="font-semibold text-[var(--team-color)] min-[1920px]:text-2xl sm:text-lg">
+        <p class="text-team-a font-semibold min-[1920px]:text-2xl sm:text-lg">
           {match.sideA.teamName || 'Team A'}
         </p>
         <p
@@ -119,11 +114,10 @@
     </div>
 
     <div
-      style={teamStyle(match.sideB.teamColor)}
-      class="border-border bg-surface-raised rounded-xl border p-3 min-[1920px]:rounded-2xl min-[1920px]:p-6 sm:p-4"
+      class="border-y-border border-r-border border-l-team-b bg-team-b/5 rounded-xl border-y border-r border-l-4 p-3 min-[1920px]:rounded-2xl min-[1920px]:p-6 sm:p-4"
     >
       <div class="flex items-center justify-between gap-2">
-        <p class="font-semibold text-[var(--team-color)] min-[1920px]:text-2xl sm:text-lg">
+        <p class="text-team-b font-semibold min-[1920px]:text-2xl sm:text-lg">
           {match.sideB.teamName || 'Team B'}
         </p>
         <p

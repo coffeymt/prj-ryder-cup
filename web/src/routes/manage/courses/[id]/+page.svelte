@@ -117,7 +117,7 @@
     <p
       class="border-status-up/30 bg-status-up/10 text-status-up rounded-lg border px-4 py-3 text-sm font-medium"
     >
-      This is a seeded Kiawah course.
+      This is a seeded course.
     </p>
   {/if}
 

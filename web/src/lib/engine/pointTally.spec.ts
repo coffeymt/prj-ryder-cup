@@ -76,7 +76,7 @@ describe('computeTournamentTally', () => {
     expectPointConservation(tally, subMatchResults);
   });
 
-  it('3) mixed with halves: Kiawah-like scenario yields 16.5-13.5', () => {
+  it('3) mixed with halves: realistic scenario yields 16.5-13.5', () => {
     const subMatchResults: SubMatchResult[] = [
       createSubMatchResult(1, 1, 1, 0, 'F9'),
       createSubMatchResult(2, 1, 0.5, 0.5, 'B9'),

@@ -1,4 +1,4 @@
-# Golf App — Architecture Overview
+# Tears Tourneys — Architecture Overview
 
 ## Stack
 

@@ -60,7 +60,7 @@ describe('sendMagicLink', () => {
     expect(payload.api_key).toBe('test-key');
     expect(payload.sender).toBe('SBCC Tears <michael@sbcctears.com>');
     expect(payload.to).toEqual(['captain@example.com']);
-    expect(payload.subject).toBe('Your Kiawah Golf sign-in link');
+    expect(payload.subject).toBe('Your Tears Tourneys ⛳ sign-in link');
     expect(payload.html_body).toContain(testParams.magicLinkUrl);
   });
 

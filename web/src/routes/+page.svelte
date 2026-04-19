@@ -5,7 +5,7 @@
 </script>
 
 <svelte:head>
-  <title>Kiawah Golf</title>
+  <title>Tears Tourneys ⛳</title>
   <meta name="description" content="Live tournament scoring for your golf trip." />
 </svelte:head>
 
@@ -21,9 +21,9 @@
           <span class="bg-accent h-1.5 w-1.5 rounded-full"></span>
           <span class="bg-accent/60 h-px w-10"></span>
         </div>
-        <p class="text-text-muted text-xs font-semibold tracking-[0.32em] uppercase">Kiawah Golf</p>
+        <p class="text-text-muted text-xs font-semibold tracking-[0.32em] uppercase">Golf Scoring</p>
         <h1 class="font-display text-text-primary text-5xl font-bold tracking-tight">
-          Kiawah Golf
+          Tears Tourneys ⛳
         </h1>
         <span class="bg-accent/70 mx-auto block h-1 w-20 rounded-full"></span>
         <p class="text-text-secondary pt-1 text-base leading-relaxed">

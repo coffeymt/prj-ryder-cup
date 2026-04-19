@@ -41,14 +41,14 @@
 
   function roundStatusClasses(status: 'pending' | 'in_progress' | 'complete'): string {
     if (status === 'in_progress') {
-      return 'border-status-halved bg-surface-raised text-status-halved';
+      return 'bg-status-halved/10 text-status-halved';
     }
 
     if (status === 'complete') {
-      return 'border-status-up bg-surface-raised text-status-up';
+      return 'bg-status-up/10 text-status-up';
     }
 
-    return 'border-status-closed bg-surface-raised text-status-closed';
+    return 'bg-status-closed/10 text-status-closed';
   }
 
   function mapSegment(segment: 'F9' | 'B9' | 'OVERALL' | 'FULL18'): string {
@@ -120,7 +120,7 @@
   };
   $: teamB = {
     name: secondTeam?.name ?? 'Team B',
-    color: resolveTeamColor(secondTeam?.color, 'var(--color-status-down)'),
+    color: resolveTeamColor(secondTeam?.color, 'var(--color-team-b)'),
     points: secondTeam?.totalPoints ?? 0,
   };
   $: teamAProgress = progressPercent(teamA.points, pointsToWin);
@@ -148,7 +148,7 @@
           },
           sideB: {
             teamName: sideBTeam?.name ?? 'Team B',
-            teamColor: resolveTeamColor(sideBTeam?.color, 'var(--color-status-down)'),
+            teamColor: resolveTeamColor(sideBTeam?.color, 'var(--color-team-b)'),
             playerNames: match.sideB.playerNames,
             points: match.sideB.points,
           },
@@ -195,7 +195,7 @@
         <div class="space-y-3">
           <div class="flex items-center justify-between text-sm min-[1920px]:text-xl">
             <span class="text-team-a font-bold drop-shadow-sm">{teamA.name}</span>
-            <span class="text-text-primary font-bold tabular-nums"
+            <span class="text-team-a font-bold tabular-nums"
               >{formatPoints(teamA.points)}
               <span class="text-text-muted font-normal">/ {formatPoints(pointsToWin)}</span></span
             >
@@ -214,7 +214,7 @@
         <div class="space-y-3">
           <div class="flex items-center justify-between text-sm min-[1920px]:text-xl">
             <span class="text-team-b font-bold drop-shadow-sm">{teamB.name}</span>
-            <span class="text-text-primary font-bold tabular-nums"
+            <span class="text-team-b font-bold tabular-nums"
               >{formatPoints(teamB.points)}
               <span class="text-text-muted font-normal">/ {formatPoints(pointsToWin)}</span></span
             >
@@ -258,7 +258,7 @@
               </div>
 
               <span
-                class={`rounded-full border px-3.5 py-1.5 text-xs font-semibold tracking-[0.08em] uppercase shadow-sm min-[1920px]:px-6 min-[1920px]:py-2.5 min-[1920px]:text-lg sm:text-sm ${roundStatusClasses(round.status)}`}
+                class={`rounded-full px-3.5 py-1.5 text-xs font-semibold tracking-[0.08em] uppercase min-[1920px]:px-6 min-[1920px]:py-2.5 min-[1920px]:text-lg sm:text-sm ${roundStatusClasses(round.status)}`}
               >
                 {formatRoundStatus(round.status)}
               </span>
