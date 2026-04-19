@@ -17,10 +17,10 @@
 </script>
 
 <section
-  class="border-border bg-surface p-card-padding space-y-4 rounded-2xl border shadow-sm min-[1920px]:space-y-7 min-[1920px]:rounded-3xl min-[1920px]:p-10 sm:space-y-5 sm:p-6 2xl:p-8"
+  class="border-border bg-surface p-card-padding space-y-4 rounded-2xl border shadow-lg min-[1920px]:space-y-7 min-[1920px]:rounded-3xl min-[1920px]:p-10 sm:space-y-5 sm:p-6 2xl:p-8"
 >
   <p
-    class="text-text-secondary text-xs font-semibold tracking-[0.2em] uppercase min-[1920px]:text-lg sm:text-sm"
+    class="text-text-secondary text-xs font-semibold tracking-[0.2em] uppercase sm:text-sm lg:text-base min-[1920px]:text-xl"
   >
     Live Team Totals
   </p>
@@ -41,6 +41,10 @@
       First to {formatPoints(pointsToWin)} points wins
     </p>
   </div>
+  <div
+    class="mt-3 h-0.5 rounded-full bg-gradient-to-r from-team-a via-transparent to-team-b opacity-30"
+    aria-hidden="true"
+  ></div>
 
   <div class="grid gap-3 min-[1920px]:gap-6 lg:grid-cols-2">
     <div class="space-y-2">

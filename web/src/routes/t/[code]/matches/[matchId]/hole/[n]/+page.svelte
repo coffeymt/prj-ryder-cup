@@ -111,7 +111,7 @@
   onContinue={() => (showInterstitial = false)}
 />
 
-<div class="space-y-4 pb-8">
+<div class="animate-fade-in space-y-5 pb-8">
   <MatchStatusHeader
     matchState={data.matchState}
     teamAName={data.match.teamAName}
@@ -120,13 +120,13 @@
     teamBColor={data.match.teamBColor}
   />
 
-  <section class="border-border bg-surface p-card-padding rounded-2xl border shadow-sm">
+  <section class="space-y-2 py-3 sm:py-5">
     <p class="text-text-muted text-xs font-semibold tracking-[0.2em] uppercase">
       {data.segmentLabel}
     </p>
-    <h1 class="font-display text-text-primary mt-1 text-2xl font-semibold tracking-tight">
+    <h1 class="font-display text-text-primary mt-1 text-4xl font-bold tracking-tight sm:text-5xl">
       Hole {data.holeNumber}
-      <span class="text-text-secondary text-base font-medium">
+      <span class="text-text-secondary mt-1 block text-sm font-medium sm:text-base">
         · Par {data.par} · SI {data.strokeIndex}</span
       >
     </h1>
@@ -135,7 +135,9 @@
   <section class="space-y-3">
     {#each rows as row (row.id)}
       <article
-        class="border-border bg-surface p-card-padding space-y-3 rounded-2xl border shadow-sm"
+        class={`border-border bg-surface p-card-padding space-y-3 rounded-2xl border border-l-4 shadow-md transition-all duration-base ${
+          row.player.teamColor === data.match.teamBColor ? 'border-l-team-b' : 'border-l-team-a'
+        }`}
       >
         <div class="flex items-start justify-between gap-2">
           <div class="min-w-0">
@@ -176,7 +178,7 @@
         <div class="grid grid-cols-2 gap-2">
           <button
             type="button"
-            class={`min-h-touch rounded-lg border px-3 text-sm font-semibold transition ${
+            class={`min-h-touch rounded-lg border px-3 text-sm font-semibold transition-all duration-fast active:scale-95 ${
               row.conceded
                 ? 'border-status-down bg-surface-raised text-status-down'
                 : 'border-border bg-surface-raised text-text-primary hover:bg-surface'
@@ -188,7 +190,7 @@
           </button>
           <button
             type="button"
-            class={`min-h-touch rounded-lg border px-3 text-sm font-semibold transition ${
+            class={`min-h-touch rounded-lg border px-3 text-sm font-semibold transition-all duration-fast active:scale-95 ${
               row.pickedUp
                 ? 'border-status-halved bg-surface-raised text-status-halved'
                 : 'border-border bg-surface-raised text-text-primary hover:bg-surface'
@@ -206,13 +208,13 @@
   <div class="grid grid-cols-2 gap-2">
     <a
       href={backHref}
-      class="min-h-touch border-border text-text-primary hover:bg-surface-raised inline-flex items-center justify-center rounded-lg border bg-transparent px-4 text-sm font-semibold transition"
+      class="min-h-touch border-border text-text-primary hover:bg-surface-raised inline-flex items-center justify-center rounded-xl border bg-transparent px-4 text-sm font-semibold transition-all duration-base"
     >
       &larr; Back
     </a>
     <button
       type="button"
-      class="min-h-touch bg-accent text-accent-text hover:bg-accent-hover inline-flex items-center justify-center rounded-lg px-4 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60"
+      class="min-h-touch bg-accent text-accent-text hover:bg-accent-hover inline-flex items-center justify-center rounded-xl px-4 text-base font-semibold shadow-md transition-all duration-base hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60"
       disabled={isSaving}
       on:click={saveAndNext}
     >
@@ -223,7 +225,7 @@
 
 {#if errorMessage}
   <div
-    class="border-status-down bg-surface-raised text-status-down fixed inset-x-3 bottom-3 z-40 rounded-xl border px-4 py-3 text-sm font-medium shadow-lg"
+    class="border-status-down bg-surface-raised text-status-down fixed inset-x-3 bottom-3 z-40 animate-slide-up-fade rounded-xl border px-4 py-3 text-sm font-medium shadow-xl"
     role="alert"
   >
     {errorMessage}

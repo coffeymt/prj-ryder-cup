@@ -48,7 +48,7 @@
 
 <div class="min-h-screen bg-[var(--color-bg)]" style={wrapperStyle(teamAColor, teamBColor)}>
   <header
-    class={`border-border bg-surface border-b backdrop-blur ${
+    class={`border-border bg-surface-glass sticky top-0 z-30 border-b backdrop-blur-md ${
       data.team?.color ? 'border-l-team-a border-l-4' : ''
     }`}
   >
@@ -85,7 +85,7 @@
 
         <a
           href={`/t/${encodeURIComponent(data.tournament.code)}/live`}
-          class="min-h-touch bg-accent text-accent-text hover:bg-accent-hover focus-visible:outline-accent inline-flex items-center justify-center rounded-full px-4 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+          class="min-h-touch bg-accent text-accent-text hover:bg-accent-hover focus-visible:outline-accent inline-flex items-center justify-center rounded-full px-4 text-sm font-semibold shadow-sm transition-all duration-base hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
         >
           Live Scores
         </a>
@@ -93,7 +93,7 @@
     </div>
   </header>
 
-  <main class="mx-auto w-full max-w-5xl px-4 py-5 sm:px-6 sm:py-6">
+  <main class="mx-auto w-full max-w-5xl animate-fade-in px-4 py-5 sm:px-6 sm:py-6">
     <slot />
   </main>
 </div>

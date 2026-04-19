@@ -83,7 +83,7 @@
 </script>
 
 <header
-  class="border-border bg-surface sticky top-0 z-20 space-y-2 rounded-2xl border p-3 shadow-sm backdrop-blur"
+  class="border-border bg-surface-glass sticky top-0 z-20 space-y-2 rounded-2xl border p-3 shadow-md backdrop-blur-md"
   style={headerStyle(teamAColor, teamBColor)}
 >
   <div class="flex items-center justify-between gap-2">

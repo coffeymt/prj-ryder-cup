@@ -59,9 +59,13 @@
 </script>
 
 <article
-  class={`border-border bg-surface p-card-padding space-y-3 rounded-2xl border shadow-sm min-[1920px]:space-y-6 min-[1920px]:rounded-3xl min-[1920px]:p-8 sm:space-y-4 sm:p-5 ${
-    match.status === 'notStarted' ? 'opacity-80' : ''
-  }`}
+  class={`border-border bg-surface p-card-padding space-y-3 rounded-2xl border min-[1920px]:space-y-6 min-[1920px]:rounded-3xl min-[1920px]:p-8 sm:space-y-4 sm:p-5 transition-all duration-base ease-standard ${
+    match.status === 'notStarted'
+      ? 'opacity-80 shadow-sm'
+      : match.status === 'inProgress'
+        ? 'border-l-4 border-l-accent shadow-md'
+        : 'shadow-sm'
+  } ${match.status !== 'notStarted' ? 'hover:shadow-md hover:-translate-y-0.5' : ''}`}
 >
   <div class="flex flex-wrap items-start justify-between gap-2">
     <div>

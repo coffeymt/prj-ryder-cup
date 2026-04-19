@@ -28,9 +28,13 @@
   $: emailDisplay = email ? maskEmail(email) : 'your inbox';
 </script>
 
-<section class="bg-bg text-text-primary min-h-dvh px-4 py-10">
+<section
+  class="text-text-primary bg-gradient-to-b from-[var(--color-bg-gradient-start)] to-[var(--color-bg-gradient-end)] min-h-dvh px-4 py-10"
+>
   <div class="mx-auto flex min-h-[calc(100dvh-5rem)] w-full max-w-xl items-center justify-center">
-    <div class="border-border bg-surface p-card-padding w-full rounded-2xl border shadow-sm sm:p-8">
+    <div
+      class="border-border bg-surface p-card-padding animate-slide-up-fade w-full rounded-3xl border shadow-lg sm:p-8"
+    >
       <h1 class="text-text-primary text-2xl font-semibold tracking-tight">
         Check your email at {emailDisplay}
       </h1>
@@ -38,7 +42,7 @@
 
       <a
         href="/manage/login"
-        class="min-h-touch border-border text-text-primary hover:bg-surface-raised mt-6 inline-flex w-full items-center justify-center rounded-lg border bg-transparent px-4 text-base font-semibold transition"
+        class="min-h-touch border-border text-text-primary hover:bg-surface-raised mt-6 inline-flex w-full items-center justify-center rounded-xl border bg-transparent px-4 text-base font-semibold shadow-sm transition hover:shadow-md"
       >
         Didn&apos;t get it? Resend link
       </a>

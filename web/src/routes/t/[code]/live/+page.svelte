@@ -175,12 +175,18 @@
   class="bg-bg text-text-primary relative -mx-4 -my-5 min-h-[calc(100vh-7rem)] px-3 py-4 min-[1920px]:px-12 min-[1920px]:py-10 sm:-mx-6 sm:-my-6 sm:px-6 sm:py-6 2xl:px-8 2xl:py-8"
 >
   <div
-    class="mx-auto w-full max-w-[120rem] space-y-4 min-[1920px]:space-y-9 sm:space-y-5 2xl:space-y-7"
+    aria-hidden="true"
+    class="pointer-events-none absolute inset-0"
+    style="background: radial-gradient(ellipse at top center, var(--color-bg-gradient-start), var(--color-bg-gradient-end));"
+  ></div>
+
+  <div
+    class="relative z-10 mx-auto w-full max-w-[120rem] space-y-4 animate-fade-in min-[1920px]:space-y-9 sm:space-y-5 2xl:space-y-7"
   >
     <TickerHeader {pointsToWin} {teamA} {teamB} />
 
     <section
-      class="border-border bg-surface p-card-padding rounded-2xl border shadow-sm min-[1920px]:rounded-3xl min-[1920px]:p-8 sm:p-5 2xl:p-6"
+      class="border-border bg-surface p-card-padding rounded-2xl border shadow-lg min-[1920px]:rounded-3xl min-[1920px]:p-8 sm:p-5 2xl:p-6"
     >
       <h2 class="text-text-secondary text-xs font-semibold tracking-[0.18em] uppercase sm:text-sm">
         Progress to Win
@@ -188,12 +194,12 @@
       <div class="mt-3 grid gap-4 min-[1920px]:gap-6 lg:grid-cols-2">
         <div class="space-y-2">
           <div class="flex items-center justify-between text-sm min-[1920px]:text-xl">
-            <span class="text-team-a font-semibold">{teamA.name}</span>
-            <span class="text-text-secondary tabular-nums"
+            <span class="text-team-a font-bold">{teamA.name}</span>
+            <span class="text-text-primary font-semibold tabular-nums"
               >{formatPoints(teamA.points)} / {formatPoints(pointsToWin)}</span
             >
           </div>
-          <div class="bg-surface-raised h-3 overflow-hidden rounded-full min-[1920px]:h-5">
+          <div class="bg-surface-raised h-3.5 overflow-hidden rounded-full min-[1920px]:h-6 sm:h-4">
             <div
               class="bg-team-a h-full rounded-full transition-all duration-500"
               style={`width: ${teamAProgress}%;`}
@@ -204,12 +210,12 @@
 
         <div class="space-y-2">
           <div class="flex items-center justify-between text-sm min-[1920px]:text-xl">
-            <span class="text-team-b font-semibold">{teamB.name}</span>
-            <span class="text-text-secondary tabular-nums"
+            <span class="text-team-b font-bold">{teamB.name}</span>
+            <span class="text-text-primary font-semibold tabular-nums"
               >{formatPoints(teamB.points)} / {formatPoints(pointsToWin)}</span
             >
           </div>
-          <div class="bg-surface-raised h-3 overflow-hidden rounded-full min-[1920px]:h-5">
+          <div class="bg-surface-raised h-3.5 overflow-hidden rounded-full min-[1920px]:h-6 sm:h-4">
             <div
               class="bg-team-b h-full rounded-full transition-all duration-500"
               style={`width: ${teamBProgress}%;`}
@@ -228,14 +234,15 @@
           No rounds are available yet.
         </p>
       {:else}
-        {#each rounds as round (round.id)}
+        {#each rounds as round, roundIndex (round.id)}
           <article
-            class="border-border bg-surface p-card-padding space-y-3 rounded-2xl border shadow-sm min-[1920px]:space-y-6 min-[1920px]:rounded-3xl min-[1920px]:p-8 sm:space-y-4 sm:p-5 2xl:p-6"
+            class="border-border bg-surface p-card-padding space-y-3 rounded-2xl border border-l-4 border-l-accent shadow-lg animate-slide-up-fade min-[1920px]:space-y-6 min-[1920px]:rounded-3xl min-[1920px]:p-8 sm:space-y-4 sm:p-5 2xl:p-6"
+            style={`animation-delay: ${(roundIndex + 1) * 100}ms;`}
           >
             <div class="flex flex-wrap items-start justify-between gap-3">
               <div>
                 <h2
-                  class="text-text-primary text-xl font-semibold tracking-tight min-[1920px]:text-4xl sm:text-2xl"
+                  class="text-text-primary text-xl font-bold tracking-[0.08em] uppercase min-[1920px]:text-4xl sm:text-2xl"
                 >
                   {round.name}
                 </h2>
@@ -245,7 +252,7 @@
               </div>
 
               <span
-                class={`rounded-full border px-3 py-1 text-xs font-semibold min-[1920px]:px-5 min-[1920px]:py-2 min-[1920px]:text-lg sm:text-sm ${roundStatusClasses(round.status)}`}
+                class={`rounded-full border px-3.5 py-1.5 text-xs font-semibold tracking-[0.08em] uppercase shadow-sm min-[1920px]:px-6 min-[1920px]:py-2.5 min-[1920px]:text-lg sm:text-sm ${roundStatusClasses(round.status)}`}
               >
                 {formatRoundStatus(round.status)}
               </span>
@@ -259,7 +266,7 @@
               </p>
             {:else}
               <div
-                class="grid gap-3 min-[1920px]:grid-cols-3 min-[1920px]:gap-6 md:gap-4 xl:grid-cols-2"
+                class="grid gap-3 min-[1920px]:grid-cols-3 min-[1920px]:gap-7 md:gap-4 lg:gap-5 xl:grid-cols-2 2xl:gap-6"
               >
                 {#each round.cards as match (match.id)}
                   <MatchCard {match} />
@@ -273,11 +280,11 @@
   </div>
 
   <div
-    class="border-border bg-surface-raised fixed right-3 bottom-3 z-20 rounded-full border px-3 py-2 shadow-sm backdrop-blur min-[1920px]:right-8 min-[1920px]:bottom-8 min-[1920px]:px-6 min-[1920px]:py-4 sm:right-4 sm:bottom-4 sm:px-4"
+    class="border-border bg-surface-glass fixed right-3 bottom-3 z-20 rounded-full border px-3 py-2 shadow-lg backdrop-blur-md min-[1920px]:right-8 min-[1920px]:bottom-8 min-[1920px]:px-6 min-[1920px]:py-4 sm:right-4 sm:bottom-4 sm:px-4"
   >
     <div class="flex items-center gap-2 text-xs min-[1920px]:gap-3 min-[1920px]:text-xl sm:text-sm">
       <span
-        class={`h-2.5 w-2.5 rounded-full min-[1920px]:h-4 min-[1920px]:w-4 ${$connected ? 'bg-online' : 'bg-offline animate-pulse'}`}
+        class={`h-2.5 w-2.5 rounded-full min-[1920px]:h-4 min-[1920px]:w-4 ${$connected ? 'bg-online' : 'bg-offline animate-pulse-soft'}`}
       ></span>
       <span class="text-text-primary font-medium"
         >{$connected ? 'Live updates connected' : 'Reconnecting live feed'}</span

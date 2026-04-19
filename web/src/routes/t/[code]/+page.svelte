@@ -85,8 +85,8 @@
   <meta name="description" content="Team totals, today's rounds, and your live scoring matches." />
 </svelte:head>
 
-<div class="space-y-5">
-  <section class="border-border bg-surface p-card-padding rounded-2xl border shadow-sm sm:p-5">
+<div class="animate-fade-in space-y-5">
+  <section class="border-border bg-surface p-card-padding rounded-2xl border shadow-lg sm:p-5">
     <div class="flex items-start justify-between gap-3">
       <div>
         <p class="text-text-muted text-xs font-semibold tracking-[0.2em] uppercase">Team Totals</p>
@@ -140,7 +140,7 @@
     <div class="mt-4 space-y-2">
       <div class="bg-surface-raised h-3 overflow-hidden rounded-full" aria-hidden="true">
         <div
-          class="h-full rounded-full bg-[var(--team-color)] transition-all"
+          class="h-full rounded-full bg-[var(--team-color)] transition-all duration-slow"
           style={`${teamColorStyle(leadingTeam.color, '--color-team-a')} width: ${progressPercent}%`}
         ></div>
       </div>
@@ -153,7 +153,7 @@
   </section>
 
   <section
-    class="border-border bg-surface p-card-padding space-y-3 rounded-2xl border shadow-sm sm:p-5"
+    class="border-border bg-surface p-card-padding space-y-3 rounded-2xl border shadow-md sm:p-5"
   >
     <div class="flex items-center justify-between gap-3">
       <h2 class="font-display text-text-primary text-lg font-semibold">Today's Rounds</h2>
@@ -200,7 +200,7 @@
               <div class="space-y-3">
                 {#each matchesForRound(round.id) as match (match.id)}
                   <article
-                    class="min-h-touch border-border bg-surface space-y-3 rounded-xl border p-3"
+                    class="min-h-touch border-border bg-surface space-y-3 rounded-xl border p-3 shadow-sm transition-all duration-base hover:-translate-y-0.5 hover:shadow-md"
                   >
                     <div class="flex items-start justify-between gap-3">
                       <div>
@@ -245,7 +245,7 @@
 
                     <a
                       href={`/t/${encodeURIComponent(data.tournament.code)}/matches/${encodeURIComponent(match.id)}`}
-                      class="min-h-touch bg-accent text-accent-text hover:bg-accent-hover focus-visible:outline-accent inline-flex w-full items-center justify-center rounded-lg px-4 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                      class="min-h-touch bg-accent text-accent-text hover:bg-accent-hover focus-visible:outline-accent inline-flex w-full items-center justify-center rounded-xl px-4 text-sm font-semibold shadow-sm transition-all duration-base hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                     >
                       Enter Scores
                     </a>

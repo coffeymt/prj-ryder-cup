@@ -17,10 +17,10 @@
     value < par ? 'text-status-up' : value > par ? 'text-status-down' : 'text-text-primary';
 </script>
 
-<div class="border-border bg-surface flex items-center gap-3 rounded-xl border p-1">
+<div class="border-border bg-surface flex items-center gap-3 rounded-xl border p-1 shadow-sm">
   <button
     type="button"
-    class="min-h-stepper min-w-stepper border-border bg-surface-raised text-text-primary hover:bg-surface inline-flex items-center justify-center rounded-xl border text-3xl font-semibold transition disabled:cursor-not-allowed disabled:opacity-45"
+    class="min-h-stepper min-w-stepper border-border bg-surface-raised text-text-primary hover:bg-surface inline-flex items-center justify-center rounded-xl border text-3xl font-semibold transition active:scale-95 transition-transform duration-fast disabled:cursor-not-allowed disabled:opacity-45"
     aria-label="Decrease strokes"
     disabled={value <= min}
     on:click={() => update(value - 1)}
@@ -29,14 +29,14 @@
   </button>
 
   <div
-    class={`min-h-stepper border-border bg-surface-raised font-display flex min-w-[6rem] items-center justify-center rounded-xl border px-4 text-4xl font-semibold tabular-nums ${relationClass}`}
+    class={`min-h-stepper border-border bg-surface-raised font-display flex min-w-[6rem] items-center justify-center rounded-xl border px-4 text-4xl font-semibold tabular-nums transition-colors duration-base ${relationClass}`}
   >
     {value}
   </div>
 
   <button
     type="button"
-    class="min-h-stepper min-w-stepper border-border bg-surface-raised text-text-primary hover:bg-surface inline-flex items-center justify-center rounded-xl border text-3xl font-semibold transition disabled:cursor-not-allowed disabled:opacity-45"
+    class="min-h-stepper min-w-stepper border-border bg-surface-raised text-text-primary hover:bg-surface inline-flex items-center justify-center rounded-xl border text-3xl font-semibold transition active:scale-95 transition-transform duration-fast disabled:cursor-not-allowed disabled:opacity-45"
     aria-label="Increase strokes"
     disabled={value >= max}
     on:click={() => update(value + 1)}
