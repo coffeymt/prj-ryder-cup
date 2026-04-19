@@ -16,6 +16,7 @@
 --   player_taylor_kim        -> 00000000-0000-4000-8000-420260000207 (id 420260000207)
 --   player_jamie_nguyen      -> 00000000-0000-4000-8000-420260000208 (id 420260000208)
 --   round_demo_1             -> 00000000-0000-4000-8000-420260000301 (id 420260000301)
+--   segment_demo_1_overall   -> 420260000601 (id 420260000601)
 --   match_1_singles          -> 00000000-0000-4000-8000-420260000401 (id 420260000401)
 --   match_2_fourball         -> 00000000-0000-4000-8000-420260000402 (id 420260000402)
 --   match_3_pinehurst        -> 00000000-0000-4000-8000-420260000403 (id 420260000403)
@@ -163,6 +164,37 @@ JOIN tees tee
  AND tee.name = 'Black'
 WHERE t.code = 'DEMO26';
 
+-- round_segments
+-- One OVERALL segment covering all 18 holes for round_demo_1.
+-- Each match overrides the format via its format_override column;
+-- this segment provides the required default (SINGLES).
+INSERT OR IGNORE INTO round_segments (
+  id,
+  round_id,
+  segment_type,
+  hole_start,
+  hole_end,
+  format,
+  points_available,
+  allowance_override,
+  created_at
+)
+SELECT
+  420260000601,
+  r.id,
+  'OVERALL',
+  1,
+  18,
+  'SINGLES',
+  1.0,
+  NULL,
+  '2026-04-18T12:17:00.000Z'
+FROM tournaments t
+JOIN rounds r
+  ON r.tournament_id = t.id
+ AND r.round_number = 1
+WHERE t.code = 'DEMO26';
+
 -- matches
 WITH match_seed (id, match_number, format_override) AS (
   VALUES
@@ -292,6 +324,7 @@ JOIN players p
 -- 00000000-0000-4000-8000-420260000207 (player_taylor_kim)
 -- 00000000-0000-4000-8000-420260000208 (player_jamie_nguyen)
 -- 00000000-0000-4000-8000-420260000301 (round_demo_1)
+-- 00000000-0000-4000-8000-420260000601 (segment_demo_1_overall)
 -- 00000000-0000-4000-8000-420260000401 (match_1_singles)
 -- 00000000-0000-4000-8000-420260000402 (match_2_fourball)
 -- 00000000-0000-4000-8000-420260000403 (match_3_pinehurst)

@@ -191,33 +191,33 @@
       <h2 class="text-text-secondary text-xs font-semibold tracking-[0.18em] uppercase sm:text-sm">
         Progress to Win
       </h2>
-      <div class="mt-3 grid gap-4 min-[1920px]:gap-6 lg:grid-cols-2">
-        <div class="space-y-2">
+      <div class="mt-4 grid gap-5 min-[1920px]:gap-8 lg:grid-cols-2">
+        <div class="space-y-3">
           <div class="flex items-center justify-between text-sm min-[1920px]:text-xl">
-            <span class="text-team-a font-bold">{teamA.name}</span>
-            <span class="text-text-primary font-semibold tabular-nums"
-              >{formatPoints(teamA.points)} / {formatPoints(pointsToWin)}</span
+            <span class="text-team-a font-bold drop-shadow-sm">{teamA.name}</span>
+            <span class="text-text-primary font-bold tabular-nums"
+              >{formatPoints(teamA.points)} <span class="text-text-muted font-normal">/ {formatPoints(pointsToWin)}</span></span
             >
           </div>
-          <div class="bg-surface-raised h-3.5 overflow-hidden rounded-full min-[1920px]:h-6 sm:h-4">
+          <div class="bg-surface-glass h-3.5 overflow-hidden rounded-full shadow-inner min-[1920px]:h-6 sm:h-4">
             <div
-              class="bg-team-a h-full rounded-full transition-all duration-500"
+              class="bg-team-a h-full rounded-full transition-all duration-slow ease-standard shadow-[0_0_10px_var(--color-team-a)]"
               style={`width: ${teamAProgress}%;`}
               aria-label={`${teamA.name} progress`}
             ></div>
           </div>
         </div>
 
-        <div class="space-y-2">
+        <div class="space-y-3">
           <div class="flex items-center justify-between text-sm min-[1920px]:text-xl">
-            <span class="text-team-b font-bold">{teamB.name}</span>
-            <span class="text-text-primary font-semibold tabular-nums"
-              >{formatPoints(teamB.points)} / {formatPoints(pointsToWin)}</span
+            <span class="text-team-b font-bold drop-shadow-sm">{teamB.name}</span>
+            <span class="text-text-primary font-bold tabular-nums"
+              >{formatPoints(teamB.points)} <span class="text-text-muted font-normal">/ {formatPoints(pointsToWin)}</span></span
             >
           </div>
-          <div class="bg-surface-raised h-3.5 overflow-hidden rounded-full min-[1920px]:h-6 sm:h-4">
+          <div class="bg-surface-glass h-3.5 overflow-hidden rounded-full shadow-inner min-[1920px]:h-6 sm:h-4">
             <div
-              class="bg-team-b h-full rounded-full transition-all duration-500"
+              class="bg-team-b h-full rounded-full transition-all duration-slow ease-standard shadow-[0_0_10px_var(--color-team-b)]"
               style={`width: ${teamBProgress}%;`}
               aria-label={`${teamB.name} progress`}
             ></div>
@@ -260,13 +260,13 @@
 
             {#if round.cards.length === 0}
               <p
-                class="border-border bg-surface-raised text-text-secondary rounded-xl border border-dashed px-3 py-5 text-sm min-[1920px]:px-5 min-[1920px]:py-8 min-[1920px]:text-xl sm:text-base"
+                class="border-border bg-surface-glass text-text-secondary rounded-xl border border-dashed px-3 py-5 text-sm min-[1920px]:px-5 min-[1920px]:py-8 min-[1920px]:text-xl sm:text-base text-center"
               >
                 Matchups for this round have not been published yet.
               </p>
             {:else}
               <div
-                class="grid gap-3 min-[1920px]:grid-cols-3 min-[1920px]:gap-7 md:gap-4 lg:gap-5 xl:grid-cols-2 2xl:gap-6"
+                class="grid gap-4 min-[1920px]:grid-cols-3 min-[1920px]:gap-8 md:grid-cols-2 md:gap-5 xl:grid-cols-3 2xl:gap-6"
               >
                 {#each round.cards as match (match.id)}
                   <MatchCard {match} />
@@ -280,17 +280,17 @@
   </div>
 
   <div
-    class="border-border bg-surface-glass fixed right-3 bottom-3 z-20 rounded-full border px-3 py-2 shadow-lg backdrop-blur-md min-[1920px]:right-8 min-[1920px]:bottom-8 min-[1920px]:px-6 min-[1920px]:py-4 sm:right-4 sm:bottom-4 sm:px-4"
+    class="border-border bg-surface-glass fixed right-3 bottom-3 z-20 rounded-full border px-4 py-2.5 shadow-lg backdrop-blur-md min-[1920px]:right-8 min-[1920px]:bottom-8 min-[1920px]:px-8 min-[1920px]:py-5 sm:right-4 sm:bottom-4 sm:px-5 sm:py-3 transition-colors duration-base"
   >
-    <div class="flex items-center gap-2 text-xs min-[1920px]:gap-3 min-[1920px]:text-xl sm:text-sm">
+    <div class="flex items-center gap-2.5 text-xs min-[1920px]:gap-4 min-[1920px]:text-xl sm:text-sm">
       <span
-        class={`h-2.5 w-2.5 rounded-full min-[1920px]:h-4 min-[1920px]:w-4 ${$connected ? 'bg-online' : 'bg-offline animate-pulse-soft'}`}
+        class={`h-2.5 w-2.5 rounded-full min-[1920px]:h-4 min-[1920px]:w-4 ${$connected ? 'bg-status-up shadow-[0_0_8px_var(--color-status-up)] animate-pulse-soft' : 'bg-status-closed shadow-[0_0_8px_var(--color-status-closed)] animate-pulse'}`}
       ></span>
-      <span class="text-text-primary font-medium"
-        >{$connected ? 'Live updates connected' : 'Reconnecting live feed'}</span
+      <span class="text-text-primary font-medium tracking-wide"
+        >{$connected ? 'Live updates connected' : 'Reconnecting live feed...'}</span
       >
     </div>
-    <p class="text-text-secondary mt-1 text-[11px] min-[1920px]:text-base sm:text-xs">
+    <p class="text-text-secondary mt-1 tracking-wider text-[11px] min-[1920px]:mt-2 min-[1920px]:text-base sm:text-xs text-center opacity-80">
       Last updated:
       {#if secondsSinceUpdate === null}
         unavailable

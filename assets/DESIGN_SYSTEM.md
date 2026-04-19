@@ -123,16 +123,31 @@ Cards use a shadow-based depth hierarchy. See [Shadow Hierarchy](#6-shadow-hiera
 - **Classes:** `flex items-center justify-between rounded-xl border border-border bg-surface p-1`
 - **Tactile feedback:** Buttons use `active:scale-95 transition-transform duration-fast`. The center display uses `transition-colors duration-base` for smooth color transitions when the value crosses par.
 
+### Navigation Pills
+
+Used in the player layout header for contextual section navigation. Shape uses `rounded-full` to distinguish from action buttons (`rounded-xl`).
+
+- **Active:** `bg-accent text-accent-text hover:bg-accent-hover hover:shadow-md rounded-full`
+- **Inactive:** `border border-border bg-surface-raised text-text-primary hover:bg-surface hover:shadow-md rounded-full`
+- **Accessibility:** Apply `aria-current="page"` to the active item.
+- **Conditional visibility:** The "My Matches" link renders only when the player is on a `/live` or `/matches` sub-path. The "Live Scores" link is always visible.
+
 ### Progress Bars
 
 - **Team Totals:** A continuous bar representing the points needed to win.
 - **Implementation:**
 
 ```html
-<div class="h-3 w-full overflow-hidden rounded-full bg-surface-raised">
-  <div class="h-full bg-team-a transition-all" style="width: 45%;"></div>
+<div class="h-3 w-full overflow-hidden rounded-full bg-surface-raised shadow-inner">
+  <div
+    class="bg-team-a h-full rounded-full transition-all duration-slow ease-standard shadow-[0_0_12px_var(--color-team-a)]"
+    style="width: 45%;"
+    aria-hidden="true"
+  ></div>
 </div>
 ```
+
+The fill bar uses `shadow-[0_0_12px_var(--color-team-a)]` to emit a team-colored glow — applied directly on the fill, not the track.
 
 ### Match State Display
 
@@ -207,12 +222,13 @@ Glass surfaces use a semi-transparent background with a backdrop blur to let und
 
 ### When to Use
 
-| Context                       | Apply glass? |
-| ----------------------------- | ------------ |
-| Sticky player layout header   | Yes          |
-| Sticky match status header    | Yes          |
-| Modal overlay backdrop        | No — use `animate-fade-in` on a solid backdrop |
-| General page sections         | No           |
+| Context                              | Apply glass? |
+| ------------------------------------ | ------------ |
+| Sticky player layout header          | Yes          |
+| Sticky match status header           | Yes          |
+| Broadcast ticker / hero score card   | Yes          |
+| Modal overlay backdrop               | No — use `animate-fade-in` on a solid backdrop |
+| General page sections                | No           |
 
 Glass is reserved for sticky/floating chrome that overlaps scrolling content. Do not apply it to static page sections.
 

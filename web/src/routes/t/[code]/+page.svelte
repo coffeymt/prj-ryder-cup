@@ -85,220 +85,227 @@
   <meta name="description" content="Team totals, today's rounds, and your live scoring matches." />
 </svelte:head>
 
-<div class="animate-fade-in space-y-5">
-  <section class="border-border bg-surface p-card-padding rounded-2xl border shadow-lg sm:p-5">
-    <div class="flex items-start justify-between gap-3">
-      <div>
-        <p class="text-text-muted text-xs font-semibold tracking-[0.2em] uppercase">Team Totals</p>
-        <h2 class="font-display text-text-primary mt-1 text-xl font-semibold tracking-tight">
-          Race to {formatPoints(pointsToWin)}
-        </h2>
+<div class="animate-fade-in space-y-6">
+  <!-- Team Totals Hero Section -->
+  <section class="bg-surface-raised border-border rounded-2xl border p-6 shadow-lg">
+    <div class="mb-6 text-center">
+      <p class="text-text-secondary mb-4 text-sm font-medium tracking-widest uppercase">
+        Race to {formatPoints(pointsToWin)}
+      </p>
+
+      <!-- Subtle Progress Bar -->
+      <div class="bg-surface h-2 overflow-hidden rounded-full mb-3" aria-hidden="true">
+        <div
+          class="h-full rounded-full transition-all duration-slow"
+          style={`background-color: var(--team-color); ${teamColorStyle(leadingTeam.color, '--color-team-a')} width: ${progressPercent}%`}
+        ></div>
       </div>
-      <span class={`rounded-full px-3 py-1 text-xs font-semibold ${leadingTeamClasses()}`}>
-        {#if teamsAreTied}
-          AS
-        {:else}
-          {leadingTeam.name || 'Leading team'} leads
-        {/if}
-      </span>
     </div>
 
-    <div class="mt-4 grid gap-3">
+    <div class="flex items-center justify-between">
+      <!-- Team A -->
       <div
-        class="min-h-touch border-border bg-surface-raised flex items-center justify-between rounded-xl border px-3 py-2"
+        class="flex min-w-0 flex-1 flex-col items-center"
         style={teamColorStyle(teamA.color, '--color-team-a')}
       >
-        <div class="flex min-w-0 items-center gap-2">
-          <span
-            class="border-border h-3 w-3 rounded-full border bg-[var(--team-color)]"
-            aria-hidden="true"
-          ></span>
-          <span class="text-text-primary truncate font-medium">{teamA.name || 'Team A'}</span>
-        </div>
-        <span class="text-text-primary text-lg font-semibold tabular-nums"
+        <div
+          class="mb-2 h-4 w-4 rounded-full bg-[var(--team-color)] shadow-sm"
+          aria-hidden="true"
+        ></div>
+        <h3
+          class="font-display text-text-primary w-full px-1 text-center text-base font-bold truncate sm:text-xl"
+        >
+          {teamA.name || 'Team A'}
+        </h3>
+        <span class="font-display text-text-primary mt-1 tabular-nums tracking-tight text-3xl font-bold"
           >{formatPoints(teamA.points)}</span
         >
       </div>
 
+      <!-- Divider -->
+      <div class="font-display text-text-muted px-2 text-lg font-medium sm:px-4">-</div>
+
+      <!-- Team B -->
       <div
-        class="min-h-touch border-border bg-surface-raised flex items-center justify-between rounded-xl border px-3 py-2"
+        class="flex min-w-0 flex-1 flex-col items-center"
         style={teamColorStyle(teamB.color, '--color-team-b')}
       >
-        <div class="flex min-w-0 items-center gap-2">
-          <span
-            class="border-border h-3 w-3 rounded-full border bg-[var(--team-color)]"
-            aria-hidden="true"
-          ></span>
-          <span class="text-text-primary truncate font-medium">{teamB.name || 'Team B'}</span>
-        </div>
-        <span class="text-text-primary text-lg font-semibold tabular-nums"
+        <div
+          class="mb-2 h-4 w-4 rounded-full bg-[var(--team-color)] shadow-sm"
+          aria-hidden="true"
+        ></div>
+        <h3
+          class="font-display text-text-primary w-full px-1 text-center text-base font-bold truncate sm:text-xl"
+        >
+          {teamB.name || 'Team B'}
+        </h3>
+        <span class="font-display text-text-primary mt-1 tabular-nums tracking-tight text-3xl font-bold"
           >{formatPoints(teamB.points)}</span
         >
       </div>
     </div>
 
-    <div class="mt-4 space-y-2">
-      <div class="bg-surface-raised h-3 overflow-hidden rounded-full" aria-hidden="true">
-        <div
-          class="h-full rounded-full bg-[var(--team-color)] transition-all duration-slow"
-          style={`${teamColorStyle(leadingTeam.color, '--color-team-a')} width: ${progressPercent}%`}
-        ></div>
-      </div>
-      <p class="text-text-secondary text-sm">
-        {leadingTeam.name || 'Leading team'} has {formatPoints(leadingPoints)} of {formatPoints(
-          pointsToWin
-        )} points needed to win.
-      </p>
+    <div class="mt-8 flex justify-center">
+      <span class={`rounded-full px-4 py-1.5 text-xs font-semibold shadow-sm ${leadingTeamClasses()}`}>
+        {#if teamsAreTied}
+          All Square
+        {:else}
+          {leadingTeam.name || 'Leading team'} leads
+        {/if}
+      </span>
     </div>
   </section>
 
-  <section
-    class="border-border bg-surface p-card-padding space-y-3 rounded-2xl border shadow-md sm:p-5"
-  >
-    <div class="flex items-center justify-between gap-3">
-      <h2 class="font-display text-text-primary text-lg font-semibold">Today's Rounds</h2>
+  <!-- Today's Rounds Section -->
+  <section class="space-y-4">
+    <div class="flex items-center justify-between">
+      <h2 class="text-text-muted text-xs font-bold tracking-widest uppercase">Today's Rounds</h2>
       {#if data.player}
-        <span class="text-text-secondary text-sm">{data.player.name}</span>
+        <span class="text-text-secondary text-xs font-semibold">{data.player.name}</span>
       {/if}
     </div>
 
     {#if data.todayRounds.length === 0}
       <p
-        class="border-border text-text-secondary rounded-xl border border-dashed px-4 py-5 text-sm"
+        class="border-border text-text-secondary rounded-2xl border border-dashed p-6 text-center text-sm"
       >
         No rounds are scheduled yet.
       </p>
     {:else}
-      <div class="space-y-4">
+      <div class="space-y-6">
         {#each data.todayRounds as round (round.id)}
-          <article class="border-border bg-surface-raised space-y-3 rounded-xl border p-3">
-            <div class="flex flex-wrap items-center justify-between gap-2">
+          <article class="bg-surface border-border overflow-hidden rounded-2xl border shadow-sm">
+            <div
+              class="border-border bg-surface-raised flex flex-wrap items-center justify-between gap-2 border-b p-4"
+            >
               <div>
-                <h3 class="text-text-primary text-base font-semibold">{round.name}</h3>
+                <h3 class="font-display text-text-primary text-base font-semibold">{round.name}</h3>
                 <p class="text-text-secondary text-sm">
                   {round.formatSummary} · {formatSchedule(round.scheduledAt)}
                 </p>
               </div>
               <span
-                class={`rounded-full px-3 py-1 text-xs font-semibold ${roundStatusClasses(round.status)}`}
+                class={`rounded-full px-3 py-1 text-xs font-semibold shadow-sm ${roundStatusClasses(round.status)}`}
               >
                 {round.status}
               </span>
             </div>
 
-            {#if matchesForRound(round.id).length === 0}
-              <p
-                class="border-border text-text-secondary rounded-lg border border-dashed px-3 py-4 text-sm"
-              >
-                {#if data.player}
-                  You are not assigned to a match in this round.
-                {:else}
-                  Sign in as a player to enter scores.
-                {/if}
-              </p>
-            {:else}
-              <div class="space-y-3">
-                {#each matchesForRound(round.id) as match (match.id)}
-                  <article
-                    class="min-h-touch border-border bg-surface space-y-3 rounded-xl border p-3 shadow-sm transition-all duration-base hover:-translate-y-0.5 hover:shadow-md"
-                  >
-                    <div class="flex items-start justify-between gap-3">
-                      <div>
-                        <p class="text-text-primary text-sm font-semibold">
-                          Match {match.matchNumber} · {match.format}
-                        </p>
-                        <p
-                          class="text-text-secondary text-xs font-semibold tracking-wide uppercase"
+            <div class="bg-surface p-4">
+              {#if matchesForRound(round.id).length === 0}
+                <p
+                  class="border-border text-text-secondary rounded-xl border border-dashed px-3 py-6 text-center text-sm"
+                >
+                  {#if data.player}
+                    You are not assigned to a match in this round.
+                  {:else}
+                    Sign in as a player to enter scores.
+                  {/if}
+                </p>
+              {:else}
+                <div class="space-y-4">
+                  {#each matchesForRound(round.id) as match (match.id)}
+                    <article
+                      class="bg-surface-raised border-border space-y-4 rounded-xl border p-4 shadow-sm"
+                    >
+                      <div class="flex items-start justify-between gap-3">
+                        <div>
+                          <p class="font-display text-text-primary text-sm font-semibold">
+                            Match {match.matchNumber} <span class="text-text-muted mx-1 font-normal"
+                              >|</span
+                            > {match.format}
+                          </p>
+                        </div>
+                        <span
+                          class={`rounded-full px-2.5 py-1 text-xs font-semibold shadow-sm ${matchStateClasses(match.statusLabel)}`}
                         >
                           {match.statusLabel}
-                        </p>
+                        </span>
                       </div>
-                      <span
-                        class={`rounded-full px-2.5 py-1 text-xs font-semibold ${matchStateClasses(match.statusLabel)}`}
-                      >
-                        {match.statusLabel}
-                      </span>
-                    </div>
 
-                    <div class="space-y-2 text-sm">
-                      {#each match.sides as side (side.sideLabel)}
-                        <p
-                          class="min-h-touch border-border bg-surface-raised flex items-center gap-2 rounded-lg border px-2.5"
-                          style={teamColorStyle(
-                            side.teamColor,
-                            side.sideLabel === 'A' ? '--color-team-a' : '--color-team-b'
-                          )}
+                      <div class="space-y-2">
+                        {#each match.sides as side (side.sideLabel)}
+                          <div
+                            class="flex items-center gap-3 rounded-lg px-2 py-1.5"
+                            style={teamColorStyle(
+                              side.teamColor,
+                              side.sideLabel === 'A' ? '--color-team-a' : '--color-team-b'
+                            )}
+                          >
+                            <span
+                              class="border-border h-3 w-3 rounded-full border bg-[var(--team-color)] shadow-sm"
+                              aria-hidden="true"
+                            ></span>
+                            <div class="min-w-0">
+                              <p class="text-text-primary truncate text-sm font-semibold leading-tight">
+                                {side.teamName || `Side ${side.sideLabel}`}
+                              </p>
+                              <p class="text-text-secondary mt-0.5 truncate text-xs">
+                                {side.playerNames.join(' / ') || 'Lineup TBD'}
+                              </p>
+                            </div>
+                          </div>
+                        {/each}
+                      </div>
+
+                      <div class="pt-2">
+                        <a
+                          href={`/t/${encodeURIComponent(data.tournament.code)}/matches/${encodeURIComponent(match.id)}`}
+                          class="bg-accent text-accent-text hover:bg-accent-hover focus-visible:outline-accent min-h-touch inline-flex w-full items-center justify-center rounded-xl px-4 text-sm font-semibold shadow-md transition-all duration-base hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                         >
-                          <span
-                            class="border-border h-2.5 w-2.5 rounded-full border bg-[var(--team-color)]"
-                            aria-hidden="true"
-                          ></span>
-                          <span class="text-text-primary font-semibold"
-                            >{side.teamName || `Side ${side.sideLabel}`}</span
-                          >
-                          <span class="text-text-secondary truncate"
-                            >{side.playerNames.join(' / ') || 'Lineup TBD'}</span
-                          >
-                        </p>
-                      {/each}
-                    </div>
-
-                    <a
-                      href={`/t/${encodeURIComponent(data.tournament.code)}/matches/${encodeURIComponent(match.id)}`}
-                      class="min-h-touch bg-accent text-accent-text hover:bg-accent-hover focus-visible:outline-accent inline-flex w-full items-center justify-center rounded-xl px-4 text-sm font-semibold shadow-sm transition-all duration-base hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                    >
-                      Enter Scores
-                    </a>
-                  </article>
-                {/each}
-              </div>
-            {/if}
+                          Enter Scores
+                        </a>
+                      </div>
+                    </article>
+                  {/each}
+                </div>
+              {/if}
+            </div>
           </article>
         {/each}
       </div>
     {/if}
   </section>
 
-  <section class="border-border bg-surface p-card-padding rounded-2xl border shadow-sm sm:p-5">
-    <details open>
-      <summary class="min-h-touch flex cursor-pointer list-none items-center justify-between gap-3">
-        <h2 class="font-display text-text-primary text-lg font-semibold">All Rounds</h2>
-        <span
-          class="border-border bg-surface-raised text-text-secondary rounded-full border px-3 py-1 text-xs font-semibold"
-        >
-          {data.allRounds.length}
-        </span>
-      </summary>
+  <!-- All Rounds Section -->
+  <section class="space-y-4">
+    <div class="flex items-center justify-between">
+      <h2 class="text-text-muted text-xs font-bold tracking-widest uppercase">All Rounds</h2>
+      <span
+        class="border-border bg-surface-raised text-text-secondary rounded-full border px-2.5 py-0.5 text-xs font-semibold"
+      >
+        {data.allRounds.length}
+      </span>
+    </div>
 
-      <div class="mt-3 space-y-2">
-        {#if data.allRounds.length === 0}
-          <p
-            class="border-border text-text-secondary rounded-lg border border-dashed px-3 py-4 text-sm"
+    <div class="space-y-3">
+      {#if data.allRounds.length === 0}
+        <p
+          class="border-border text-text-secondary rounded-2xl border border-dashed px-4 py-6 text-center text-sm"
+        >
+          No rounds have been created yet.
+        </p>
+      {:else}
+        {#each data.allRounds as round (round.id)}
+          <article
+            class="min-h-touch bg-surface-raised border-border hover:bg-surface flex items-center justify-between gap-3 rounded-xl border px-4 py-3 shadow-sm transition-all"
           >
-            No rounds have been created yet.
-          </p>
-        {:else}
-          {#each data.allRounds as round (round.id)}
-            <article
-              class="min-h-touch border-border bg-surface-raised flex items-center justify-between gap-3 rounded-xl border px-3 py-2.5"
+            <div class="min-w-0 flex-1">
+              <p class="font-display text-text-primary truncate text-sm font-semibold">
+                Round {round.roundNumber}: {round.name}
+              </p>
+              <p class="text-text-secondary mt-0.5 truncate text-xs">
+                {round.formatSummary} · {formatSchedule(round.scheduledAt)}
+              </p>
+            </div>
+            <span
+              class={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold shadow-sm ${roundStatusClasses(round.status)}`}
             >
-              <div class="min-w-0">
-                <p class="text-text-primary truncate text-sm font-semibold">
-                  Round {round.roundNumber}: {round.name}
-                </p>
-                <p class="text-text-secondary truncate text-xs">
-                  {round.formatSummary} · {formatSchedule(round.scheduledAt)}
-                </p>
-              </div>
-              <span
-                class={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold ${roundStatusClasses(round.status)}`}
-              >
-                {round.status}
-              </span>
-            </article>
-          {/each}
-        {/if}
-      </div>
-    </details>
+              {round.status}
+            </span>
+          </article>
+        {/each}
+      {/if}
+    </div>
   </section>
 </div>
