@@ -37,3 +37,6 @@ Thumbs.db
 tail.log
 tail-err.log
 wrangler-tail.txt
+
+plan/
+support/
