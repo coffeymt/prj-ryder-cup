@@ -18,17 +18,17 @@
     >
       <div class="space-y-5 text-center">
         <div class="mx-auto mb-2 flex w-fit items-center gap-2">
-          <span class="h-1.5 w-1.5 rounded-full bg-accent"></span>
-          <span class="h-px w-10 bg-accent/60"></span>
+          <span class="bg-accent h-1.5 w-1.5 rounded-full"></span>
+          <span class="bg-accent/60 h-px w-10"></span>
         </div>
-      <p class="text-text-muted text-xs font-semibold tracking-[0.32em] uppercase">Kiawah Golf</p>
-      <h1 class="font-display text-text-primary text-5xl font-bold tracking-tight">
-        Kiawah Golf
-      </h1>
-      <span class="mx-auto block h-1 w-20 rounded-full bg-accent/70"></span>
-      <p class="text-text-secondary pt-1 text-base leading-relaxed">
-        Live tournament scoring for your golf trip.
-      </p>
+        <p class="text-text-muted text-xs font-semibold tracking-[0.32em] uppercase">Kiawah Golf</p>
+        <h1 class="font-display text-text-primary text-5xl font-bold tracking-tight">
+          Kiawah Golf
+        </h1>
+        <span class="bg-accent/70 mx-auto block h-1 w-20 rounded-full"></span>
+        <p class="text-text-secondary pt-1 text-base leading-relaxed">
+          Live tournament scoring for your golf trip.
+        </p>
       </div>
 
       <div class="space-y-4">
@@ -46,6 +46,12 @@
           >
             Go to Manager Portal
           </a>
+          <a
+            href="/join"
+            class="min-h-touch border-border text-text-secondary hover:text-text-primary hover:bg-surface-alt focus-visible:outline-accent flex w-full items-center justify-center rounded-xl border px-6 text-base font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+          >
+            Enter Event Code
+          </a>
         {:else}
           <a
             href="/join"
@@ -55,12 +61,14 @@
           </a>
         {/if}
 
-        <a
-          href="/manage/login"
-          class="min-h-touch text-text-secondary hover:text-text-primary focus-visible:outline-accent inline-flex w-full items-center justify-center text-sm font-medium underline underline-offset-4 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-        >
-          Commissioner Login
-        </a>
+        {#if !data.isCommissioner}
+          <a
+            href="/manage/login"
+            class="min-h-touch text-text-secondary hover:text-text-primary focus-visible:outline-accent inline-flex w-full items-center justify-center text-sm font-medium underline underline-offset-4 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+          >
+            Commissioner Login
+          </a>
+        {/if}
       </div>
     </section>
   </div>

@@ -92,14 +92,14 @@
   <slot />
 {:else}
   <div class="bg-bg text-text-primary min-h-dvh">
-    <header class="border-border bg-surface-glass backdrop-blur-md border-b">
+    <header class="border-border bg-surface-glass border-b backdrop-blur-md">
       <div
         class="mx-auto flex w-full max-w-7xl items-center justify-between gap-3 px-3 py-3 sm:px-4"
       >
         <div class="flex items-center gap-2">
           <button
             type="button"
-            class="min-h-touch min-w-touch border-border text-text-primary hover:bg-surface-raised inline-flex items-center justify-center rounded-lg border bg-transparent transition-all duration-base md:hidden"
+            class="min-h-touch min-w-touch border-border text-text-primary hover:bg-surface-raised duration-base inline-flex items-center justify-center rounded-lg border bg-transparent transition-all md:hidden"
             aria-label={mobileNavOpen ? 'Close navigation' : 'Open navigation'}
             aria-expanded={mobileNavOpen}
             aria-controls="manage-side-nav"
@@ -180,7 +180,9 @@
       <aside
         id="manage-side-nav"
         class={`border-border bg-surface absolute inset-y-0 left-0 z-30 w-72 border-r p-4 transition-transform md:static md:w-64 md:translate-x-0 ${
-          mobileNavOpen ? 'translate-x-0 shadow-md md:shadow-none' : '-translate-x-full md:shadow-none'
+          mobileNavOpen
+            ? 'translate-x-0 shadow-md md:shadow-none'
+            : '-translate-x-full md:shadow-none'
         }`}
       >
         <div class="text-text-secondary mb-3 text-xs font-semibold tracking-wide uppercase">

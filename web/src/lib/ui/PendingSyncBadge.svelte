@@ -10,7 +10,7 @@
     aria-label={`${pendingCount} score submissions pending sync`}
   >
     <span
-      class="bg-status-down inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[0.65rem] leading-none font-bold text-white animate-pulse-soft"
+      class="bg-status-down animate-pulse-soft inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[0.65rem] leading-none font-bold text-white"
       aria-hidden="true"
     >
       {pendingCount}

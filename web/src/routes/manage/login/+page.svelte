@@ -38,7 +38,7 @@
 </script>
 
 <section
-  class="text-text-primary bg-gradient-to-b from-[var(--color-bg-gradient-start)] to-[var(--color-bg-gradient-end)] min-h-dvh px-4 py-10"
+  class="text-text-primary min-h-dvh bg-gradient-to-b from-[var(--color-bg-gradient-start)] to-[var(--color-bg-gradient-end)] px-4 py-10"
 >
   <div class="mx-auto flex min-h-[calc(100dvh-5rem)] w-full max-w-xl items-center justify-center">
     <div

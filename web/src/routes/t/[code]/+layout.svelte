@@ -53,7 +53,7 @@
   <meta name="description" content="Live player dashboard and scoring for your tournament." />
 </svelte:head>
 
-<div class="min-h-screen bg-bg" style={wrapperStyle(teamAColor, teamBColor)}>
+<div class="bg-bg min-h-screen" style={wrapperStyle(teamAColor, teamBColor)}>
   <header
     class={`border-border bg-surface-glass sticky top-0 z-30 border-b backdrop-blur-md ${
       data.team?.color ? 'border-l-team-a border-l-4' : ''
@@ -94,10 +94,10 @@
           {#if isOnLive || isOnMatch}
             <a
               href={basePath}
-              class={`min-h-touch inline-flex items-center justify-center rounded-full px-4 text-sm font-semibold shadow-sm transition-all duration-base focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+              class={`min-h-touch duration-base focus-visible:outline-accent inline-flex items-center justify-center rounded-full px-4 text-sm font-semibold shadow-sm transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
                 isOnDashboard
                   ? 'bg-accent text-accent-text hover:bg-accent-hover hover:shadow-md'
-                  : 'border border-border bg-surface-raised text-text-primary hover:bg-surface hover:shadow-md'
+                  : 'border-border bg-surface-raised text-text-primary hover:bg-surface border hover:shadow-md'
               }`}
               aria-current={isOnDashboard ? 'page' : undefined}
             >
@@ -107,10 +107,10 @@
 
           <a
             href={`${basePath}/live`}
-            class={`min-h-touch inline-flex items-center justify-center rounded-full px-4 text-sm font-semibold shadow-sm transition-all duration-base focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+            class={`min-h-touch duration-base focus-visible:outline-accent inline-flex items-center justify-center rounded-full px-4 text-sm font-semibold shadow-sm transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
               isOnLive
                 ? 'bg-accent text-accent-text hover:bg-accent-hover hover:shadow-md'
-                : 'border border-border bg-surface-raised text-text-primary hover:bg-surface hover:shadow-md'
+                : 'border-border bg-surface-raised text-text-primary hover:bg-surface border hover:shadow-md'
             }`}
             aria-current={isOnLive ? 'page' : undefined}
           >
@@ -121,7 +121,7 @@
     </div>
   </header>
 
-  <main class="mx-auto w-full max-w-5xl animate-fade-in px-4 py-5 sm:px-6 sm:py-6">
+  <main class="animate-fade-in mx-auto w-full max-w-5xl px-4 py-5 sm:px-6 sm:py-6">
     <slot />
   </main>
 </div>

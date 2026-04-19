@@ -27,13 +27,14 @@
   class={`min-h-touch inline-flex items-center gap-1.5 rounded-full font-semibold ${
     isOnline
       ? 'bg-accent-soft text-accent px-2.5 py-0.5 text-[0.6875rem]'
-      : 'bg-offline text-white animate-pulse-soft px-3 py-1 text-xs'
+      : 'bg-offline animate-pulse-soft px-3 py-1 text-xs text-white'
   }`}
   role="status"
   aria-live="polite"
   aria-atomic="true"
 >
-  <span class={`h-2 w-2 rounded-full ${isOnline ? 'bg-accent' : 'bg-white/90'}`} aria-hidden="true"></span>
+  <span class={`h-2 w-2 rounded-full ${isOnline ? 'bg-accent' : 'bg-white/90'}`} aria-hidden="true"
+  ></span>
 
   {#if isOnline}
     <span class="hidden sm:inline">Online</span>

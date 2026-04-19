@@ -94,9 +94,9 @@
       </p>
 
       <!-- Subtle Progress Bar -->
-      <div class="bg-surface h-2 overflow-hidden rounded-full mb-3" aria-hidden="true">
+      <div class="bg-surface mb-3 h-2 overflow-hidden rounded-full" aria-hidden="true">
         <div
-          class="h-full rounded-full transition-all duration-slow"
+          class="duration-slow h-full rounded-full transition-all"
           style={`background-color: var(--team-color); ${teamColorStyle(leadingTeam.color, '--color-team-a')} width: ${progressPercent}%`}
         ></div>
       </div>
@@ -113,11 +113,12 @@
           aria-hidden="true"
         ></div>
         <h3
-          class="font-display text-text-primary w-full px-1 text-center text-base font-bold truncate sm:text-xl"
+          class="font-display text-text-primary w-full truncate px-1 text-center text-base font-bold sm:text-xl"
         >
           {teamA.name || 'Team A'}
         </h3>
-        <span class="font-display text-text-primary mt-1 tabular-nums tracking-tight text-3xl font-bold"
+        <span
+          class="font-display text-text-primary mt-1 text-3xl font-bold tracking-tight tabular-nums"
           >{formatPoints(teamA.points)}</span
         >
       </div>
@@ -135,18 +136,21 @@
           aria-hidden="true"
         ></div>
         <h3
-          class="font-display text-text-primary w-full px-1 text-center text-base font-bold truncate sm:text-xl"
+          class="font-display text-text-primary w-full truncate px-1 text-center text-base font-bold sm:text-xl"
         >
           {teamB.name || 'Team B'}
         </h3>
-        <span class="font-display text-text-primary mt-1 tabular-nums tracking-tight text-3xl font-bold"
+        <span
+          class="font-display text-text-primary mt-1 text-3xl font-bold tracking-tight tabular-nums"
           >{formatPoints(teamB.points)}</span
         >
       </div>
     </div>
 
     <div class="mt-8 flex justify-center">
-      <span class={`rounded-full px-4 py-1.5 text-xs font-semibold shadow-sm ${leadingTeamClasses()}`}>
+      <span
+        class={`rounded-full px-4 py-1.5 text-xs font-semibold shadow-sm ${leadingTeamClasses()}`}
+      >
         {#if teamsAreTied}
           All Square
         {:else}
@@ -211,9 +215,9 @@
                       <div class="flex items-start justify-between gap-3">
                         <div>
                           <p class="font-display text-text-primary text-sm font-semibold">
-                            Match {match.matchNumber} <span class="text-text-muted mx-1 font-normal"
-                              >|</span
-                            > {match.format}
+                            Match {match.matchNumber}
+                            <span class="text-text-muted mx-1 font-normal">|</span>
+                            {match.format}
                           </p>
                         </div>
                         <span
@@ -237,7 +241,9 @@
                               aria-hidden="true"
                             ></span>
                             <div class="min-w-0">
-                              <p class="text-text-primary truncate text-sm font-semibold leading-tight">
+                              <p
+                                class="text-text-primary truncate text-sm leading-tight font-semibold"
+                              >
                                 {side.teamName || `Side ${side.sideLabel}`}
                               </p>
                               <p class="text-text-secondary mt-0.5 truncate text-xs">
@@ -251,7 +257,7 @@
                       <div class="pt-2">
                         <a
                           href={`/t/${encodeURIComponent(data.tournament.code)}/matches/${encodeURIComponent(match.id)}`}
-                          class="bg-accent text-accent-text hover:bg-accent-hover focus-visible:outline-accent min-h-touch inline-flex w-full items-center justify-center rounded-xl px-4 text-sm font-semibold shadow-md transition-all duration-base hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                          class="bg-accent text-accent-text hover:bg-accent-hover focus-visible:outline-accent min-h-touch duration-base inline-flex w-full items-center justify-center rounded-xl px-4 text-sm font-semibold shadow-md transition-all hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                         >
                           Enter Scores
                         </a>

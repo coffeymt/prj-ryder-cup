@@ -31,7 +31,7 @@
 
 {#if show}
   <div
-    class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 animate-fade-in"
+    class="animate-fade-in fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
     role="dialog"
     aria-modal="true"
     aria-labelledby="format-change-heading"
@@ -39,7 +39,7 @@
     on:keydown={handleKeydown}
   >
     <div
-      class="border-border bg-surface-raised text-text-primary w-full max-w-md rounded-2xl border p-6 shadow-xl animate-slide-up-fade"
+      class="border-border bg-surface-raised text-text-primary animate-slide-up-fade w-full max-w-md rounded-2xl border p-6 shadow-xl"
     >
       <p class="text-text-muted text-xs font-semibold tracking-[0.2em] uppercase">
         {segment} starts now

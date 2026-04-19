@@ -17,10 +17,10 @@
 </script>
 
 <section
-  class="border-border bg-surface-glass p-card-padding space-y-4 rounded-2xl border shadow-xl min-[1920px]:space-y-7 min-[1920px]:rounded-3xl min-[1920px]:p-10 sm:space-y-5 sm:p-6 2xl:p-8 backdrop-blur-md"
+  class="border-border bg-surface-glass p-card-padding space-y-4 rounded-2xl border shadow-xl backdrop-blur-md min-[1920px]:space-y-7 min-[1920px]:rounded-3xl min-[1920px]:p-10 sm:space-y-5 sm:p-6 2xl:p-8"
 >
   <p
-    class="text-text-muted text-xs font-bold tracking-[0.25em] uppercase sm:text-sm lg:text-base min-[1920px]:text-xl"
+    class="text-text-muted text-xs font-bold tracking-[0.25em] uppercase min-[1920px]:text-xl sm:text-sm lg:text-base"
   >
     Live Team Totals
   </p>
@@ -42,7 +42,7 @@
     </p>
   </div>
   <div
-    class="mt-3 h-0.5 rounded-full bg-gradient-to-r from-team-a via-transparent to-team-b opacity-30"
+    class="from-team-a to-team-b mt-3 h-0.5 rounded-full bg-gradient-to-r via-transparent opacity-30"
     aria-hidden="true"
   ></div>
 
@@ -52,12 +52,12 @@
         class="text-text-secondary flex items-center justify-between text-sm min-[1920px]:text-xl sm:text-base"
       >
         <span class="text-team-a font-semibold drop-shadow-sm">{teamA.name || 'Team A'}</span>
-        <span class="tabular-nums font-bold">{formatPoints(teamA.points)} pts</span>
+        <span class="font-bold tabular-nums">{formatPoints(teamA.points)} pts</span>
       </div>
-      <div class="bg-surface-raised h-3 overflow-hidden rounded-full min-[1920px]:h-5 shadow-inner">
+      <div class="bg-surface-raised h-3 overflow-hidden rounded-full shadow-inner min-[1920px]:h-5">
         <div
           style={`width: ${toPercent(teamA.points)}%`}
-          class="bg-team-a h-full rounded-full transition-all duration-slow ease-standard shadow-[0_0_12px_var(--color-team-a)]"
+          class="bg-team-a duration-slow ease-standard h-full rounded-full shadow-[0_0_12px_var(--color-team-a)] transition-all"
           aria-hidden="true"
         ></div>
       </div>
@@ -68,12 +68,12 @@
         class="text-text-secondary flex items-center justify-between text-sm min-[1920px]:text-xl sm:text-base"
       >
         <span class="text-team-b font-semibold drop-shadow-sm">{teamB.name || 'Team B'}</span>
-        <span class="tabular-nums font-bold">{formatPoints(teamB.points)} pts</span>
+        <span class="font-bold tabular-nums">{formatPoints(teamB.points)} pts</span>
       </div>
-      <div class="bg-surface-raised h-3 overflow-hidden rounded-full min-[1920px]:h-5 shadow-inner">
+      <div class="bg-surface-raised h-3 overflow-hidden rounded-full shadow-inner min-[1920px]:h-5">
         <div
           style={`width: ${toPercent(teamB.points)}%`}
-          class="bg-team-b h-full rounded-full transition-all duration-slow ease-standard shadow-[0_0_12px_var(--color-team-b)]"
+          class="bg-team-b duration-slow ease-standard h-full rounded-full shadow-[0_0_12px_var(--color-team-b)] transition-all"
           aria-hidden="true"
         ></div>
       </div>

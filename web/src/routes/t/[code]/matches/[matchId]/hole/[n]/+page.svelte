@@ -135,7 +135,7 @@
   <section class="space-y-3">
     {#each rows as row (row.id)}
       <article
-        class={`border-border bg-surface p-card-padding space-y-3 rounded-2xl border border-l-4 shadow-md transition-all duration-base ${
+        class={`border-border bg-surface p-card-padding duration-base space-y-3 rounded-2xl border border-l-4 shadow-md transition-all ${
           row.player.teamColor === data.match.teamBColor ? 'border-l-team-b' : 'border-l-team-a'
         }`}
       >
@@ -178,7 +178,7 @@
         <div class="grid grid-cols-2 gap-2">
           <button
             type="button"
-            class={`min-h-touch rounded-lg border px-3 text-sm font-semibold transition-all duration-fast active:scale-95 ${
+            class={`min-h-touch duration-fast rounded-lg border px-3 text-sm font-semibold transition-all active:scale-95 ${
               row.conceded
                 ? 'border-status-down bg-surface-raised text-status-down'
                 : 'border-border bg-surface-raised text-text-primary hover:bg-surface'
@@ -190,7 +190,7 @@
           </button>
           <button
             type="button"
-            class={`min-h-touch rounded-lg border px-3 text-sm font-semibold transition-all duration-fast active:scale-95 ${
+            class={`min-h-touch duration-fast rounded-lg border px-3 text-sm font-semibold transition-all active:scale-95 ${
               row.pickedUp
                 ? 'border-status-halved bg-surface-raised text-status-halved'
                 : 'border-border bg-surface-raised text-text-primary hover:bg-surface'
@@ -208,13 +208,13 @@
   <div class="grid grid-cols-2 gap-2">
     <a
       href={backHref}
-      class="min-h-touch border-border text-text-primary hover:bg-surface-raised inline-flex items-center justify-center rounded-xl border bg-transparent px-4 text-sm font-semibold transition-all duration-base"
+      class="min-h-touch border-border text-text-primary hover:bg-surface-raised duration-base inline-flex items-center justify-center rounded-xl border bg-transparent px-4 text-sm font-semibold transition-all"
     >
       &larr; Back
     </a>
     <button
       type="button"
-      class="min-h-touch bg-accent text-accent-text hover:bg-accent-hover inline-flex items-center justify-center rounded-xl px-4 text-base font-semibold shadow-md transition-all duration-base hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60"
+      class="min-h-touch bg-accent text-accent-text hover:bg-accent-hover duration-base inline-flex items-center justify-center rounded-xl px-4 text-base font-semibold shadow-md transition-all hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60"
       disabled={isSaving}
       on:click={saveAndNext}
     >
@@ -225,7 +225,7 @@
 
 {#if errorMessage}
   <div
-    class="border-status-down bg-surface-raised text-status-down fixed inset-x-3 bottom-3 z-40 animate-slide-up-fade rounded-xl border px-4 py-3 text-sm font-medium shadow-xl"
+    class="border-status-down bg-surface-raised text-status-down animate-slide-up-fade fixed inset-x-3 bottom-3 z-40 rounded-xl border px-4 py-3 text-sm font-medium shadow-xl"
     role="alert"
   >
     {errorMessage}

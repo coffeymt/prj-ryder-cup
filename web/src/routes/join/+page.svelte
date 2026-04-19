@@ -30,12 +30,12 @@
       class="border-border bg-surface p-card-padding animate-slide-up-fade space-y-8 rounded-3xl border shadow-lg"
     >
       <div class="space-y-2 text-center">
-      <h1 class="font-display text-text-primary text-3xl font-semibold tracking-tight">
-        Enter Event Code
-      </h1>
-      <p class="text-text-secondary text-sm">
-        Type your 6-character tournament code to see the roster.
-      </p>
+        <h1 class="font-display text-text-primary text-3xl font-semibold tracking-tight">
+          Enter Event Code
+        </h1>
+        <p class="text-text-secondary text-sm">
+          Type your 6-character tournament code to see the roster.
+        </p>
       </div>
 
       <form method="POST" class="space-y-5">

@@ -17,8 +17,11 @@ function getDatabaseBinding(platform: App.Platform | undefined): D1Database {
 }
 
 export const load: PageServerLoad = async (event) => {
-  if (event.locals.role === 'commissioner') {
+  const isCommissioner = event.locals.role === 'commissioner';
+
+  if (isCommissioner) {
     return {
+      isCommissioner,
       primaryAction: {
         type: 'manage',
       } satisfies LandingPrimaryAction,
@@ -27,6 +30,7 @@ export const load: PageServerLoad = async (event) => {
 
   if (event.locals.role !== 'player' || !event.locals.tournamentId) {
     return {
+      isCommissioner,
       primaryAction: {
         type: 'join',
       } satisfies LandingPrimaryAction,
@@ -38,6 +42,7 @@ export const load: PageServerLoad = async (event) => {
 
   if (!tournament) {
     return {
+      isCommissioner,
       primaryAction: {
         type: 'join',
       } satisfies LandingPrimaryAction,
@@ -45,6 +50,7 @@ export const load: PageServerLoad = async (event) => {
   }
 
   return {
+    isCommissioner,
     primaryAction: {
       type: 'continue',
       tournamentCode: tournament.code,

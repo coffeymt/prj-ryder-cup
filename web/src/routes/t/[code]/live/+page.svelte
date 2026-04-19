@@ -181,7 +181,7 @@
   ></div>
 
   <div
-    class="relative z-10 mx-auto w-full max-w-[120rem] space-y-4 animate-fade-in min-[1920px]:space-y-9 sm:space-y-5 2xl:space-y-7"
+    class="animate-fade-in relative z-10 mx-auto w-full max-w-[120rem] space-y-4 min-[1920px]:space-y-9 sm:space-y-5 2xl:space-y-7"
   >
     <TickerHeader {pointsToWin} {teamA} {teamB} />
 
@@ -196,12 +196,15 @@
           <div class="flex items-center justify-between text-sm min-[1920px]:text-xl">
             <span class="text-team-a font-bold drop-shadow-sm">{teamA.name}</span>
             <span class="text-text-primary font-bold tabular-nums"
-              >{formatPoints(teamA.points)} <span class="text-text-muted font-normal">/ {formatPoints(pointsToWin)}</span></span
+              >{formatPoints(teamA.points)}
+              <span class="text-text-muted font-normal">/ {formatPoints(pointsToWin)}</span></span
             >
           </div>
-          <div class="bg-surface-glass h-3.5 overflow-hidden rounded-full shadow-inner min-[1920px]:h-6 sm:h-4">
+          <div
+            class="bg-surface-glass h-3.5 overflow-hidden rounded-full shadow-inner min-[1920px]:h-6 sm:h-4"
+          >
             <div
-              class="bg-team-a h-full rounded-full transition-all duration-slow ease-standard shadow-[0_0_10px_var(--color-team-a)]"
+              class="bg-team-a duration-slow ease-standard h-full rounded-full shadow-[0_0_10px_var(--color-team-a)] transition-all"
               style={`width: ${teamAProgress}%;`}
               aria-label={`${teamA.name} progress`}
             ></div>
@@ -212,12 +215,15 @@
           <div class="flex items-center justify-between text-sm min-[1920px]:text-xl">
             <span class="text-team-b font-bold drop-shadow-sm">{teamB.name}</span>
             <span class="text-text-primary font-bold tabular-nums"
-              >{formatPoints(teamB.points)} <span class="text-text-muted font-normal">/ {formatPoints(pointsToWin)}</span></span
+              >{formatPoints(teamB.points)}
+              <span class="text-text-muted font-normal">/ {formatPoints(pointsToWin)}</span></span
             >
           </div>
-          <div class="bg-surface-glass h-3.5 overflow-hidden rounded-full shadow-inner min-[1920px]:h-6 sm:h-4">
+          <div
+            class="bg-surface-glass h-3.5 overflow-hidden rounded-full shadow-inner min-[1920px]:h-6 sm:h-4"
+          >
             <div
-              class="bg-team-b h-full rounded-full transition-all duration-slow ease-standard shadow-[0_0_10px_var(--color-team-b)]"
+              class="bg-team-b duration-slow ease-standard h-full rounded-full shadow-[0_0_10px_var(--color-team-b)] transition-all"
               style={`width: ${teamBProgress}%;`}
               aria-label={`${teamB.name} progress`}
             ></div>
@@ -236,7 +242,7 @@
       {:else}
         {#each rounds as round, roundIndex (round.id)}
           <article
-            class="border-border bg-surface p-card-padding space-y-3 rounded-2xl border border-l-4 border-l-accent shadow-lg animate-slide-up-fade min-[1920px]:space-y-6 min-[1920px]:rounded-3xl min-[1920px]:p-8 sm:space-y-4 sm:p-5 2xl:p-6"
+            class="border-border bg-surface p-card-padding border-l-accent animate-slide-up-fade space-y-3 rounded-2xl border border-l-4 shadow-lg min-[1920px]:space-y-6 min-[1920px]:rounded-3xl min-[1920px]:p-8 sm:space-y-4 sm:p-5 2xl:p-6"
             style={`animation-delay: ${(roundIndex + 1) * 100}ms;`}
           >
             <div class="flex flex-wrap items-start justify-between gap-3">
@@ -260,7 +266,7 @@
 
             {#if round.cards.length === 0}
               <p
-                class="border-border bg-surface-glass text-text-secondary rounded-xl border border-dashed px-3 py-5 text-sm min-[1920px]:px-5 min-[1920px]:py-8 min-[1920px]:text-xl sm:text-base text-center"
+                class="border-border bg-surface-glass text-text-secondary rounded-xl border border-dashed px-3 py-5 text-center text-sm min-[1920px]:px-5 min-[1920px]:py-8 min-[1920px]:text-xl sm:text-base"
               >
                 Matchups for this round have not been published yet.
               </p>
@@ -280,17 +286,21 @@
   </div>
 
   <div
-    class="border-border bg-surface-glass fixed right-3 bottom-3 z-20 rounded-full border px-4 py-2.5 shadow-lg backdrop-blur-md min-[1920px]:right-8 min-[1920px]:bottom-8 min-[1920px]:px-8 min-[1920px]:py-5 sm:right-4 sm:bottom-4 sm:px-5 sm:py-3 transition-colors duration-base"
+    class="border-border bg-surface-glass duration-base fixed right-3 bottom-3 z-20 rounded-full border px-4 py-2.5 shadow-lg backdrop-blur-md transition-colors min-[1920px]:right-8 min-[1920px]:bottom-8 min-[1920px]:px-8 min-[1920px]:py-5 sm:right-4 sm:bottom-4 sm:px-5 sm:py-3"
   >
-    <div class="flex items-center gap-2.5 text-xs min-[1920px]:gap-4 min-[1920px]:text-xl sm:text-sm">
+    <div
+      class="flex items-center gap-2.5 text-xs min-[1920px]:gap-4 min-[1920px]:text-xl sm:text-sm"
+    >
       <span
-        class={`h-2.5 w-2.5 rounded-full min-[1920px]:h-4 min-[1920px]:w-4 ${$connected ? 'bg-status-up shadow-[0_0_8px_var(--color-status-up)] animate-pulse-soft' : 'bg-status-closed shadow-[0_0_8px_var(--color-status-closed)] animate-pulse'}`}
+        class={`h-2.5 w-2.5 rounded-full min-[1920px]:h-4 min-[1920px]:w-4 ${$connected ? 'bg-status-up animate-pulse-soft shadow-[0_0_8px_var(--color-status-up)]' : 'bg-status-closed animate-pulse shadow-[0_0_8px_var(--color-status-closed)]'}`}
       ></span>
       <span class="text-text-primary font-medium tracking-wide"
         >{$connected ? 'Live updates connected' : 'Reconnecting live feed...'}</span
       >
     </div>
-    <p class="text-text-secondary mt-1 tracking-wider text-[11px] min-[1920px]:mt-2 min-[1920px]:text-base sm:text-xs text-center opacity-80">
+    <p
+      class="text-text-secondary mt-1 text-center text-[11px] tracking-wider opacity-80 min-[1920px]:mt-2 min-[1920px]:text-base sm:text-xs"
+    >
       Last updated:
       {#if secondsSinceUpdate === null}
         unavailable

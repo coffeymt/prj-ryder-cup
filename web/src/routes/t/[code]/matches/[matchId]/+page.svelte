@@ -33,7 +33,7 @@
 <div class="animate-fade-in space-y-4">
   <a
     href={`/t/${encodeURIComponent(data.tournament.code)}`}
-    class="min-h-touch border-border text-text-primary hover:bg-surface-raised inline-flex items-center rounded-lg border bg-transparent px-4 text-sm font-semibold transition-all duration-base"
+    class="min-h-touch border-border text-text-primary hover:bg-surface-raised duration-base inline-flex items-center rounded-lg border bg-transparent px-4 text-sm font-semibold transition-all"
   >
     &larr; Back to Dashboard
   </a>
@@ -61,7 +61,7 @@
     <div class="grid gap-2 sm:grid-cols-2">
       {#each data.sides as side (side.id)}
         <article
-          class="border-border bg-surface-raised rounded-xl border p-3 shadow-sm transition-all duration-base hover:-translate-y-0.5 hover:shadow-md"
+          class="border-border bg-surface-raised duration-base rounded-xl border p-3 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
           style={sideStyle(side.teamColor)}
         >
           <p class="text-text-primary flex items-center gap-2 text-sm font-semibold">
@@ -80,7 +80,7 @@
 
     <a
       href={`/t/${encodeURIComponent(data.tournament.code)}/matches/${encodeURIComponent(data.match.id)}/hole/${data.currentHole}`}
-      class="min-h-touch bg-accent text-accent-text hover:bg-accent-hover inline-flex w-full items-center justify-center rounded-xl px-4 py-3 text-base font-semibold shadow-md transition-all duration-base hover:shadow-lg"
+      class="min-h-touch bg-accent text-accent-text hover:bg-accent-hover duration-base inline-flex w-full items-center justify-center rounded-xl px-4 py-3 text-base font-semibold shadow-md transition-all hover:shadow-lg"
     >
       Enter Hole {data.currentHole}
     </a>
@@ -99,7 +99,7 @@
       <ul class="mt-3 space-y-2">
         {#each data.completedHoles as hole (hole.holeNumber)}
           <li
-            class="border-border bg-surface-raised hover:bg-surface rounded-xl border px-3 py-2.5 transition-colors duration-fast"
+            class="border-border bg-surface-raised hover:bg-surface duration-fast rounded-xl border px-3 py-2.5 transition-colors"
           >
             <p class="text-text-primary text-sm font-semibold">Hole {hole.holeNumber}</p>
             <p class="text-text-secondary text-sm">{hole.resultLabel}</p>
