@@ -16,7 +16,7 @@ const DB_NAME = 'GolfOutbox';
 const LEGACY_DB_NAME = 'RyderCupOutbox';
 const MIGRATION_FLAG_KEY = 'golf_outbox_migrated';
 const OUTBOX_DB_STORES = {
-  outbox: '++id, opId, status, createdAt'
+  outbox: '++id, opId, status, createdAt',
 };
 
 export class GolfOutboxDB extends Dexie {
@@ -34,7 +34,7 @@ export const db: GolfOutboxDB | null = typeof window !== 'undefined' ? new GolfO
 function createLegacyOutboxDb(): Dexie {
   const legacyDb = new Dexie(LEGACY_DB_NAME);
   legacyDb.version(1).stores({
-    outbox: '++id, opId, status, createdAt'
+    outbox: '++id, opId, status, createdAt',
   });
   return legacyDb;
 }
@@ -109,7 +109,9 @@ export async function migrateLegacyOutbox(): Promise<void> {
     try {
       await legacyDb.open();
       const legacyRowsByStore = await Promise.all(
-        storeNames.map(async (storeName) => [storeName, await legacyDb.table(storeName).toArray()] as const)
+        storeNames.map(
+          async (storeName) => [storeName, await legacyDb.table(storeName).toArray()] as const
+        )
       );
 
       await db.transaction(

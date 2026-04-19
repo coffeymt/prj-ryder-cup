@@ -12,7 +12,9 @@
   let optionRefs: Array<HTMLButtonElement | null> = [];
 
   $: selectedTournament =
-    tournaments.find((tournament) => tournament.id === currentTournamentId) ?? tournaments[0] ?? null;
+    tournaments.find((tournament) => tournament.id === currentTournamentId) ??
+    tournaments[0] ??
+    null;
   $: selectedLabel = selectedTournament?.name ?? 'No tournaments';
 
   function closeMenu(): void {
@@ -169,15 +171,15 @@
 <div class="relative w-full max-w-sm" bind:this={containerElement}>
   {#if tournaments.length === 0}
     <div
-      class="flex min-h-touch items-center justify-between rounded-lg border border-border bg-surface px-3 text-sm text-text-primary"
+      class="min-h-touch border-border bg-surface text-text-primary flex items-center justify-between rounded-lg border px-3 text-sm"
     >
       <span>No tournaments</span>
-      <a href="/manage/tournaments/new" class="font-semibold text-accent underline">Create one</a>
+      <a href="/manage/tournaments/new" class="text-accent font-semibold underline">Create one</a>
     </div>
   {:else}
     <button
       type="button"
-      class="inline-flex min-h-touch w-full items-center justify-between rounded-lg border border-border bg-surface px-3 text-left text-sm font-semibold text-text-primary shadow-sm transition hover:bg-surface-raised focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+      class="min-h-touch border-border bg-surface text-text-primary hover:bg-surface-raised focus-visible:ring-accent inline-flex w-full items-center justify-between rounded-lg border px-3 text-left text-sm font-semibold shadow-sm transition focus:outline-none focus-visible:ring-2"
       aria-haspopup="menu"
       aria-expanded={isOpen}
       aria-controls="tournament-switcher-menu"
@@ -189,7 +191,7 @@
         aria-hidden="true"
         viewBox="0 0 20 20"
         fill="currentColor"
-        class={`h-4 w-4 text-text-secondary transition-transform ${isOpen ? 'rotate-180' : ''}`}
+        class={`text-text-secondary h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
       >
         <path
           fill-rule="evenodd"
@@ -200,7 +202,9 @@
     </button>
 
     {#if isOpen}
-      <div class="absolute left-0 right-0 z-40 mt-2 rounded-lg border border-border bg-surface shadow-lg">
+      <div
+        class="border-border bg-surface absolute right-0 left-0 z-40 mt-2 rounded-lg border shadow-lg"
+      >
         <ul
           id="tournament-switcher-menu"
           role="menu"
@@ -215,7 +219,7 @@
                 role="menuitemradio"
                 aria-checked={selectedTournament?.id === tournament.id}
                 bind:this={optionRefs[index]}
-                class={`flex min-h-touch w-full items-center justify-between px-3 text-left text-sm transition ${
+                class={`min-h-touch flex w-full items-center justify-between px-3 text-left text-sm transition ${
                   selectedTournament?.id === tournament.id
                     ? 'bg-accent text-accent-text'
                     : 'text-text-primary hover:bg-surface-raised'

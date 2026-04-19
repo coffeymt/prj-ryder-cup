@@ -41,7 +41,7 @@ export const load: PageServerLoad = async ({ locals, platform }) => {
   return {
     courses: courses.map((course) => ({
       ...course,
-      teeCount: teeCountByCourseId.get(course.id) ?? 0
-    }))
+      teeCount: teeCountByCourseId.get(course.id) ?? 0,
+    })),
   };
 };

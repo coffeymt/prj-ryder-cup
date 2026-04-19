@@ -98,7 +98,7 @@ const MATCH_FORMAT_LABELS: Record<MatchFormat, string> = {
   PINEHURST: 'Pinehurst',
   SHAMBLE: 'Shamble',
   FOURBALL: 'Four-Ball',
-  SINGLES: 'Singles'
+  SINGLES: 'Singles',
 };
 
 function toDateKey(value: string): string {
@@ -124,7 +124,7 @@ function createEmptySide(sideLabel: SideLabel): MutableSide {
     teamName: '',
     teamColor: '',
     playerIds: [],
-    playerNames: []
+    playerNames: [],
   };
 }
 
@@ -199,13 +199,13 @@ function buildTeamTotals(
     teamA: {
       name: firstTeam?.name ?? '',
       color: firstTeam?.color ?? null,
-      points: firstTeam ? pointsByTeamId.get(firstTeam.id) ?? 0 : 0
+      points: firstTeam ? (pointsByTeamId.get(firstTeam.id) ?? 0) : 0,
     },
     teamB: {
       name: secondTeam?.name ?? '',
       color: secondTeam?.color ?? null,
-      points: secondTeam ? pointsByTeamId.get(secondTeam.id) ?? 0 : 0
-    }
+      points: secondTeam ? (pointsByTeamId.get(secondTeam.id) ?? 0) : 0,
+    },
   };
 }
 
@@ -223,7 +223,10 @@ function resolveTargetRoundDate(rounds: DashboardRound[]): string {
 
   const upcoming = roundsWithDates
     .filter((round) => round.dateKey >= todayDateKey)
-    .sort((left, right) => left.dateKey.localeCompare(right.dateKey) || left.roundNumber - right.roundNumber);
+    .sort(
+      (left, right) =>
+        left.dateKey.localeCompare(right.dateKey) || left.roundNumber - right.roundNumber
+    );
 
   if (upcoming.length > 0) {
     return upcoming[0].dateKey;
@@ -240,10 +243,11 @@ export const load: PageServerLoad = async (event) => {
   const { tournament, player, team, allTeams } = await event.parent();
   const db = getDatabaseBinding(event.platform);
 
-  const [roundResult, segmentResult, matchResult, sidePlayerResult, teamPointsResult] = await Promise.all([
-    db
-      .prepare(
-        `
+  const [roundResult, segmentResult, matchResult, sidePlayerResult, teamPointsResult] =
+    await Promise.all([
+      db
+        .prepare(
+          `
           SELECT
             r.id,
             r.round_number,
@@ -254,12 +258,12 @@ export const load: PageServerLoad = async (event) => {
           WHERE r.tournament_id = ?1
           ORDER BY r.scheduled_at ASC, r.round_number ASC
         `
-      )
-      .bind(tournament.id)
-      .all<RoundRow>(),
-    db
-      .prepare(
-        `
+        )
+        .bind(tournament.id)
+        .all<RoundRow>(),
+      db
+        .prepare(
+          `
           SELECT
             rs.round_id,
             rs.format,
@@ -269,12 +273,12 @@ export const load: PageServerLoad = async (event) => {
           WHERE r.tournament_id = ?1
           ORDER BY r.round_number ASC, rs.hole_start ASC, rs.id ASC
         `
-      )
-      .bind(tournament.id)
-      .all<SegmentRow>(),
-    db
-      .prepare(
-        `
+        )
+        .bind(tournament.id)
+        .all<SegmentRow>(),
+      db
+        .prepare(
+          `
           WITH ranked_results AS (
             SELECT
               mr.match_id,
@@ -312,12 +316,12 @@ export const load: PageServerLoad = async (event) => {
           WHERE r.tournament_id = ?1
           ORDER BY r.round_number ASC, m.match_number ASC
         `
-      )
-      .bind(tournament.id)
-      .all<MatchRow>(),
-    db
-      .prepare(
-        `
+        )
+        .bind(tournament.id)
+        .all<MatchRow>(),
+      db
+        .prepare(
+          `
           SELECT
             ms.match_id,
             ms.side_label,
@@ -335,12 +339,12 @@ export const load: PageServerLoad = async (event) => {
           WHERE r.tournament_id = ?1
           ORDER BY r.round_number ASC, m.match_number ASC, ms.side_label ASC, msp.created_at ASC, p.name ASC
         `
-      )
-      .bind(tournament.id)
-      .all<MatchSidePlayerRow>(),
-    db
-      .prepare(
-        `
+        )
+        .bind(tournament.id)
+        .all<MatchSidePlayerRow>(),
+      db
+        .prepare(
+          `
           SELECT
             ms.team_id AS team_id,
             SUM(
@@ -357,10 +361,10 @@ export const load: PageServerLoad = async (event) => {
             AND mr.status = 'FINAL'
           GROUP BY ms.team_id
         `
-      )
-      .bind(tournament.id)
-      .all<TeamPointsRow>()
-  ]);
+        )
+        .bind(tournament.id)
+        .all<TeamPointsRow>(),
+    ]);
 
   const rounds = roundResult.results;
   const segments = segmentResult.results;
@@ -384,7 +388,7 @@ export const load: PageServerLoad = async (event) => {
     roundStatsById.set(String(round.id), {
       totalMatches: 0,
       matchesWithScores: 0,
-      finalMatches: 0
+      finalMatches: 0,
     });
   }
 
@@ -426,8 +430,8 @@ export const load: PageServerLoad = async (event) => {
       playerSide: null,
       sides: {
         A: createEmptySide('A'),
-        B: createEmptySide('B')
-      }
+        B: createEmptySide('B'),
+      },
     });
   }
 
@@ -467,11 +471,13 @@ export const load: PageServerLoad = async (event) => {
   const allRounds: DashboardRound[] = rounds.map((round) => {
     const roundId = String(round.id);
     const roundFormats = roundFormatsById.get(roundId) ?? [];
-    const uniqueFormatLabels = [...new Set(roundFormats.map((format) => MATCH_FORMAT_LABELS[format]))];
+    const uniqueFormatLabels = [
+      ...new Set(roundFormats.map((format) => MATCH_FORMAT_LABELS[format])),
+    ];
     const stats = roundStatsById.get(roundId) ?? {
       totalMatches: 0,
       matchesWithScores: 0,
-      finalMatches: 0
+      finalMatches: 0,
     };
 
     return {
@@ -482,7 +488,7 @@ export const load: PageServerLoad = async (event) => {
       name: round.course_name ?? `Round ${round.round_number}`,
       formatSummary: uniqueFormatLabels.join(' / ') || 'TBD',
       status: toRoundStatus(stats),
-      totalMatches: stats.totalMatches
+      totalMatches: stats.totalMatches,
     };
   });
 
@@ -505,7 +511,7 @@ export const load: PageServerLoad = async (event) => {
           status: match.resultStatus,
           statusLabel: formatMatchStateLabel(match),
           enteredHoles: match.holesEntered,
-          sides: [match.sides.A, match.sides.B]
+          sides: [match.sides.A, match.sides.B],
         }))
     : [];
 
@@ -521,6 +527,6 @@ export const load: PageServerLoad = async (event) => {
     todayRounds,
     myMatches,
     teamTotals,
-    allRounds
+    allRounds,
   };
 };

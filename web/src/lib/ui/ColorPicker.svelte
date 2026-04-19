@@ -50,7 +50,9 @@
     if (/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/u.test(resolved)) {
       return resolved;
     }
-    const fallback = getComputedStyle(document.documentElement).getPropertyValue('--color-preset-black').trim();
+    const fallback = getComputedStyle(document.documentElement)
+      .getPropertyValue('--color-preset-black')
+      .trim();
     return /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/u.test(fallback) ? fallback : '';
   }
 </script>
@@ -62,9 +64,9 @@
         type="button"
         aria-label={`Select ${swatch.name}`}
         aria-pressed={normalizedValue === resolveCssColor(swatch.token).toUpperCase()}
-        class={`inline-flex min-h-touch min-w-touch items-center justify-center rounded-full border transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+        class={`min-h-touch min-w-touch focus-visible:outline-accent inline-flex items-center justify-center rounded-full border transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
           normalizedValue === resolveCssColor(swatch.token).toUpperCase()
-            ? 'border-accent ring-2 ring-accent ring-offset-2 ring-offset-bg'
+            ? 'border-accent ring-accent ring-offset-bg ring-2 ring-offset-2'
             : 'border-border hover:scale-105'
         }`}
         style={`background-color: var(${swatch.token});`}
@@ -75,13 +77,13 @@
     {/each}
   </div>
 
-  <label class="block text-sm font-semibold text-text-primary">
+  <label class="text-text-primary block text-sm font-semibold">
     Custom color
     <input
       type="color"
       value={normalizedValue}
       on:input={handleCustomColorInput}
-      class="mt-2 block min-h-touch w-24 cursor-pointer rounded-md border border-border bg-bg p-1"
+      class="min-h-touch border-border bg-bg mt-2 block w-24 cursor-pointer rounded-md border p-1"
       aria-label="Choose custom team color"
     />
   </label>

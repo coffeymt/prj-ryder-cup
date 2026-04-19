@@ -14,44 +14,44 @@ const ALLOWANCE_FIELDS = [
     key: 'allowanceShamble',
     label: 'Shamble allowance',
     defaultPercent: 85,
-    usgaPercent: 75
+    usgaPercent: 75,
   },
   {
     key: 'allowanceFourball',
     label: 'Four-Ball allowance',
     defaultPercent: 100,
-    usgaPercent: 90
+    usgaPercent: 90,
   },
   {
     key: 'allowanceScrambleLow',
     label: 'Scramble low allowance',
     defaultPercent: 35,
-    usgaPercent: 35
+    usgaPercent: 35,
   },
   {
     key: 'allowanceScrambleHigh',
     label: 'Scramble high allowance',
     defaultPercent: 15,
-    usgaPercent: 15
+    usgaPercent: 15,
   },
   {
     key: 'allowancePinehurstLow',
     label: 'Pinehurst low allowance',
     defaultPercent: 60,
-    usgaPercent: 60
+    usgaPercent: 60,
   },
   {
     key: 'allowancePinehurstHigh',
     label: 'Pinehurst high allowance',
     defaultPercent: 40,
-    usgaPercent: 40
+    usgaPercent: 40,
   },
   {
     key: 'allowanceSingles',
     label: 'Singles allowance',
     defaultPercent: 100,
-    usgaPercent: 100
-  }
+    usgaPercent: 100,
+  },
 ] as const;
 
 type AllowanceFieldConfig = (typeof ALLOWANCE_FIELDS)[number];
@@ -108,7 +108,7 @@ function toFormValues(tournament: Tournament): TournamentFormValues {
     allowanceScrambleHigh: ratioToPercentString(tournament.allowance_scramble_high),
     allowancePinehurstLow: ratioToPercentString(tournament.allowance_pinehurst_low),
     allowancePinehurstHigh: ratioToPercentString(tournament.allowance_pinehurst_high),
-    allowanceSingles: ratioToPercentString(tournament.allowance_singles)
+    allowanceSingles: ratioToPercentString(tournament.allowance_singles),
   };
 }
 
@@ -134,21 +134,27 @@ function parseBoundedNumber(value: string, minimum: number, maximum: number): nu
 function readValues(formData: FormData, defaults: TournamentFormValues): TournamentFormValues {
   const values: TournamentFormValues = {
     ...defaults,
-    name: typeof formData.get('name') === 'string' ? String(formData.get('name')).trim() : defaults.name,
+    name:
+      typeof formData.get('name') === 'string'
+        ? String(formData.get('name')).trim()
+        : defaults.name,
     startDate:
       typeof formData.get('startDate') === 'string'
         ? String(formData.get('startDate')).trim()
         : defaults.startDate,
     endDate:
-      typeof formData.get('endDate') === 'string' ? String(formData.get('endDate')).trim() : defaults.endDate,
+      typeof formData.get('endDate') === 'string'
+        ? String(formData.get('endDate')).trim()
+        : defaults.endDate,
     pointsToWin:
       typeof formData.get('pointsToWin') === 'string'
         ? String(formData.get('pointsToWin')).trim()
         : defaults.pointsToWin,
     spectatorAccess:
-      formData.get('spectatorAccess') === 'public' || formData.get('spectatorAccess') === 'requireCode'
+      formData.get('spectatorAccess') === 'public' ||
+      formData.get('spectatorAccess') === 'requireCode'
         ? (formData.get('spectatorAccess') as SpectatorAccess)
-        : defaults.spectatorAccess
+        : defaults.spectatorAccess,
   };
 
   for (const allowanceField of ALLOWANCE_FIELD_KEYS) {
@@ -188,7 +194,11 @@ function validateValues(values: TournamentFormValues): {
     errors.endDate = 'End date must be on or after the start date.';
   }
 
-  const parsedPointsToWin = parseBoundedNumber(values.pointsToWin, MIN_POINTS_TO_WIN, Number.POSITIVE_INFINITY);
+  const parsedPointsToWin = parseBoundedNumber(
+    values.pointsToWin,
+    MIN_POINTS_TO_WIN,
+    Number.POSITIVE_INFINITY
+  );
 
   if (parsedPointsToWin === null) {
     errors.pointsToWin = `Points to win must be at least ${MIN_POINTS_TO_WIN}.`;
@@ -212,7 +222,12 @@ function validateValues(values: TournamentFormValues): {
     parsedAllowances[allowanceField] = parsedValue;
   }
 
-  if (Object.keys(errors).length > 0 || parsedStartDate === null || parsedEndDate === null || parsedPointsToWin === null) {
+  if (
+    Object.keys(errors).length > 0 ||
+    parsedStartDate === null ||
+    parsedEndDate === null ||
+    parsedPointsToWin === null
+  ) {
     return { errors, parsed: null };
   }
 
@@ -224,8 +239,8 @@ function validateValues(values: TournamentFormValues): {
       endDate: values.endDate,
       pointsToWin: parsedPointsToWin,
       spectatorAccess: values.spectatorAccess,
-      ...parsedAllowances
-    }
+      ...parsedAllowances,
+    },
   };
 }
 
@@ -285,7 +300,7 @@ export const load: PageServerLoad = async (event) => {
   return {
     allowanceFields: ALLOWANCE_FIELDS,
     tournament: toFormValues(tournament),
-    eventCode: tournament.code
+    eventCode: tournament.code,
   };
 };
 
@@ -301,7 +316,7 @@ export const actions: Actions = {
         action: 'save',
         values,
         eventCode: tournament.code,
-        errors: validationResult.errors
+        errors: validationResult.errors,
       });
     }
 
@@ -319,7 +334,7 @@ export const actions: Actions = {
       allowanceScrambleHigh: parsedValues.allowanceScrambleHigh / 100,
       allowancePinehurstLow: parsedValues.allowancePinehurstLow / 100,
       allowancePinehurstHigh: parsedValues.allowancePinehurstHigh / 100,
-      allowanceSingles: parsedValues.allowanceSingles / 100
+      allowanceSingles: parsedValues.allowanceSingles / 100,
     };
 
     let response: Response;
@@ -328,9 +343,9 @@ export const actions: Actions = {
       response = await event.fetch(`/api/tournaments/${tournamentId}`, {
         method: 'PATCH',
         headers: {
-          'content-type': 'application/json'
+          'content-type': 'application/json',
         },
-        body: JSON.stringify(requestBody)
+        body: JSON.stringify(requestBody),
       });
     } catch {
       return fail(500, {
@@ -338,21 +353,24 @@ export const actions: Actions = {
         values,
         eventCode: tournament.code,
         errors: {
-          form: 'Could not save tournament settings. Please try again.'
-        }
+          form: 'Could not save tournament settings. Please try again.',
+        },
       });
     }
 
     if (!response.ok) {
-      const apiError = await readApiErrorMessage(response, 'Could not save tournament settings. Please try again.');
+      const apiError = await readApiErrorMessage(
+        response,
+        'Could not save tournament settings. Please try again.'
+      );
 
       return fail(response.status, {
         action: 'save',
         values,
         eventCode: tournament.code,
         errors: {
-          form: apiError
-        }
+          form: apiError,
+        },
       });
     }
 
@@ -363,7 +381,7 @@ export const actions: Actions = {
       action: 'save',
       values,
       eventCode,
-      success: 'Tournament settings saved.'
+      success: 'Tournament settings saved.',
     };
   },
 
@@ -375,7 +393,7 @@ export const actions: Actions = {
 
     try {
       response = await event.fetch(`/api/tournaments/${tournamentId}/regenerate-code`, {
-        method: 'POST'
+        method: 'POST',
       });
     } catch {
       return fail(500, {
@@ -383,21 +401,24 @@ export const actions: Actions = {
         values,
         eventCode: tournament.code,
         errors: {
-          form: 'Could not regenerate the event code. Please try again.'
-        }
+          form: 'Could not regenerate the event code. Please try again.',
+        },
       });
     }
 
     if (!response.ok) {
-      const apiError = await readApiErrorMessage(response, 'Could not regenerate the event code. Please try again.');
+      const apiError = await readApiErrorMessage(
+        response,
+        'Could not regenerate the event code. Please try again.'
+      );
 
       return fail(response.status, {
         action: 'regenerate',
         values,
         eventCode: tournament.code,
         errors: {
-          form: apiError
-        }
+          form: apiError,
+        },
       });
     }
 
@@ -410,8 +431,8 @@ export const actions: Actions = {
         values,
         eventCode: tournament.code,
         errors: {
-          form: 'Event code regenerated, but no new code was returned.'
-        }
+          form: 'Event code regenerated, but no new code was returned.',
+        },
       });
     }
 
@@ -419,7 +440,7 @@ export const actions: Actions = {
       action: 'regenerate',
       values,
       eventCode,
-      success: 'Event code regenerated.'
+      success: 'Event code regenerated.',
     };
   },
 
@@ -433,9 +454,9 @@ export const actions: Actions = {
       response = await event.fetch(`/api/tournaments/${tournamentId}`, {
         method: 'PATCH',
         headers: {
-          'content-type': 'application/json'
+          'content-type': 'application/json',
         },
-        body: JSON.stringify({ status: 'archived' })
+        body: JSON.stringify({ status: 'archived' }),
       });
     } catch {
       return fail(500, {
@@ -443,21 +464,24 @@ export const actions: Actions = {
         values,
         eventCode: tournament.code,
         errors: {
-          form: 'Could not archive tournament. Please try again.'
-        }
+          form: 'Could not archive tournament. Please try again.',
+        },
       });
     }
 
     if (!response.ok) {
-      const apiError = await readApiErrorMessage(response, 'Could not archive tournament. Please try again.');
+      const apiError = await readApiErrorMessage(
+        response,
+        'Could not archive tournament. Please try again.'
+      );
 
       return fail(response.status, {
         action: 'archive',
         values,
         eventCode: tournament.code,
         errors: {
-          form: apiError
-        }
+          form: apiError,
+        },
       });
     }
 
@@ -465,7 +489,7 @@ export const actions: Actions = {
       action: 'archive',
       values,
       eventCode: tournament.code,
-      success: 'Tournament archived.'
+      success: 'Tournament archived.',
     };
-  }
+  },
 };

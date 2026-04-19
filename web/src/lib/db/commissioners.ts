@@ -28,7 +28,7 @@ function normalizeCommissioner(row: Commissioner | null): Commissioner | null {
   return {
     ...row,
     id: String(row.id),
-    tournament_id: row.tournament_id === null ? null : String(row.tournament_id)
+    tournament_id: row.tournament_id === null ? null : String(row.tournament_id),
   };
 }
 
@@ -78,7 +78,10 @@ export async function getCommissionerByEmail(
   return normalizeCommissioner(row);
 }
 
-export async function getCommissionerById(db: D1Database, id: string): Promise<Commissioner | null> {
+export async function getCommissionerById(
+  db: D1Database,
+  id: string
+): Promise<Commissioner | null> {
   const row = await db
     .prepare(
       `

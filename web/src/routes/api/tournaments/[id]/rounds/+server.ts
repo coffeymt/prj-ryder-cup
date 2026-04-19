@@ -1,6 +1,11 @@
 import { error, json, type RequestHandler } from '@sveltejs/kit';
 import { requireRole, requireSameTournament } from '$lib/auth/guards';
-import { createRound, createRoundSegment, listRoundsByTournament, listSegmentsByRound } from '$lib/db/rounds';
+import {
+  createRound,
+  createRoundSegment,
+  listRoundsByTournament,
+  listSegmentsByRound,
+} from '$lib/db/rounds';
 import { getTournamentById } from '$lib/db/tournaments';
 import type { MatchFormat, Round, RoundSegment, SegmentType } from '$lib/db/types';
 
@@ -20,7 +25,13 @@ type ParsedSegmentInput = {
 };
 
 const API_SEGMENTS: readonly ApiSegment[] = ['F9', 'B9', '18'];
-const API_FORMATS: readonly ApiFormat[] = ['Scramble', 'Pinehurst', 'Shamble', 'FourBall', 'Singles'];
+const API_FORMATS: readonly ApiFormat[] = [
+  'Scramble',
+  'Pinehurst',
+  'Shamble',
+  'FourBall',
+  'Singles',
+];
 const ROUND_STATUSES: readonly RoundStatus[] = ['draft', 'inProgress', 'complete'];
 
 const API_FORMAT_TO_DB: Record<ApiFormat, MatchFormat> = {
@@ -130,16 +141,6 @@ function parseApiFormat(value: unknown): ApiFormat {
   return format as ApiFormat;
 }
 
-function parseRoundStatus(value: unknown): RoundStatus {
-  const status = expectString(value, 'status');
-
-  if (!ROUND_STATUSES.includes(status as RoundStatus)) {
-    throw error(400, 'status must be one of draft, inProgress, complete.');
-  }
-
-  return status as RoundStatus;
-}
-
 function toDbSegmentType(segment: ApiSegment, segmentCount: number): SegmentType {
   if (segment === 'F9' || segment === 'B9') {
     return segment;
@@ -223,7 +224,8 @@ function parseRoundNotes(notes: string | null): { name: string | null; status: R
     }
 
     const payload = parsed as { name?: unknown; status?: unknown };
-    const name = typeof payload.name === 'string' && payload.name.trim().length > 0 ? payload.name : null;
+    const name =
+      typeof payload.name === 'string' && payload.name.trim().length > 0 ? payload.name : null;
     const status =
       typeof payload.status === 'string' && ROUND_STATUSES.includes(payload.status as RoundStatus)
         ? (payload.status as RoundStatus)
@@ -352,7 +354,8 @@ export const POST: RequestHandler = async ({ params, request, locals, platform }
 
   const existingRounds = await listRoundsByTournament(db, params.id);
   const nextRoundNumber =
-    existingRounds.reduce((highestRound, round) => Math.max(highestRound, round.round_number), 0) + 1;
+    existingRounds.reduce((highestRound, round) => Math.max(highestRound, round.round_number), 0) +
+    1;
 
   const createdRound = await createRound(db, {
     id: crypto.randomUUID(),
@@ -389,7 +392,9 @@ export const POST: RequestHandler = async ({ params, request, locals, platform }
       allowance_override: segment.allowanceOverride,
     });
 
-    createdSegments.push(mapSegmentResponse(createdSegment, segment.order, segment.allowanceConfig));
+    createdSegments.push(
+      mapSegmentResponse(createdSegment, segment.order, segment.allowanceConfig)
+    );
   }
 
   return json(

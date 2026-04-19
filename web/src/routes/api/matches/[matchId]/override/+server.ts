@@ -90,18 +90,24 @@ function parseEditScoreBody(
     return { body: null, message: 'conceded and pickedUp cannot both be true.' };
   }
 
-  if (grossStrokes !== null && (!Number.isInteger(grossStrokes) || grossStrokes < 1 || grossStrokes > 15)) {
+  if (
+    grossStrokes !== null &&
+    (!Number.isInteger(grossStrokes) || grossStrokes < 1 || grossStrokes > 15)
+  ) {
     return { body: null, message: 'grossStrokes must be an integer between 1 and 15 or null.' };
   }
 
   if (conceded || pickedUp) {
     if (grossStrokes !== null) {
-      return { body: null, message: 'grossStrokes must be null when conceded or pickedUp is true.' };
+      return {
+        body: null,
+        message: 'grossStrokes must be null when conceded or pickedUp is true.',
+      };
     }
   } else if (grossStrokes === null) {
     return {
       body: null,
-      message: 'grossStrokes is required when conceded and pickedUp are both false.'
+      message: 'grossStrokes is required when conceded and pickedUp are both false.',
     };
   }
 
@@ -113,9 +119,9 @@ function parseEditScoreBody(
       grossStrokes,
       conceded,
       pickedUp,
-      reason
+      reason,
     },
-    message: null
+    message: null,
   };
 }
 
@@ -139,13 +145,16 @@ function parseForceCloseBody(
       action: 'force_close',
       sideAPoints,
       sideBPoints,
-      reason
+      reason,
     },
-    message: null
+    message: null,
   };
 }
 
-async function getLatestMatchResult(db: D1Database, matchId: string): Promise<MatchResultRow | null> {
+async function getLatestMatchResult(
+  db: D1Database,
+  matchId: string
+): Promise<MatchResultRow | null> {
   const row = await db
     .prepare(
       `
@@ -175,7 +184,7 @@ async function getLatestMatchResult(db: D1Database, matchId: string): Promise<Ma
         ...row,
         id: String(row.id),
         match_id: String(row.match_id),
-        segment_id: String(row.segment_id)
+        segment_id: String(row.segment_id),
       }
     : null;
 }
@@ -241,7 +250,10 @@ export const POST: RequestHandler = async (event) => {
 
   const reason = parseReason(rawBody.reason);
   if (!reason) {
-    return json({ message: 'reason is required and must be at least 5 characters.' }, { status: 400 });
+    return json(
+      { message: 'reason is required and must be at least 5 characters.' },
+      { status: 400 }
+    );
   }
 
   const action = rawBody.action;
@@ -267,25 +279,30 @@ export const POST: RequestHandler = async (event) => {
       return json({ message: parsed.message ?? 'Invalid request body.' }, { status: 400 });
     }
 
-    const beforeScore = await getHoleScore(db, match.id, parsed.body.playerId, parsed.body.holeNumber);
+    const beforeScore = await getHoleScore(
+      db,
+      match.id,
+      parsed.body.playerId,
+      parsed.body.holeNumber
+    );
     const delegatedRequest = new Request(event.request.url, {
       method: 'POST',
       headers: new Headers({
         'content-type': 'application/json',
-        'Idempotency-Key': crypto.randomUUID()
+        'Idempotency-Key': crypto.randomUUID(),
       }),
       body: JSON.stringify({
         playerId: parsed.body.playerId,
         holeNumber: parsed.body.holeNumber,
         grossStrokes: parsed.body.grossStrokes,
         conceded: parsed.body.conceded,
-        pickedUp: parsed.body.pickedUp
-      })
+        pickedUp: parsed.body.pickedUp,
+      }),
     });
 
     const delegatedResponse = await postHoleScore({
       ...event,
-      request: delegatedRequest
+      request: delegatedRequest,
     } as RequestEvent);
 
     const delegatedPayload: unknown = await delegatedResponse.json();
@@ -307,8 +324,8 @@ export const POST: RequestHandler = async (event) => {
       old_value: beforeScore ? JSON.stringify(beforeScore) : null,
       new_value: JSON.stringify({
         score: afterScore,
-        reason: parsed.body.reason
-      })
+        reason: parsed.body.reason,
+      }),
     });
 
     return json(delegatedPayload);
@@ -330,10 +347,16 @@ export const POST: RequestHandler = async (event) => {
     throw error(500, 'Unable to determine points-at-stake segment for this match.');
   }
 
-  if (!isPointsTotalValid(pointsSegment.points_available, parsed.body.sideAPoints, parsed.body.sideBPoints)) {
+  if (
+    !isPointsTotalValid(
+      pointsSegment.points_available,
+      parsed.body.sideAPoints,
+      parsed.body.sideBPoints
+    )
+  ) {
     return json(
       {
-        message: `sideAPoints + sideBPoints must equal points at stake (${pointsSegment.points_available}).`
+        message: `sideAPoints + sideBPoints must equal points at stake (${pointsSegment.points_available}).`,
       },
       { status: 400 }
     );
@@ -346,7 +369,7 @@ export const POST: RequestHandler = async (event) => {
     halves: 0,
     close_notation: 'OVERRIDE',
     side_a_points: parsed.body.sideAPoints,
-    side_b_points: parsed.body.sideBPoints
+    side_b_points: parsed.body.sideBPoints,
   });
 
   const matchResult = await getLatestMatchResult(db, match.id);
@@ -368,11 +391,11 @@ export const POST: RequestHandler = async (event) => {
       sideBPoints: parsed.body.sideBPoints,
       pointsAtStake: pointsSegment.points_available,
       closeNotation: 'OVERRIDE',
-      reason: parsed.body.reason
-    })
+      reason: parsed.body.reason,
+    }),
   });
 
   return json({
-    matchResult
+    matchResult,
   });
 };

@@ -6,11 +6,11 @@
 
 {#if pendingCount > 0}
   <span
-    class="inline-flex min-h-touch items-center gap-1.5 rounded-full border border-status-down bg-surface-raised px-1 text-xs font-semibold text-status-down sm:px-2.5"
+    class="min-h-touch border-status-down bg-surface-raised text-status-down inline-flex items-center gap-1.5 rounded-full border px-1 text-xs font-semibold sm:px-2.5"
     aria-label={`${pendingCount} score submissions pending sync`}
   >
     <span
-      class="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-status-down px-1 text-[0.65rem] font-bold leading-none text-white"
+      class="bg-status-down inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[0.65rem] leading-none font-bold text-white"
       aria-hidden="true"
     >
       {pendingCount}

@@ -6,8 +6,10 @@
 </script>
 
 <span
-  class="inline-flex min-h-touch min-w-[2.5rem] items-center justify-center rounded-full border border-border bg-surface-raised px-2 text-sm font-bold tracking-wide text-text-secondary"
-  aria-label={normalized === 0 ? 'No handicap strokes on this hole' : `${normalized} handicap stroke${normalized === 1 ? '' : 's'} on this hole`}
+  class="min-h-touch border-border bg-surface-raised text-text-secondary inline-flex min-w-[2.5rem] items-center justify-center rounded-full border px-2 text-sm font-bold tracking-wide"
+  aria-label={normalized === 0
+    ? 'No handicap strokes on this hole'
+    : `${normalized} handicap stroke${normalized === 1 ? '' : 's'} on this hole`}
 >
   {#if dots}
     {dots}

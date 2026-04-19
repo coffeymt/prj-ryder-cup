@@ -38,7 +38,7 @@ export const GET: RequestHandler = async ({ params, platform }) => {
   const teamsById = new Map(teams.map((team) => [team.id, team]));
 
   const roster: RosterPlayer[] = players.map((player) => {
-    const team = player.team_id ? teamsById.get(player.team_id) ?? null : null;
+    const team = player.team_id ? (teamsById.get(player.team_id) ?? null) : null;
 
     return {
       id: player.id,

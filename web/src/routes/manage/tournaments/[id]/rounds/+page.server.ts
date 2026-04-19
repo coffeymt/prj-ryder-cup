@@ -15,7 +15,7 @@ const FORMAT_LABELS: Record<MatchFormat, string> = {
   PINEHURST: 'Pinehurst',
   SHAMBLE: 'Shamble',
   FOURBALL: 'Four-Ball',
-  SINGLES: 'Singles'
+  SINGLES: 'Singles',
 };
 
 function getDb(platform: App.Platform | undefined): D1Database {
@@ -82,7 +82,7 @@ export const load: PageServerLoad = async (event) => {
   const [tournament, rounds, courses] = await Promise.all([
     getTournamentById(db, event.params.id),
     listRoundsByTournament(db, event.params.id),
-    listCourses(db)
+    listCourses(db),
   ]);
 
   if (!tournament) {
@@ -105,7 +105,7 @@ export const load: PageServerLoad = async (event) => {
         courseName: courseNameById.get(round.course_id) ?? 'Unknown course',
         formatSummary: formatSummary(segments),
         points: roundPoints,
-        segments
+        segments,
       };
     })
   );
@@ -116,6 +116,6 @@ export const load: PageServerLoad = async (event) => {
     tournament,
     rounds: roundsWithSegments,
     configuredPoints,
-    targetPoints: pointsTarget(tournament.points_to_win)
+    targetPoints: pointsTarget(tournament.points_to_win),
   };
 };

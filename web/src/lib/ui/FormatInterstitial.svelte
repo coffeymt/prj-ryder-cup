@@ -38,14 +38,25 @@
     tabindex="-1"
     on:keydown={handleKeydown}
   >
-    <div class="w-full max-w-md rounded-2xl border border-border bg-surface-raised p-6 text-text-primary shadow-2xl">
-      <p class="text-xs font-semibold uppercase tracking-[0.2em] text-text-muted">{segment} starts now</p>
-      <h2 id="format-change-heading" class="mt-2 font-display text-2xl font-semibold tracking-tight">{newFormat}</h2>
-      <p class="mt-3 text-sm text-text-secondary">Stroke allowances have changed for this segment.</p>
+    <div
+      class="border-border bg-surface-raised text-text-primary w-full max-w-md rounded-2xl border p-6 shadow-2xl"
+    >
+      <p class="text-text-muted text-xs font-semibold tracking-[0.2em] uppercase">
+        {segment} starts now
+      </p>
+      <h2
+        id="format-change-heading"
+        class="font-display mt-2 text-2xl font-semibold tracking-tight"
+      >
+        {newFormat}
+      </h2>
+      <p class="text-text-secondary mt-3 text-sm">
+        Stroke allowances have changed for this segment.
+      </p>
       <button
         type="button"
         bind:this={continueButton}
-        class="mt-5 inline-flex min-h-touch w-full items-center justify-center rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-accent-text transition hover:bg-accent-hover"
+        class="min-h-touch bg-accent text-accent-text hover:bg-accent-hover mt-5 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm font-semibold transition"
         on:click={onContinue}
       >
         Continue

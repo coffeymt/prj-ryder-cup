@@ -25,8 +25,8 @@
       format: 'FourBall',
       pointsAtStake: 1,
       allowanceOverride: null,
-      order: 1
-    }
+      order: 1,
+    },
   ];
 
   let formState: FormState | undefined;
@@ -78,7 +78,9 @@
   $: courseHas9HoleRatings = selectedTee ? teeHasNineHoleRatings(selectedTee) : false;
   $: currentRoundPoints = segments.reduce((sum, segment) => sum + segment.pointsAtStake, 0);
   $: configuredPoints = data.existingConfiguredPoints + currentRoundPoints;
-  $: validMatchups = matchups.filter((row) => row.sideAPlayerIds.length > 0 && row.sideBPlayerIds.length > 0);
+  $: validMatchups = matchups.filter(
+    (row) => row.sideAPlayerIds.length > 0 && row.sideBPlayerIds.length > 0
+  );
   $: segmentsJson = JSON.stringify(segments);
   $: matchupsJson = JSON.stringify(validMatchups);
   $: duplicatePlayerIds = findDuplicatePlayers(validMatchups);
@@ -148,7 +150,10 @@
   }
 
   function isSplitShape(configuredSegments: Segment[]): boolean {
-    const keys = configuredSegments.map((segment) => segment.segment).sort().join('|');
+    const keys = configuredSegments
+      .map((segment) => segment.segment)
+      .sort()
+      .join('|');
     return keys !== '18';
   }
 
@@ -196,7 +201,11 @@
         return 'Configure at least one segment.';
       }
 
-      if (segments.some((segment) => !Number.isFinite(segment.pointsAtStake) || segment.pointsAtStake <= 0)) {
+      if (
+        segments.some(
+          (segment) => !Number.isFinite(segment.pointsAtStake) || segment.pointsAtStake <= 0
+        )
+      ) {
         return 'Each segment must have positive points.';
       }
 
@@ -263,30 +272,42 @@
   <header class="space-y-2">
     <a
       href={`/manage/tournaments/${data.tournament.id}/rounds`}
-      class="inline-flex min-h-touch items-center text-sm font-medium text-text-secondary hover:text-text-primary"
+      class="min-h-touch text-text-secondary hover:text-text-primary inline-flex items-center text-sm font-medium"
     >
       ← Back to rounds
     </a>
-    <h1 class="text-2xl font-semibold tracking-tight text-text-primary">Build round</h1>
-    <p class="text-sm text-text-secondary">Configure round basics, formats, and pairings in one flow.</p>
+    <h1 class="text-text-primary text-2xl font-semibold tracking-tight">Build round</h1>
+    <p class="text-text-secondary text-sm">
+      Configure round basics, formats, and pairings in one flow.
+    </p>
   </header>
 
-  <p class="sticky top-0 z-20 rounded-lg border border-border bg-surface px-4 py-3 text-sm font-semibold text-text-primary shadow-sm">
+  <p
+    class="border-border bg-surface text-text-primary sticky top-0 z-20 rounded-lg border px-4 py-3 text-sm font-semibold shadow-sm"
+  >
     {formatPoints(configuredPoints)} / {formatPoints(data.targetPoints)} points configured
   </p>
 
   {#if localError}
-    <p class="rounded-lg border border-status-down/30 bg-status-down/10 px-3 py-2 text-sm font-medium text-status-down">{localError}</p>
+    <p
+      class="border-status-down/30 bg-status-down/10 text-status-down rounded-lg border px-3 py-2 text-sm font-medium"
+    >
+      {localError}
+    </p>
   {/if}
 
   {#if formState?.error}
-    <p class="rounded-lg border border-status-down/30 bg-status-down/10 px-3 py-2 text-sm font-medium text-status-down">
+    <p
+      class="border-status-down/30 bg-status-down/10 text-status-down rounded-lg border px-3 py-2 text-sm font-medium"
+    >
       {formState.error}
     </p>
   {/if}
 
   {#if formState?.createdRoundId}
-    <p class="rounded-lg border border-status-halved/30 bg-status-halved/10 px-3 py-2 text-sm text-status-halved">
+    <p
+      class="border-status-halved/30 bg-status-halved/10 text-status-halved rounded-lg border px-3 py-2 text-sm"
+    >
       Round was created but matchup creation failed.
       <a
         href={`/manage/tournaments/${data.tournament.id}/rounds/${formState.createdRoundId}`}
@@ -299,9 +320,21 @@
   {/if}
 
   <div class="grid grid-cols-3 gap-2">
-    <button type="button" class={`min-h-touch rounded-lg border text-sm font-medium ${stepButtonClasses(1)}`}>1. Basics</button>
-    <button type="button" class={`min-h-touch rounded-lg border text-sm font-medium ${stepButtonClasses(2)}`}>2. Segments</button>
-    <button type="button" class={`min-h-touch rounded-lg border text-sm font-medium ${stepButtonClasses(3)}`}>3. Matchups</button>
+    <button
+      type="button"
+      class={`min-h-touch rounded-lg border text-sm font-medium ${stepButtonClasses(1)}`}
+      >1. Basics</button
+    >
+    <button
+      type="button"
+      class={`min-h-touch rounded-lg border text-sm font-medium ${stepButtonClasses(2)}`}
+      >2. Segments</button
+    >
+    <button
+      type="button"
+      class={`min-h-touch rounded-lg border text-sm font-medium ${stepButtonClasses(3)}`}
+      >3. Matchups</button
+    >
   </div>
 
   <form method="POST" class="space-y-5" on:submit={handleSubmit}>
@@ -313,25 +346,25 @@
     <input type="hidden" name="matchupsJson" value={matchupsJson} />
 
     {#if currentStep === 1}
-      <section class="space-y-4 rounded-2xl border border-border bg-surface p-4 shadow-sm sm:p-5">
-        <h2 class="text-lg font-semibold text-text-primary">Step 1: Round basics</h2>
+      <section class="border-border bg-surface space-y-4 rounded-2xl border p-4 shadow-sm sm:p-5">
+        <h2 class="text-text-primary text-lg font-semibold">Step 1: Round basics</h2>
 
-        <label class="space-y-1 text-sm text-text-primary">
+        <label class="text-text-primary space-y-1 text-sm">
           <span class="font-medium">Round name</span>
           <input
             type="text"
             bind:value={roundName}
             placeholder="Cougar Point"
-            class="min-h-touch w-full rounded-lg border border-border bg-bg px-4 text-base outline-none transition focus:border-accent focus:ring-1 focus:ring-accent"
+            class="min-h-touch border-border bg-bg focus:border-accent focus:ring-accent w-full rounded-lg border px-4 text-base transition outline-none focus:ring-1"
             required
           />
         </label>
 
-        <label class="space-y-1 text-sm text-text-primary">
+        <label class="text-text-primary space-y-1 text-sm">
           <span class="font-medium">Course</span>
           <select
             bind:value={selectedCourseId}
-            class="min-h-touch w-full rounded-lg border border-border bg-bg px-4 text-base outline-none transition focus:border-accent focus:ring-1 focus:ring-accent"
+            class="min-h-touch border-border bg-bg focus:border-accent focus:ring-accent w-full rounded-lg border px-4 text-base transition outline-none focus:ring-1"
             required
           >
             {#each data.courses as course (course.id)}
@@ -340,11 +373,11 @@
           </select>
         </label>
 
-        <label class="space-y-1 text-sm text-text-primary">
+        <label class="text-text-primary space-y-1 text-sm">
           <span class="font-medium">Tee</span>
           <select
             bind:value={selectedTeeId}
-            class="min-h-touch w-full rounded-lg border border-border bg-bg px-4 text-base outline-none transition focus:border-accent focus:ring-1 focus:ring-accent"
+            class="min-h-touch border-border bg-bg focus:border-accent focus:ring-accent w-full rounded-lg border px-4 text-base transition outline-none focus:ring-1"
             required
             disabled={availableTees.length === 0}
           >
@@ -358,12 +391,12 @@
           </select>
         </label>
 
-        <label class="space-y-1 text-sm text-text-primary">
+        <label class="text-text-primary space-y-1 text-sm">
           <span class="font-medium">Date &amp; time</span>
           <input
             type="datetime-local"
             bind:value={dateTime}
-            class="min-h-touch w-full rounded-lg border border-border bg-bg px-4 text-base outline-none transition focus:border-accent focus:ring-1 focus:ring-accent"
+            class="min-h-touch border-border bg-bg focus:border-accent focus:ring-accent w-full rounded-lg border px-4 text-base transition outline-none focus:ring-1"
             required
           />
         </label>
@@ -371,19 +404,19 @@
     {/if}
 
     {#if currentStep === 2}
-      <section class="space-y-4 rounded-2xl border border-border bg-surface p-4 shadow-sm sm:p-5">
-        <h2 class="text-lg font-semibold text-text-primary">Step 2: Segment configuration</h2>
+      <section class="border-border bg-surface space-y-4 rounded-2xl border p-4 shadow-sm sm:p-5">
+        <h2 class="text-text-primary text-lg font-semibold">Step 2: Segment configuration</h2>
         <SegmentConfig
-          segments={segments}
-          courseHas9HoleRatings={courseHas9HoleRatings}
+          {segments}
+          {courseHas9HoleRatings}
           onChange={(nextSegments) => (segments = nextSegments)}
         />
       </section>
     {/if}
 
     {#if currentStep === 3}
-      <section class="space-y-4 rounded-2xl border border-border bg-surface p-4 shadow-sm sm:p-5">
-        <h2 class="text-lg font-semibold text-text-primary">Step 3: Matchups</h2>
+      <section class="border-border bg-surface space-y-4 rounded-2xl border p-4 shadow-sm sm:p-5">
+        <h2 class="text-text-primary text-lg font-semibold">Step 3: Matchups</h2>
 
         {#if data.teamA && data.teamB}
           <MatchupBuilder
@@ -395,7 +428,9 @@
             onChange={(nextMatchups) => (matchups = nextMatchups)}
           />
         {:else}
-          <p class="rounded-lg border border-status-halved/30 bg-status-halved/10 px-3 py-2 text-sm font-medium text-status-halved">
+          <p
+            class="border-status-halved/30 bg-status-halved/10 text-status-halved rounded-lg border px-3 py-2 text-sm font-medium"
+          >
             Create two teams before adding round matchups.
           </p>
         {/if}
@@ -407,7 +442,7 @@
         type="button"
         on:click={goToPreviousStep}
         disabled={currentStep === 1}
-        class="inline-flex min-h-touch items-center rounded-lg border border-border bg-transparent px-4 text-sm font-semibold text-text-primary transition hover:bg-surface-raised disabled:cursor-not-allowed disabled:text-text-secondary"
+        class="min-h-touch border-border text-text-primary hover:bg-surface-raised disabled:text-text-secondary inline-flex items-center rounded-lg border bg-transparent px-4 text-sm font-semibold transition disabled:cursor-not-allowed"
       >
         Back
       </button>
@@ -416,14 +451,14 @@
         <button
           type="button"
           on:click={goToNextStep}
-          class="inline-flex min-h-touch items-center rounded-lg bg-accent px-4 text-sm font-semibold text-accent-text transition hover:bg-accent-hover"
+          class="min-h-touch bg-accent text-accent-text hover:bg-accent-hover inline-flex items-center rounded-lg px-4 text-sm font-semibold transition"
         >
           Next
         </button>
       {:else}
         <button
           type="submit"
-          class="inline-flex min-h-touch items-center rounded-lg bg-accent px-4 text-sm font-semibold text-accent-text transition hover:bg-accent-hover"
+          class="min-h-touch bg-accent text-accent-text hover:bg-accent-hover inline-flex items-center rounded-lg px-4 text-sm font-semibold transition"
         >
           Create Round
         </button>

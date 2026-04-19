@@ -41,7 +41,9 @@ export const load: PageServerLoad = async (event) => {
 
   return {
     queryError:
-      queryError === 'not_found' ? 'Tournament not found. Check the event code and try again.' : null,
+      queryError === 'not_found'
+        ? 'Tournament not found. Check the event code and try again.'
+        : null,
   };
 };
 

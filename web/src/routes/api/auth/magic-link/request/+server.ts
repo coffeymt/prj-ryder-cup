@@ -17,9 +17,11 @@ function getDb(event: RequestEvent): D1Database {
   return db;
 }
 
-function getAuthConfig(
-  platformEnv: App.Platform['env']
-): { magicLinkKey: string; emailApiKey: string; fromEmail: string } {
+function getAuthConfig(platformEnv: App.Platform['env']): {
+  magicLinkKey: string;
+  emailApiKey: string;
+  fromEmail: string;
+} {
   const missingKeys: string[] = [];
 
   if (!platformEnv.MAGIC_LINK_KEY) {
@@ -97,11 +99,7 @@ export const POST: RequestHandler = async (event) => {
     });
   }
 
-  const { token: rawToken, expiresAt } = await issueMagicLink(
-    db,
-    commissioner.email,
-    magicLinkKey
-  );
+  const { token: rawToken, expiresAt } = await issueMagicLink(db, commissioner.email, magicLinkKey);
   const magicLinkUrl = `${event.url.origin}/api/auth/magic-link/consume?token=${encodeURIComponent(rawToken)}`;
 
   if (dev && (!emailApiKey || !fromEmail)) {

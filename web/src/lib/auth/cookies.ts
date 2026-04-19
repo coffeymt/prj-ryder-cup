@@ -78,7 +78,11 @@ async function importHmacKey(key: string): Promise<CryptoKey> {
 
 async function createSignature(payloadSegment: string, key: string): Promise<Uint8Array> {
   const cryptoKey = await importHmacKey(key);
-  const signature = await crypto.subtle.sign('HMAC', cryptoKey, UTF8_ENCODER.encode(payloadSegment));
+  const signature = await crypto.subtle.sign(
+    'HMAC',
+    cryptoKey,
+    UTF8_ENCODER.encode(payloadSegment)
+  );
 
   return new Uint8Array(signature);
 }

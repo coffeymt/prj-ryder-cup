@@ -53,7 +53,11 @@ async function resolveIdentity(
 
   const verifiedPayload = await verifyCookie(cookieValue, signingKey);
 
-  if (!verifiedPayload || !isCookiePayload(verifiedPayload) || verifiedPayload.role !== expectedRole) {
+  if (
+    !verifiedPayload ||
+    !isCookiePayload(verifiedPayload) ||
+    verifiedPayload.role !== expectedRole
+  ) {
     return null;
   }
 
@@ -68,8 +72,8 @@ async function resolveIdentity(
   return {
     role: expectedRole,
     tournamentId: verifiedPayload.tournamentId,
-    playerId: expectedRole === 'player' ? verifiedPayload.playerId ?? null : null,
-    userId: expectedRole === 'commissioner' ? verifiedPayload.userId ?? null : null,
+    playerId: expectedRole === 'player' ? (verifiedPayload.playerId ?? null) : null,
+    userId: expectedRole === 'commissioner' ? (verifiedPayload.userId ?? null) : null,
   };
 }
 

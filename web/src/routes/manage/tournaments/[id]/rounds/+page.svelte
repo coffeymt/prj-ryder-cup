@@ -12,7 +12,7 @@
 
     return new Date(parsed).toLocaleString(undefined, {
       dateStyle: 'medium',
-      timeStyle: 'short'
+      timeStyle: 'short',
     });
   }
 
@@ -51,27 +51,37 @@
 
 <section class="space-y-5">
   <header class="space-y-3">
-    <p class="text-xs font-semibold uppercase tracking-[0.2em] text-text-secondary">Commissioner Portal</p>
+    <p class="text-text-secondary text-xs font-semibold tracking-[0.2em] uppercase">
+      Commissioner Portal
+    </p>
     <div class="flex flex-wrap items-start justify-between gap-3">
       <div>
-        <h1 class="text-2xl font-semibold tracking-tight text-text-primary">{data.tournament.name}</h1>
-        <p class="text-sm text-text-secondary">Build and edit your tournament rounds and matchups.</p>
+        <h1 class="text-text-primary text-2xl font-semibold tracking-tight">
+          {data.tournament.name}
+        </h1>
+        <p class="text-text-secondary text-sm">
+          Build and edit your tournament rounds and matchups.
+        </p>
       </div>
       <a
         href={`/manage/tournaments/${data.tournament.id}/rounds/new`}
-        class="inline-flex min-h-touch items-center rounded-lg bg-accent px-4 text-sm font-semibold text-accent-text transition hover:bg-accent-hover"
+        class="min-h-touch bg-accent text-accent-text hover:bg-accent-hover inline-flex items-center rounded-lg px-4 text-sm font-semibold transition"
       >
         + Add Round
       </a>
     </div>
   </header>
 
-  <p class="rounded-lg border border-border bg-surface px-4 py-3 text-sm font-semibold text-text-primary shadow-sm">
+  <p
+    class="border-border bg-surface text-text-primary rounded-lg border px-4 py-3 text-sm font-semibold shadow-sm"
+  >
     {formatPoints(data.configuredPoints)} / {formatPoints(data.targetPoints)} points configured
   </p>
 
   {#if data.rounds.length === 0}
-    <p class="rounded-xl border border-dashed border-border bg-surface-raised px-4 py-4 text-sm text-text-secondary">
+    <p
+      class="border-border bg-surface-raised text-text-secondary rounded-xl border border-dashed px-4 py-4 text-sm"
+    >
       No rounds yet. Add your first round to start building matchups.
     </p>
   {:else}
@@ -79,35 +89,35 @@
       {#each data.rounds as round (round.id)}
         <a
           href={`/manage/tournaments/${data.tournament.id}/rounds/${round.id}`}
-          class="block rounded-xl border border-border bg-surface p-4 shadow-sm transition hover:border-border hover:shadow"
+          class="border-border bg-surface hover:border-border block rounded-xl border p-4 shadow-sm transition hover:shadow"
         >
           <div class="flex flex-wrap items-start justify-between gap-2">
             <div>
-              <p class="text-sm font-semibold text-text-secondary">Round {round.roundNumber}</p>
-              <h2 class="text-lg font-semibold text-text-primary">{round.name}</h2>
+              <p class="text-text-secondary text-sm font-semibold">Round {round.roundNumber}</p>
+              <h2 class="text-text-primary text-lg font-semibold">{round.name}</h2>
             </div>
             <span
-              class={`inline-flex min-h-8 items-center rounded-full border px-3 text-xs font-semibold uppercase tracking-wide ${statusClasses(round.status)}`}
+              class={`inline-flex min-h-8 items-center rounded-full border px-3 text-xs font-semibold tracking-wide uppercase ${statusClasses(round.status)}`}
             >
               {statusLabel(round.status)}
             </span>
           </div>
 
-          <dl class="mt-3 grid gap-2 text-sm text-text-secondary sm:grid-cols-2">
+          <dl class="text-text-secondary mt-3 grid gap-2 text-sm sm:grid-cols-2">
             <div>
-              <dt class="font-semibold text-text-primary">Date</dt>
+              <dt class="text-text-primary font-semibold">Date</dt>
               <dd>{formatDateTime(round.scheduledAt)}</dd>
             </div>
             <div>
-              <dt class="font-semibold text-text-primary">Course</dt>
+              <dt class="text-text-primary font-semibold">Course</dt>
               <dd>{round.courseName}</dd>
             </div>
             <div class="sm:col-span-2">
-              <dt class="font-semibold text-text-primary">Format</dt>
+              <dt class="text-text-primary font-semibold">Format</dt>
               <dd>{round.formatSummary}</dd>
             </div>
             <div>
-              <dt class="font-semibold text-text-primary">Points</dt>
+              <dt class="text-text-primary font-semibold">Points</dt>
               <dd>{formatPoints(round.points)}</dd>
             </div>
           </dl>

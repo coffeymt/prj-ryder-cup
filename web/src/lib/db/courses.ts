@@ -55,7 +55,7 @@ function normalizeCourse(row: Course | null): Course | null {
 
   return {
     ...row,
-    id: String(row.id)
+    id: String(row.id),
   };
 }
 
@@ -67,7 +67,7 @@ function normalizeTee(row: Tee | null): Tee | null {
   return {
     ...row,
     id: String(row.id),
-    course_id: String(row.course_id)
+    course_id: String(row.course_id),
   };
 }
 
@@ -79,7 +79,7 @@ function normalizeHole(row: Hole | null): Hole | null {
   return {
     ...row,
     id: String(row.id),
-    tee_id: String(row.tee_id)
+    tee_id: String(row.tee_id),
   };
 }
 
@@ -151,7 +151,7 @@ export async function listCourses(db: D1Database): Promise<Course[]> {
 
   return result.results.map((row) => ({
     ...row,
-    id: String(row.id)
+    id: String(row.id),
   }));
 }
 
@@ -266,7 +266,7 @@ export async function listTeesByCourse(db: D1Database, courseId: string): Promis
   return result.results.map((row) => ({
     ...row,
     id: String(row.id),
-    course_id: String(row.course_id)
+    course_id: String(row.course_id),
   }));
 }
 
@@ -293,7 +293,15 @@ export async function upsertHole(db: D1Database, data: UpsertHoleInput): Promise
         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)
       `
     )
-    .bind(holeId, data.tee_id, data.hole_number, data.par, data.yardage, data.stroke_index, createdAt)
+    .bind(
+      holeId,
+      data.tee_id,
+      data.hole_number,
+      data.par,
+      data.yardage,
+      data.stroke_index,
+      createdAt
+    )
     .run();
 
   const upserted = await getHoleById(db, holeId);
@@ -325,6 +333,6 @@ export async function listHolesByCourse(db: D1Database, courseId: string): Promi
   return result.results.map((row) => ({
     ...row,
     id: String(row.id),
-    tee_id: String(row.tee_id)
+    tee_id: String(row.tee_id),
   }));
 }

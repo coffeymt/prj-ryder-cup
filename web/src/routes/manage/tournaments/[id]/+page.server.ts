@@ -21,7 +21,7 @@ export const load: PageServerLoad = async (event) => {
     getTournamentById(db, tournamentId),
     listTeamsByTournament(db, tournamentId),
     listPlayersByTournament(db, tournamentId),
-    listRoundsByTournament(db, tournamentId)
+    listRoundsByTournament(db, tournamentId),
   ]);
 
   if (!tournament) {
@@ -32,6 +32,6 @@ export const load: PageServerLoad = async (event) => {
     tournament,
     teams,
     players,
-    rounds
+    rounds,
   };
 };

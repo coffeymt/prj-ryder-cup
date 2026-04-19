@@ -93,6 +93,6 @@ export const load: PageServerLoad = async (event) => {
   return {
     initialData: payload,
     code: tournament.code,
-    publicTickerEnabled
+    publicTickerEnabled,
   };
 };

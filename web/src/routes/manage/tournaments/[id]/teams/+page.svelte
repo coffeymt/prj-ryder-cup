@@ -103,19 +103,21 @@
 
 <section class="space-y-6">
   <div class="space-y-3">
-    <p class="text-xs font-semibold uppercase tracking-[0.2em] text-text-secondary">Commissioner Portal</p>
-    <h1 class="text-2xl font-semibold tracking-tight text-text-primary">{data.tournament.name}</h1>
+    <p class="text-text-secondary text-xs font-semibold tracking-[0.2em] uppercase">
+      Commissioner Portal
+    </p>
+    <h1 class="text-text-primary text-2xl font-semibold tracking-tight">{data.tournament.name}</h1>
     <div class="flex flex-wrap gap-2">
       <a
         href={`/manage/tournaments/${data.tournament.id}/teams`}
-        class="inline-flex min-h-touch items-center rounded-lg bg-accent px-4 text-sm font-semibold text-accent-text"
+        class="min-h-touch bg-accent text-accent-text inline-flex items-center rounded-lg px-4 text-sm font-semibold"
         aria-current="page"
       >
         Teams
       </a>
       <a
         href={`/manage/tournaments/${data.tournament.id}/players`}
-        class="inline-flex min-h-touch items-center rounded-lg border border-border bg-transparent px-4 text-sm font-semibold text-text-primary transition hover:bg-surface-raised"
+        class="min-h-touch border-border text-text-primary hover:bg-surface-raised inline-flex items-center rounded-lg border bg-transparent px-4 text-sm font-semibold transition"
       >
         Players
       </a>
@@ -124,7 +126,7 @@
 
   {#if formState?.success}
     <p
-      class="rounded-lg border border-status-up/30 bg-status-up/10 px-3 py-2 text-sm font-medium text-status-up"
+      class="border-status-up/30 bg-status-up/10 text-status-up rounded-lg border px-3 py-2 text-sm font-medium"
       role="status"
     >
       {formState.success}
@@ -132,18 +134,20 @@
   {/if}
 
   {#if formState?.error && formState.action === 'deleteTeam'}
-    <p class="rounded-lg border border-status-down/30 bg-status-down/10 px-3 py-2 text-sm font-medium text-status-down">
+    <p
+      class="border-status-down/30 bg-status-down/10 text-status-down rounded-lg border px-3 py-2 text-sm font-medium"
+    >
       {formState.error}
     </p>
   {/if}
 
-  <section class="rounded-2xl border border-border bg-surface p-4 shadow-sm sm:p-5">
+  <section class="border-border bg-surface rounded-2xl border p-4 shadow-sm sm:p-5">
     <div class="flex flex-wrap items-center justify-between gap-3">
-      <h2 class="text-lg font-semibold text-text-primary">Teams</h2>
+      <h2 class="text-text-primary text-lg font-semibold">Teams</h2>
       {#if !showCreateForm}
         <button
           type="button"
-          class="inline-flex min-h-touch items-center rounded-lg bg-accent px-4 text-sm font-semibold text-accent-text transition hover:bg-accent-hover"
+          class="min-h-touch bg-accent text-accent-text hover:bg-accent-hover inline-flex items-center rounded-lg px-4 text-sm font-semibold transition"
           on:click={() => (showCreateForm = true)}
         >
           + Add Team
@@ -152,40 +156,46 @@
     </div>
 
     {#if showCreateForm}
-      <form method="POST" action="?/createTeam" class="mt-4 space-y-4 rounded-xl border border-border p-4">
+      <form
+        method="POST"
+        action="?/createTeam"
+        class="border-border mt-4 space-y-4 rounded-xl border p-4"
+      >
         <div class="space-y-2">
-          <label for="create-team-name" class="block text-sm font-semibold text-text-primary">Team name</label>
+          <label for="create-team-name" class="text-text-primary block text-sm font-semibold"
+            >Team name</label
+          >
           <input
             id="create-team-name"
             name="name"
             type="text"
             bind:value={createTeamName}
-            class="h-11 w-full rounded-lg border border-border px-3 text-sm text-text-primary outline-none transition focus:border-accent focus:ring-1 focus:ring-accent"
+            class="border-border text-text-primary focus:border-accent focus:ring-accent h-11 w-full rounded-lg border px-3 text-sm transition outline-none focus:ring-1"
             placeholder="Enter team name"
             required
           />
         </div>
 
         <div class="space-y-2">
-          <p class="text-sm font-semibold text-text-primary">Team color</p>
+          <p class="text-text-primary text-sm font-semibold">Team color</p>
           <ColorPicker value={createTeamColor} onchange={(color) => (createTeamColor = color)} />
           <input type="hidden" name="color" value={createTeamColor} />
         </div>
 
         {#if formState?.action === 'createTeam' && formState.error}
-          <p class="text-sm font-medium text-status-down">{formState.error}</p>
+          <p class="text-status-down text-sm font-medium">{formState.error}</p>
         {/if}
 
         <div class="flex flex-wrap gap-2">
           <button
             type="submit"
-            class="inline-flex min-h-touch items-center rounded-lg bg-accent px-4 text-sm font-semibold text-accent-text transition hover:bg-accent-hover"
+            class="min-h-touch bg-accent text-accent-text hover:bg-accent-hover inline-flex items-center rounded-lg px-4 text-sm font-semibold transition"
           >
             Save Team
           </button>
           <button
             type="button"
-            class="inline-flex min-h-touch items-center rounded-lg border border-border bg-transparent px-4 text-sm font-semibold text-text-primary transition hover:bg-surface-raised"
+            class="min-h-touch border-border text-text-primary hover:bg-surface-raised inline-flex items-center rounded-lg border bg-transparent px-4 text-sm font-semibold transition"
             on:click={() => {
               showCreateForm = false;
               createTeamName = '';
@@ -200,19 +210,24 @@
 
     <div class="mt-4 space-y-3">
       {#if data.teams.length === 0}
-        <p class="rounded-lg border border-dashed border-border bg-surface-raised px-4 py-4 text-sm text-text-secondary">
+        <p
+          class="border-border bg-surface-raised text-text-secondary rounded-lg border border-dashed px-4 py-4 text-sm"
+        >
           No teams yet. Add your first team to begin assigning players.
         </p>
       {:else}
         {#each data.teams as team (team.id)}
-          <article class="rounded-xl border border-border bg-surface-raised p-4">
+          <article class="border-border bg-surface-raised rounded-xl border p-4">
             {#if editingTeamId === team.id}
               <form method="POST" action="?/updateTeam" class="space-y-4">
                 <input type="hidden" name="teamId" value={team.id} />
                 <input type="hidden" name="color" value={editTeamColor} />
 
                 <div class="space-y-2">
-                  <label for={`team-name-${team.id}`} class="block text-sm font-semibold text-text-primary">
+                  <label
+                    for={`team-name-${team.id}`}
+                    class="text-text-primary block text-sm font-semibold"
+                  >
                     Team name
                   </label>
                   <input
@@ -220,25 +235,31 @@
                     name="name"
                     type="text"
                     bind:value={editTeamName}
-                    class="h-11 w-full rounded-lg border border-border px-3 text-sm text-text-primary outline-none transition focus:border-accent focus:ring-1 focus:ring-accent"
+                    class="border-border text-text-primary focus:border-accent focus:ring-accent h-11 w-full rounded-lg border px-3 text-sm transition outline-none focus:ring-1"
                     required
                   />
                 </div>
 
                 <div class="space-y-2">
-                  <p class="text-sm font-semibold text-text-primary">Team color</p>
-                  <ColorPicker value={editTeamColor} onchange={(color) => (editTeamColor = color)} />
+                  <p class="text-text-primary text-sm font-semibold">Team color</p>
+                  <ColorPicker
+                    value={editTeamColor}
+                    onchange={(color) => (editTeamColor = color)}
+                  />
                 </div>
 
                 <div class="space-y-2">
-                  <label for={`team-captain-${team.id}`} class="block text-sm font-semibold text-text-primary">
+                  <label
+                    for={`team-captain-${team.id}`}
+                    class="text-text-primary block text-sm font-semibold"
+                  >
                     Captain
                   </label>
                   <select
                     id={`team-captain-${team.id}`}
                     name="captainPlayerId"
                     bind:value={editCaptainPlayerId}
-                    class="h-11 w-full rounded-lg border border-border px-3 text-sm text-text-primary outline-none transition focus:border-accent focus:ring-1 focus:ring-accent"
+                    class="border-border text-text-primary focus:border-accent focus:ring-accent h-11 w-full rounded-lg border px-3 text-sm transition outline-none focus:ring-1"
                   >
                     <option value="">No captain</option>
                     {#each getTeamPlayers(team.id) as player (player.id)}
@@ -248,19 +269,19 @@
                 </div>
 
                 {#if formState?.action === 'updateTeam' && formState.error && formState.teamId === team.id}
-                  <p class="text-sm font-medium text-status-down">{formState.error}</p>
+                  <p class="text-status-down text-sm font-medium">{formState.error}</p>
                 {/if}
 
                 <div class="flex flex-wrap gap-2">
                   <button
                     type="submit"
-                    class="inline-flex min-h-touch items-center rounded-lg bg-accent px-4 text-sm font-semibold text-accent-text transition hover:bg-accent-hover"
+                    class="min-h-touch bg-accent text-accent-text hover:bg-accent-hover inline-flex items-center rounded-lg px-4 text-sm font-semibold transition"
                   >
                     Save
                   </button>
                   <button
                     type="button"
-                    class="inline-flex min-h-touch items-center rounded-lg border border-border bg-transparent px-4 text-sm font-semibold text-text-primary transition hover:bg-surface-raised"
+                    class="min-h-touch border-border text-text-primary hover:bg-surface-raised inline-flex items-center rounded-lg border bg-transparent px-4 text-sm font-semibold transition"
                     on:click={cancelEdit}
                   >
                     Cancel
@@ -272,29 +293,33 @@
                 <div class="space-y-2">
                   <div class="flex items-center gap-3">
                     <span
-                      class="h-11 w-11 rounded-full border border-border"
+                      class="border-border h-11 w-11 rounded-full border"
                       style={`background-color: ${team.color};`}
                       aria-hidden="true"
                     ></span>
-                    <h3 class="text-base font-semibold text-text-primary">{team.name}</h3>
+                    <h3 class="text-text-primary text-base font-semibold">{team.name}</h3>
                   </div>
-                  <p class="text-sm text-text-secondary">Captain: {getCaptainName(team)}</p>
+                  <p class="text-text-secondary text-sm">Captain: {getCaptainName(team)}</p>
                 </div>
 
                 <div class="flex flex-wrap gap-2">
                   <button
                     type="button"
-                    class="inline-flex min-h-touch items-center rounded-lg border border-border bg-transparent px-4 text-sm font-semibold text-text-primary transition hover:bg-surface-raised"
+                    class="min-h-touch border-border text-text-primary hover:bg-surface-raised inline-flex items-center rounded-lg border bg-transparent px-4 text-sm font-semibold transition"
                     on:click={() => beginEdit(team)}
                   >
                     Edit
                   </button>
 
-                  <form method="POST" action="?/deleteTeam" on:submit={(event) => confirmDelete(event, team.name)}>
+                  <form
+                    method="POST"
+                    action="?/deleteTeam"
+                    on:submit={(event) => confirmDelete(event, team.name)}
+                  >
                     <input type="hidden" name="teamId" value={team.id} />
                     <button
                       type="submit"
-                      class="inline-flex min-h-touch items-center rounded-lg border border-status-down/30 bg-surface px-4 text-sm font-medium text-status-down transition hover:bg-status-down/10"
+                      class="min-h-touch border-status-down/30 bg-surface text-status-down hover:bg-status-down/10 inline-flex items-center rounded-lg border px-4 text-sm font-medium transition"
                     >
                       Delete
                     </button>

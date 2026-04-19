@@ -48,7 +48,7 @@
 
     return new Date(parsed).toLocaleString(undefined, {
       dateStyle: 'medium',
-      timeStyle: 'short'
+      timeStyle: 'short',
     });
   }
 
@@ -153,19 +153,19 @@
   <header class="space-y-2">
     <a
       href={`/manage/tournaments/${data.tournament.id}/rounds`}
-      class="inline-flex min-h-touch items-center text-sm font-medium text-text-secondary hover:text-text-primary"
+      class="min-h-touch text-text-secondary hover:text-text-primary inline-flex items-center text-sm font-medium"
     >
       ← Back to rounds
     </a>
     <div class="flex flex-wrap items-start justify-between gap-3">
       <div>
-        <h1 class="text-2xl font-semibold tracking-tight text-text-primary">
+        <h1 class="text-text-primary text-2xl font-semibold tracking-tight">
           {data.round.name ?? `Round ${data.round.roundNumber}`}
         </h1>
-        <p class="text-sm text-text-secondary">{data.courseName} · {data.teeName}</p>
+        <p class="text-text-secondary text-sm">{data.courseName} · {data.teeName}</p>
       </div>
       <span
-        class={`inline-flex min-h-8 items-center rounded-full border px-3 text-xs font-semibold uppercase tracking-wide ${roundStatusClasses(data.round.status)}`}
+        class={`inline-flex min-h-8 items-center rounded-full border px-3 text-xs font-semibold tracking-wide uppercase ${roundStatusClasses(data.round.status)}`}
       >
         {roundStatusLabel(data.round.status)}
       </span>
@@ -173,50 +173,58 @@
   </header>
 
   {#if formState?.success}
-    <p class="rounded-lg border border-status-up/30 bg-status-up/10 px-3 py-2 text-sm font-medium text-status-up">
+    <p
+      class="border-status-up/30 bg-status-up/10 text-status-up rounded-lg border px-3 py-2 text-sm font-medium"
+    >
       {formState.success}
     </p>
   {/if}
 
   {#if formState?.error && formState.action === 'updateRound'}
-    <p class="rounded-lg border border-status-down/30 bg-status-down/10 px-3 py-2 text-sm font-medium text-status-down">
+    <p
+      class="border-status-down/30 bg-status-down/10 text-status-down rounded-lg border px-3 py-2 text-sm font-medium"
+    >
       {formState.error}
     </p>
   {/if}
 
-  <section class="space-y-4 rounded-2xl border border-border bg-surface p-4 shadow-sm sm:p-5">
-    <h2 class="text-lg font-semibold text-text-primary">Round info</h2>
+  <section class="border-border bg-surface space-y-4 rounded-2xl border p-4 shadow-sm sm:p-5">
+    <h2 class="text-text-primary text-lg font-semibold">Round info</h2>
 
-    <dl class="grid gap-2 text-sm text-text-secondary sm:grid-cols-2">
+    <dl class="text-text-secondary grid gap-2 text-sm sm:grid-cols-2">
       <div>
-        <dt class="font-semibold text-text-primary">Scheduled</dt>
+        <dt class="text-text-primary font-semibold">Scheduled</dt>
         <dd>{formatDateTime(data.round.dateTime)}</dd>
       </div>
       <div>
-        <dt class="font-semibold text-text-primary">Round number</dt>
+        <dt class="text-text-primary font-semibold">Round number</dt>
         <dd>{data.round.roundNumber}</dd>
       </div>
     </dl>
 
-    <form method="POST" action="?/updateRound" class="grid gap-3 rounded-xl border border-border bg-surface-raised p-4 sm:grid-cols-2">
-      <label class="space-y-1 text-sm text-text-primary">
+    <form
+      method="POST"
+      action="?/updateRound"
+      class="border-border bg-surface-raised grid gap-3 rounded-xl border p-4 sm:grid-cols-2"
+    >
+      <label class="text-text-primary space-y-1 text-sm">
         <span class="font-medium">Round name</span>
         <input
           name="name"
           type="text"
           bind:value={editName}
-          class="min-h-touch w-full rounded-lg border border-border bg-bg px-4 text-base outline-none transition focus:border-accent focus:ring-1 focus:ring-accent"
+          class="min-h-touch border-border bg-bg focus:border-accent focus:ring-accent w-full rounded-lg border px-4 text-base transition outline-none focus:ring-1"
           required
         />
       </label>
 
-      <label class="space-y-1 text-sm text-text-primary">
+      <label class="text-text-primary space-y-1 text-sm">
         <span class="font-medium">Date &amp; time</span>
         <input
           name="dateTime"
           type="datetime-local"
           bind:value={editDateTime}
-          class="min-h-touch w-full rounded-lg border border-border bg-bg px-4 text-base outline-none transition focus:border-accent focus:ring-1 focus:ring-accent"
+          class="min-h-touch border-border bg-bg focus:border-accent focus:ring-accent w-full rounded-lg border px-4 text-base transition outline-none focus:ring-1"
           required
         />
       </label>
@@ -224,7 +232,7 @@
       <div class="sm:col-span-2">
         <button
           type="submit"
-          class="inline-flex min-h-touch items-center rounded-lg bg-accent px-4 text-sm font-semibold text-accent-text transition hover:bg-accent-hover"
+          class="min-h-touch bg-accent text-accent-text hover:bg-accent-hover inline-flex items-center rounded-lg px-4 text-sm font-semibold transition"
         >
           Save round details
         </button>
@@ -232,13 +240,17 @@
     </form>
   </section>
 
-  <section class="space-y-3 rounded-2xl border border-border bg-surface p-4 shadow-sm sm:p-5">
-    <h2 class="text-lg font-semibold text-text-primary">Segments</h2>
+  <section class="border-border bg-surface space-y-3 rounded-2xl border p-4 shadow-sm sm:p-5">
+    <h2 class="text-text-primary text-lg font-semibold">Segments</h2>
     <div class="space-y-2">
       {#each data.round.segments as segment (segment.id)}
-        <article class="rounded-lg border border-border bg-surface-raised px-3 py-2 text-sm text-text-primary">
+        <article
+          class="border-border bg-surface-raised text-text-primary rounded-lg border px-3 py-2 text-sm"
+        >
           <div class="flex flex-wrap items-center justify-between gap-2">
-            <p class="font-semibold text-text-primary">{formatSegment(segment.segment)} · {segment.format}</p>
+            <p class="text-text-primary font-semibold">
+              {formatSegment(segment.segment)} · {segment.format}
+            </p>
             <p>{formatPoints(segment.pointsAtStake)} pts</p>
           </div>
         </article>
@@ -246,55 +258,65 @@
     </div>
   </section>
 
-  <section class="space-y-4 rounded-2xl border border-border bg-surface p-4 shadow-sm sm:p-5">
-    <h2 class="text-lg font-semibold text-text-primary">Matches</h2>
+  <section class="border-border bg-surface space-y-4 rounded-2xl border p-4 shadow-sm sm:p-5">
+    <h2 class="text-text-primary text-lg font-semibold">Matches</h2>
 
     {#if data.matches.length === 0}
-      <p class="rounded-lg border border-dashed border-border bg-surface-raised px-3 py-3 text-sm text-text-secondary">
+      <p
+        class="border-border bg-surface-raised text-text-secondary rounded-lg border border-dashed px-3 py-3 text-sm"
+      >
         No matches have been created for this round yet.
       </p>
     {:else}
       <div class="space-y-3">
         {#each data.matches as match (match.id)}
-          <article class="space-y-3 rounded-xl border border-border bg-surface-raised p-4">
+          <article class="border-border bg-surface-raised space-y-3 rounded-xl border p-4">
             <div class="flex flex-wrap items-start justify-between gap-2">
               <div>
-                <p class="text-sm font-semibold text-text-secondary">Match {match.matchNumber}</p>
-                <p class="text-base font-semibold text-text-primary">
+                <p class="text-text-secondary text-sm font-semibold">Match {match.matchNumber}</p>
+                <p class="text-text-primary text-base font-semibold">
                   {match.format ?? 'Format TBD'} · {formatSegment(match.segment)}
                 </p>
               </div>
               <span
-                class={`inline-flex min-h-8 items-center rounded-full border px-3 text-xs font-semibold uppercase tracking-wide ${matchStatusClasses(match.status)}`}
+                class={`inline-flex min-h-8 items-center rounded-full border px-3 text-xs font-semibold tracking-wide uppercase ${matchStatusClasses(match.status)}`}
               >
                 {matchStatusLabel(match.status)}
               </span>
             </div>
 
-            <div class="grid gap-2 text-sm text-text-primary md:grid-cols-2">
-              <div class="rounded-lg border border-border bg-surface px-3 py-2">
-                <p class="font-semibold text-text-primary">Side A</p>
+            <div class="text-text-primary grid gap-2 text-sm md:grid-cols-2">
+              <div class="border-border bg-surface rounded-lg border px-3 py-2">
+                <p class="text-text-primary font-semibold">Side A</p>
                 <p>{playerNames(sideByLabel(match.sides, 'A'))}</p>
               </div>
-              <div class="rounded-lg border border-border bg-surface px-3 py-2">
-                <p class="font-semibold text-text-primary">Side B</p>
+              <div class="border-border bg-surface rounded-lg border px-3 py-2">
+                <p class="text-text-primary font-semibold">Side B</p>
                 <p>{playerNames(sideByLabel(match.sides, 'B'))}</p>
               </div>
             </div>
 
-            <p class="text-sm text-text-secondary">Points at stake: {formatPoints(match.pointsAtStake)}</p>
+            <p class="text-text-secondary text-sm">
+              Points at stake: {formatPoints(match.pointsAtStake)}
+            </p>
 
             {#if formState?.action === 'closeMatch' && formState.matchId === match.id && formState.error}
-              <p class="rounded-lg border border-status-down/30 bg-status-down/10 px-3 py-2 text-sm font-medium text-status-down">
+              <p
+                class="border-status-down/30 bg-status-down/10 text-status-down rounded-lg border px-3 py-2 text-sm font-medium"
+              >
                 {formState.error}
               </p>
             {/if}
 
             {#if data.round.status !== 'draft' && match.status !== 'FINAL'}
-              <form method="POST" action="?/closeMatch" class="space-y-3 rounded-lg border border-border bg-surface p-3">
+              <form
+                method="POST"
+                action="?/closeMatch"
+                class="border-border bg-surface space-y-3 rounded-lg border p-3"
+              >
                 <input type="hidden" name="matchId" value={match.id} />
                 <div class="grid gap-3 sm:grid-cols-2">
-                  <label class="space-y-1 text-sm text-text-primary">
+                  <label class="text-text-primary space-y-1 text-sm">
                     <span class="font-medium">Side A points</span>
                     <input
                       name="sideAPoints"
@@ -302,12 +324,12 @@
                       min="0"
                       step="0.5"
                       value={defaultSplitPoints(match.pointsAtStake, 'A')}
-                      class="min-h-touch w-full rounded-lg border border-border bg-bg px-4 text-base outline-none transition focus:border-accent focus:ring-1 focus:ring-accent"
+                      class="min-h-touch border-border bg-bg focus:border-accent focus:ring-accent w-full rounded-lg border px-4 text-base transition outline-none focus:ring-1"
                       required
                     />
                   </label>
 
-                  <label class="space-y-1 text-sm text-text-primary">
+                  <label class="text-text-primary space-y-1 text-sm">
                     <span class="font-medium">Side B points</span>
                     <input
                       name="sideBPoints"
@@ -315,27 +337,27 @@
                       min="0"
                       step="0.5"
                       value={defaultSplitPoints(match.pointsAtStake, 'B')}
-                      class="min-h-touch w-full rounded-lg border border-border bg-bg px-4 text-base outline-none transition focus:border-accent focus:ring-1 focus:ring-accent"
+                      class="min-h-touch border-border bg-bg focus:border-accent focus:ring-accent w-full rounded-lg border px-4 text-base transition outline-none focus:ring-1"
                       required
                     />
                   </label>
                 </div>
 
-                <label class="space-y-1 text-sm text-text-primary">
+                <label class="text-text-primary space-y-1 text-sm">
                   <span class="font-medium">Reason</span>
                   <input
                     name="reason"
                     type="text"
                     minlength="5"
                     placeholder="Reason for manual close"
-                    class="min-h-touch w-full rounded-lg border border-border bg-bg px-4 text-base outline-none transition focus:border-accent focus:ring-1 focus:ring-accent"
+                    class="min-h-touch border-border bg-bg focus:border-accent focus:ring-accent w-full rounded-lg border px-4 text-base transition outline-none focus:ring-1"
                     required
                   />
                 </label>
 
                 <button
                   type="submit"
-                  class="inline-flex min-h-touch items-center rounded-lg border border-status-down/30 bg-status-down/10 px-4 text-sm font-medium text-status-down transition hover:bg-status-down/10"
+                  class="min-h-touch border-status-down/30 bg-status-down/10 text-status-down hover:bg-status-down/10 inline-flex items-center rounded-lg border px-4 text-sm font-medium transition"
                 >
                   Manually close match
                 </button>

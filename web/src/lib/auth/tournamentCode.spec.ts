@@ -1,5 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { generateTournamentCode, generateUniqueCode, isValidTournamentCode } from './tournamentCode';
+import {
+  generateTournamentCode,
+  generateUniqueCode,
+  isValidTournamentCode,
+} from './tournamentCode';
 
 const BULK_GENERATION_SAMPLE_SIZE = 10_000;
 const EXPECTED_CODE_LENGTH = 6;
@@ -43,22 +47,23 @@ describe('generateUniqueCode', () => {
   });
 
   it('retries until a code is not in the existing set', () => {
-    const byteSequenceQueue = [new Uint8Array([0, 0, 0, 0, 0, 0]), new Uint8Array([1, 1, 1, 1, 1, 1])];
+    const byteSequenceQueue = [
+      new Uint8Array([0, 0, 0, 0, 0, 0]),
+      new Uint8Array([1, 1, 1, 1, 1, 1]),
+    ];
 
-    const getRandomValuesSpy = vi
-      .spyOn(globalThis.crypto, 'getRandomValues')
-      .mockImplementation(
-        ((typedArray: Uint8Array): Uint8Array => {
-          const nextBytes = byteSequenceQueue.shift();
+    const getRandomValuesSpy = vi.spyOn(globalThis.crypto, 'getRandomValues').mockImplementation(((
+      typedArray: Uint8Array
+    ): Uint8Array => {
+      const nextBytes = byteSequenceQueue.shift();
 
-          if (!nextBytes) {
-            throw new Error('Test byte sequence queue is exhausted.');
-          }
+      if (!nextBytes) {
+        throw new Error('Test byte sequence queue is exhausted.');
+      }
 
-          typedArray.set(nextBytes);
-          return typedArray;
-        }) as typeof crypto.getRandomValues
-      );
+      typedArray.set(nextBytes);
+      return typedArray;
+    }) as typeof crypto.getRandomValues);
 
     const existingCodes = new Set<string>(['AAAAAA']);
     const uniqueCode = generateUniqueCode(existingCodes);

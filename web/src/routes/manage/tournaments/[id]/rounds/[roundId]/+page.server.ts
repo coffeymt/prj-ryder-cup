@@ -71,13 +71,7 @@ function requireCommissionerAccess(locals: App.Locals, tournamentId: string): vo
 }
 
 async function parseApiErrorMessage(response: Response): Promise<string> {
-  let body: unknown = null;
-
-  try {
-    body = await response.json();
-  } catch {
-    body = null;
-  }
+  const body = await response.json().catch(() => null);
 
   if (body && typeof body === 'object' && !Array.isArray(body)) {
     const message = (body as Record<string, unknown>).message;
@@ -121,7 +115,7 @@ async function loadRoundData(event: Parameters<PageServerLoad>[0]): Promise<{
 
   return {
     round,
-    matches: matchesPayload.matches
+    matches: matchesPayload.matches,
   };
 }
 
@@ -146,7 +140,7 @@ export const load: PageServerLoad = async (event) => {
     round,
     courseName: course?.name ?? 'Unknown course',
     teeName: tee?.name ?? 'Unknown tee',
-    matches
+    matches,
   };
 };
 
@@ -161,14 +155,14 @@ export const actions: Actions = {
     if (!name) {
       return fail(400, {
         action: 'updateRound',
-        error: 'Round name is required.'
+        error: 'Round name is required.',
       });
     }
 
     if (!dateTime || Number.isNaN(Date.parse(dateTime))) {
       return fail(400, {
         action: 'updateRound',
-        error: 'Valid round date/time is required.'
+        error: 'Valid round date/time is required.',
       });
     }
 
@@ -177,25 +171,25 @@ export const actions: Actions = {
       {
         method: 'PATCH',
         headers: {
-          'content-type': 'application/json'
+          'content-type': 'application/json',
         },
         body: JSON.stringify({
           name,
-          dateTime
-        })
+          dateTime,
+        }),
       }
     );
 
     if (!response.ok) {
       return fail(toActionFailureStatus(response.status), {
         action: 'updateRound',
-        error: await parseApiErrorMessage(response)
+        error: await parseApiErrorMessage(response),
       });
     }
 
     return {
       action: 'updateRound',
-      success: 'Round details updated.'
+      success: 'Round details updated.',
     };
   },
 
@@ -209,7 +203,7 @@ export const actions: Actions = {
     if (!roundResponse.ok) {
       return fail(toActionFailureStatus(roundResponse.status), {
         action: 'closeMatch',
-        error: await parseApiErrorMessage(roundResponse)
+        error: await parseApiErrorMessage(roundResponse),
       });
     }
 
@@ -218,7 +212,7 @@ export const actions: Actions = {
     if (round.status === 'draft') {
       return fail(400, {
         action: 'closeMatch',
-        error: 'Matches can only be force-closed once the round is in progress or complete.'
+        error: 'Matches can only be force-closed once the round is in progress or complete.',
       });
     }
 
@@ -231,7 +225,7 @@ export const actions: Actions = {
     if (!matchId) {
       return fail(400, {
         action: 'closeMatch',
-        error: 'Match id is required.'
+        error: 'Match id is required.',
       });
     }
 
@@ -239,7 +233,7 @@ export const actions: Actions = {
       return fail(400, {
         action: 'closeMatch',
         matchId,
-        error: 'Side A points must be a non-negative number.'
+        error: 'Side A points must be a non-negative number.',
       });
     }
 
@@ -247,7 +241,7 @@ export const actions: Actions = {
       return fail(400, {
         action: 'closeMatch',
         matchId,
-        error: 'Side B points must be a non-negative number.'
+        error: 'Side B points must be a non-negative number.',
       });
     }
 
@@ -255,35 +249,35 @@ export const actions: Actions = {
       return fail(400, {
         action: 'closeMatch',
         matchId,
-        error: 'Reason must be at least 5 characters.'
+        error: 'Reason must be at least 5 characters.',
       });
     }
 
     const response = await event.fetch(`/api/matches/${encodeURIComponent(matchId)}/override`, {
       method: 'POST',
       headers: {
-        'content-type': 'application/json'
+        'content-type': 'application/json',
       },
       body: JSON.stringify({
         action: 'force_close',
         sideAPoints,
         sideBPoints,
-        reason
-      })
+        reason,
+      }),
     });
 
     if (!response.ok) {
       return fail(toActionFailureStatus(response.status), {
         action: 'closeMatch',
         matchId,
-        error: await parseApiErrorMessage(response)
+        error: await parseApiErrorMessage(response),
       });
     }
 
     return {
       action: 'closeMatch',
       matchId,
-      success: 'Match was manually closed.'
+      success: 'Match was manually closed.',
     };
-  }
+  },
 };

@@ -33,3 +33,7 @@ Thumbs.db
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
+
+tail.log
+tail-err.log
+wrangler-tail.txt

@@ -10,7 +10,7 @@ import {
   listPlayersBySide,
   listSidesByMatch,
   updateMatchStatus,
-  upsertMatchHoleResult
+  upsertMatchHoleResult,
 } from '$lib/db/matches';
 import { listHoleScoresByMatch, upsertHoleScore } from '$lib/db/holeScores';
 import type {
@@ -21,7 +21,7 @@ import type {
   Player,
   RoundSegment,
   SideLabel,
-  Tournament
+  Tournament,
 } from '$lib/db/types';
 import { computeFourBallResults } from '$lib/engine/formats/fourBall';
 import { computePinehurstResults } from '$lib/engine/formats/pinehurst';
@@ -36,7 +36,7 @@ import type {
   MatchState,
   PlayerHandicapInput,
   TeeData,
-  TournamentAllowances
+  TournamentAllowances,
 } from '$lib/engine/types';
 import { error, json, type RequestEvent, type RequestHandler } from '@sveltejs/kit';
 
@@ -77,7 +77,10 @@ function isValidIdempotencyKey(value: string): boolean {
   return UUID_PATTERN.test(value) || ULID_PATTERN.test(value);
 }
 
-function parseHoleScoreBody(value: unknown): { body: HoleScoreRequestBody | null; message: string | null } {
+function parseHoleScoreBody(value: unknown): {
+  body: HoleScoreRequestBody | null;
+  message: string | null;
+} {
   if (!isRecord(value)) {
     return { body: null, message: 'Request body must be a JSON object.' };
   }
@@ -108,7 +111,10 @@ function parseHoleScoreBody(value: unknown): { body: HoleScoreRequestBody | null
     return { body: null, message: 'conceded and pickedUp cannot both be true.' };
   }
 
-  if (grossStrokes !== null && (!Number.isInteger(grossStrokes) || grossStrokes < 1 || grossStrokes > 15)) {
+  if (
+    grossStrokes !== null &&
+    (!Number.isInteger(grossStrokes) || grossStrokes < 1 || grossStrokes > 15)
+  ) {
     return { body: null, message: 'grossStrokes must be an integer between 1 and 15 or null.' };
   }
 
@@ -116,13 +122,13 @@ function parseHoleScoreBody(value: unknown): { body: HoleScoreRequestBody | null
     if (grossStrokes !== null) {
       return {
         body: null,
-        message: 'grossStrokes must be null when conceded or pickedUp is true.'
+        message: 'grossStrokes must be null when conceded or pickedUp is true.',
       };
     }
   } else if (grossStrokes === null) {
     return {
       body: null,
-      message: 'grossStrokes is required when conceded and pickedUp are both false.'
+      message: 'grossStrokes is required when conceded and pickedUp are both false.',
     };
   }
 
@@ -132,9 +138,9 @@ function parseHoleScoreBody(value: unknown): { body: HoleScoreRequestBody | null
       holeNumber,
       grossStrokes,
       conceded,
-      pickedUp
+      pickedUp,
     },
-    message: null
+    message: null,
   };
 }
 
@@ -143,25 +149,25 @@ function normalizeTournamentAllowances(tournament: Tournament): TournamentAllowa
     scramble: {
       type: 'blended',
       lowPct: tournament.allowance_scramble_low,
-      highPct: tournament.allowance_scramble_high
+      highPct: tournament.allowance_scramble_high,
     },
     pinehurst: {
       type: 'blended',
       lowPct: tournament.allowance_pinehurst_low,
-      highPct: tournament.allowance_pinehurst_high
+      highPct: tournament.allowance_pinehurst_high,
     },
     shamble: {
       type: 'perPlayer',
-      pct: tournament.allowance_shamble
+      pct: tournament.allowance_shamble,
     },
     fourBall: {
       type: 'perPlayer',
-      pct: tournament.allowance_fourball
+      pct: tournament.allowance_fourball,
     },
     singles: {
       type: 'perPlayer',
-      pct: tournament.allowance_singles
-    }
+      pct: tournament.allowance_singles,
+    },
   };
 }
 
@@ -201,7 +207,11 @@ function getMatchSidesByLabel(sides: MatchSide[]): { sideA: MatchSide; sideB: Ma
   return { sideA, sideB };
 }
 
-function asTeeData(teeId: number, teeRow: Awaited<ReturnType<typeof listTeesByCourse>>[number], holes: Awaited<ReturnType<typeof listHolesByCourse>>): TeeData {
+function asTeeData(
+  teeId: number,
+  teeRow: Awaited<ReturnType<typeof listTeesByCourse>>[number],
+  holes: Awaited<ReturnType<typeof listHolesByCourse>>
+): TeeData {
   return {
     id: teeId,
     name: teeRow.name,
@@ -221,12 +231,16 @@ function asTeeData(teeId: number, teeRow: Awaited<ReturnType<typeof listTeesByCo
         holeNumber: hole.hole_number,
         par: hole.par as TeeData['holes'][number]['par'],
         strokeIndex: hole.stroke_index as TeeData['holes'][number]['strokeIndex'],
-        yardage: hole.yardage ?? undefined
-      }))
+        yardage: hole.yardage ?? undefined,
+      })),
   };
 }
 
-function resolveAllowance(format: RoundSegment['format'], tournamentAllowances: TournamentAllowances, override: number | null): Allowance {
+function resolveAllowance(
+  format: RoundSegment['format'],
+  tournamentAllowances: TournamentAllowances,
+  override: number | null
+): Allowance {
   const defaultAllowance: Allowance =
     format === 'SCRAMBLE'
       ? tournamentAllowances.scramble
@@ -246,13 +260,13 @@ function resolveAllowance(format: RoundSegment['format'], tournamentAllowances: 
     return {
       type: 'blended',
       lowPct: override,
-      highPct: override
+      highPct: override,
     };
   }
 
   return {
     type: 'perPlayer',
-    pct: override
+    pct: override,
   };
 }
 
@@ -266,8 +280,7 @@ function toEngineHoleScore(
     return null;
   }
 
-  const mappedPlayerId =
-    row.player_id === null ? null : (playerIdMap.get(row.player_id) ?? null);
+  const mappedPlayerId = row.player_id === null ? null : (playerIdMap.get(row.player_id) ?? null);
 
   return {
     holeNumber: row.hole_number,
@@ -276,7 +289,7 @@ function toEngineHoleScore(
     grossStrokes: row.gross_strokes,
     isConceded: row.is_conceded === 1,
     isPickedUp: row.is_picked_up === 1,
-    opId: row.op_id
+    opId: row.op_id,
   };
 }
 
@@ -285,7 +298,7 @@ function toEngineHoleResult(row: MatchHoleResult): EngineHoleResult {
     holeNumber: row.hole_number,
     result: row.result,
     sideANet: row.side_a_net,
-    sideBNet: row.side_b_net
+    sideBNet: row.side_b_net,
   };
 }
 
@@ -304,7 +317,7 @@ function buildOverallHoleResults(rows: MatchHoleResult[], totalHoles: number): E
         holeNumber,
         result: 'PENDING',
         sideANet: null,
-        sideBNet: null
+        sideBNet: null,
       }
     );
   }
@@ -316,7 +329,9 @@ async function loadPlayersForSide(
   db: D1Database,
   sidePlayers: MatchSidePlayer[]
 ): Promise<Player[]> {
-  const loaded = await Promise.all(sidePlayers.map((sidePlayer) => getPlayerById(db, sidePlayer.player_id)));
+  const loaded = await Promise.all(
+    sidePlayers.map((sidePlayer) => getPlayerById(db, sidePlayer.player_id))
+  );
 
   const players: Player[] = [];
 
@@ -346,7 +361,7 @@ function toPlayerHandicapInput(
     return {
       playerId: enginePlayerId,
       sideId: engineSideId,
-      handicapIndex: player.handicap_index as PlayerHandicapInput['handicapIndex']
+      handicapIndex: player.handicap_index as PlayerHandicapInput['handicapIndex'],
     };
   });
 }
@@ -374,12 +389,12 @@ function computeSegmentState(
         {
           sideId: sideAEngineId,
           players: sideAPlayers,
-          holeScores: sideAHoleScores
+          holeScores: sideAHoleScores,
         },
         {
           sideId: sideBEngineId,
           players: sideBPlayers,
-          holeScores: sideBHoleScores
+          holeScores: sideBHoleScores,
         },
         tee,
         segmentType,
@@ -395,12 +410,12 @@ function computeSegmentState(
         {
           sideId: sideAEngineId,
           players: sideAPlayers,
-          holeScores: sideAHoleScores
+          holeScores: sideAHoleScores,
         },
         {
           sideId: sideBEngineId,
           players: sideBPlayers,
-          holeScores: sideBHoleScores
+          holeScores: sideBHoleScores,
         },
         tee,
         segmentType,
@@ -416,12 +431,12 @@ function computeSegmentState(
         {
           sideId: sideAEngineId,
           players: sideAPlayers,
-          holeScores: sideAHoleScores
+          holeScores: sideAHoleScores,
         },
         {
           sideId: sideBEngineId,
           players: sideBPlayers,
-          holeScores: sideBHoleScores
+          holeScores: sideBHoleScores,
         },
         tee,
         segmentType,
@@ -437,12 +452,12 @@ function computeSegmentState(
         {
           sideId: sideAEngineId,
           players: sideAPlayers,
-          holeScores: sideAHoleScores
+          holeScores: sideAHoleScores,
         },
         {
           sideId: sideBEngineId,
           players: sideBPlayers,
-          holeScores: sideBHoleScores
+          holeScores: sideBHoleScores,
         },
         tee,
         segmentType,
@@ -462,12 +477,12 @@ function computeSegmentState(
         {
           sideId: sideAEngineId,
           player: sideAPlayers[0],
-          holeScores: sideAHoleScores
+          holeScores: sideAHoleScores,
         },
         {
           sideId: sideBEngineId,
           player: sideBPlayers[0],
-          holeScores: sideBHoleScores
+          holeScores: sideBHoleScores,
         },
         tee,
         segmentType,
@@ -576,7 +591,10 @@ export const POST: RequestHandler = async (event) => {
     }
 
     if (actorSideId !== subjectPlayerSideId) {
-      return json({ message: 'Players can only submit scores for their own side.' }, { status: 403 });
+      return json(
+        { message: 'Players can only submit scores for their own side.' },
+        { status: 403 }
+      );
     }
   }
 
@@ -604,19 +622,26 @@ export const POST: RequestHandler = async (event) => {
     is_conceded: requestBody.conceded ? 1 : 0,
     is_picked_up: requestBody.pickedUp ? 1 : 0,
     entered_by_player_id: event.locals.role === 'player' ? event.locals.playerId : null,
-    op_id: opId
+    op_id: opId,
   });
 
-  const [allHoleScores, segments, tournament, teesByCourse, holesByCourse, sideAPlayers, sideBPlayers] =
-    await Promise.all([
-      listHoleScoresByMatch(db, match.id),
-      listSegmentsByRound(db, round.id),
-      getTournamentById(db, round.tournament_id),
-      listTeesByCourse(db, round.course_id),
-      listHolesByCourse(db, round.course_id),
-      loadPlayersForSide(db, sidePlayersBySideId.get(sideA.id) ?? []),
-      loadPlayersForSide(db, sidePlayersBySideId.get(sideB.id) ?? [])
-    ]);
+  const [
+    allHoleScores,
+    segments,
+    tournament,
+    teesByCourse,
+    holesByCourse,
+    sideAPlayers,
+    sideBPlayers,
+  ] = await Promise.all([
+    listHoleScoresByMatch(db, match.id),
+    listSegmentsByRound(db, round.id),
+    getTournamentById(db, round.tournament_id),
+    listTeesByCourse(db, round.course_id),
+    listHolesByCourse(db, round.course_id),
+    loadPlayersForSide(db, sidePlayersBySideId.get(sideA.id) ?? []),
+    loadPlayersForSide(db, sidePlayersBySideId.get(sideB.id) ?? []),
+  ]);
 
   if (!tournament) {
     throw error(500, 'Round references a missing tournament.');
@@ -629,7 +654,7 @@ export const POST: RequestHandler = async (event) => {
 
   const segment = {
     ...segmentForHole,
-    format: match.format_override ?? segmentForHole.format
+    format: match.format_override ?? segmentForHole.format,
   };
 
   const tee = teesByCourse.find((candidateTee) => candidateTee.id === round.tee_id);
@@ -644,11 +669,11 @@ export const POST: RequestHandler = async (event) => {
 
   const sideIdMap = new Map<string, number>([
     [sideA.id, 1],
-    [sideB.id, 2]
+    [sideB.id, 2],
   ]);
   const sideLabelByEngineId = new Map<number, SideLabel>([
     [1, 'A'],
-    [2, 'B']
+    [2, 'B'],
   ]);
 
   const playerIdMap = new Map<string, number>();
@@ -697,7 +722,7 @@ export const POST: RequestHandler = async (event) => {
     hole_number: requestBody.holeNumber,
     result: computedHoleResult.result,
     side_a_net: computedHoleResult.sideANet,
-    side_b_net: computedHoleResult.sideBNet
+    side_b_net: computedHoleResult.sideBNet,
   });
 
   const allHoleResults = await listHoleResultsByMatch(db, match.id);
@@ -731,7 +756,7 @@ export const POST: RequestHandler = async (event) => {
       halves: overallState.sideA.holesSplit,
       close_notation: overallState.closeNotation,
       side_a_points: overallState.sideA.pointsEarned,
-      side_b_points: overallState.sideB.pointsEarned
+      side_b_points: overallState.sideB.pointsEarned,
     });
   }
 
@@ -740,7 +765,7 @@ export const POST: RequestHandler = async (event) => {
     holeResult: persistedHoleResult,
     matchState: formatMatchState(overallState, sideLabelByEngineId),
     matchClosed,
-    closeNotation: overallState.closeNotation
+    closeNotation: overallState.closeNotation,
   };
 
   await markOpProcessed(db, opId, JSON.stringify(responseBody), matchId);

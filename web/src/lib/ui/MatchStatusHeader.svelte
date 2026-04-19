@@ -83,7 +83,7 @@
 </script>
 
 <header
-  class="sticky top-0 z-20 space-y-2 rounded-2xl border border-border bg-surface p-3 shadow-sm backdrop-blur"
+  class="border-border bg-surface sticky top-0 z-20 space-y-2 rounded-2xl border p-3 shadow-sm backdrop-blur"
   style={headerStyle(teamAColor, teamBColor)}
 >
   <div class="flex items-center justify-between gap-2">
@@ -95,12 +95,18 @@
     </span>
   </div>
   <div class="grid grid-cols-2 gap-2">
-    <p class="flex min-h-touch items-center gap-2 rounded-full border border-border bg-surface-raised px-3 text-sm font-semibold text-text-primary">
-      <span class="h-2.5 w-2.5 rounded-full border border-border bg-team-a" aria-hidden="true"></span>
+    <p
+      class="min-h-touch border-border bg-surface-raised text-text-primary flex items-center gap-2 rounded-full border px-3 text-sm font-semibold"
+    >
+      <span class="border-border bg-team-a h-2.5 w-2.5 rounded-full border" aria-hidden="true"
+      ></span>
       <span class="truncate">{teamAName}</span>
     </p>
-    <p class="flex min-h-touch items-center gap-2 rounded-full border border-border bg-surface-raised px-3 text-sm font-semibold text-text-primary">
-      <span class="h-2.5 w-2.5 rounded-full border border-border bg-team-b" aria-hidden="true"></span>
+    <p
+      class="min-h-touch border-border bg-surface-raised text-text-primary flex items-center gap-2 rounded-full border px-3 text-sm font-semibold"
+    >
+      <span class="border-border bg-team-b h-2.5 w-2.5 rounded-full border" aria-hidden="true"
+      ></span>
       <span class="truncate">{teamBName}</span>
     </p>
   </div>

@@ -62,13 +62,7 @@ function requireCommissionerAccess(event: RequestEvent, tournamentId: string): v
 }
 
 async function parseApiErrorMessage(response: Response): Promise<string> {
-  let body: unknown = null;
-
-  try {
-    body = await response.json();
-  } catch {
-    body = null;
-  }
+  const body = await response.json().catch(() => null);
 
   if (body && typeof body === 'object' && !Array.isArray(body)) {
     const message = (body as Record<string, unknown>).message;
@@ -87,13 +81,7 @@ async function parseApiErrorMessage(response: Response): Promise<string> {
 }
 
 async function parseApiBulkErrors(response: Response): Promise<BulkRowError[]> {
-  let body: unknown = null;
-
-  try {
-    body = await response.json();
-  } catch {
-    return [];
-  }
+  const body = await response.json().catch(() => null);
 
   if (!body || typeof body !== 'object' || Array.isArray(body)) {
     return [];
@@ -254,18 +242,21 @@ export const actions: Actions = {
       });
     }
 
-    const response = await event.fetch(`/api/tournaments/${encodeURIComponent(tournamentId)}/players`, {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify({
-        displayName,
-        handicapIndex,
-        teamId: teamIdRaw.length > 0 ? teamIdRaw : null,
-        ...(emailRaw.length > 0 ? { email: emailRaw } : {}),
-      }),
-    });
+    const response = await event.fetch(
+      `/api/tournaments/${encodeURIComponent(tournamentId)}/players`,
+      {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          displayName,
+          handicapIndex,
+          teamId: teamIdRaw.length > 0 ? teamIdRaw : null,
+          ...(emailRaw.length > 0 ? { email: emailRaw } : {}),
+        }),
+      }
+    );
 
     if (!response.ok) {
       return fail(toActionFailureStatus(response.status), {

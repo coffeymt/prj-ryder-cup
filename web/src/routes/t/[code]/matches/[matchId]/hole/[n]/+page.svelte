@@ -19,7 +19,7 @@
     ...playerRow,
     grossStrokes: playerRow.currentScore?.grossStrokes ?? data.par,
     conceded: playerRow.currentScore?.conceded ?? false,
-    pickedUp: playerRow.currentScore?.pickedUp ?? false
+    pickedUp: playerRow.currentScore?.pickedUp ?? false,
   }));
   let isSaving = false;
   let errorMessage = '';
@@ -42,7 +42,7 @@
         ? {
             ...row,
             conceded: !row.conceded,
-            pickedUp: row.conceded ? row.pickedUp : false
+            pickedUp: row.conceded ? row.pickedUp : false,
           }
         : row
     );
@@ -54,7 +54,7 @@
         ? {
             ...row,
             pickedUp: !row.pickedUp,
-            conceded: row.pickedUp ? row.conceded : false
+            conceded: row.pickedUp ? row.conceded : false,
           }
         : row
     );
@@ -66,7 +66,7 @@
       holeNumber: data.holeNumber,
       grossStrokes: row.conceded || row.pickedUp ? null : row.grossStrokes,
       conceded: row.conceded,
-      pickedUp: row.pickedUp
+      pickedUp: row.pickedUp,
     });
   }
 
@@ -120,24 +120,36 @@
     teamBColor={data.match.teamBColor}
   />
 
-  <section class="rounded-2xl border border-border bg-surface p-card-padding shadow-sm">
-    <p class="text-xs font-semibold uppercase tracking-[0.2em] text-text-muted">{data.segmentLabel}</p>
-    <h1 class="mt-1 font-display text-2xl font-semibold tracking-tight text-text-primary">
+  <section class="border-border bg-surface p-card-padding rounded-2xl border shadow-sm">
+    <p class="text-text-muted text-xs font-semibold tracking-[0.2em] uppercase">
+      {data.segmentLabel}
+    </p>
+    <h1 class="font-display text-text-primary mt-1 text-2xl font-semibold tracking-tight">
       Hole {data.holeNumber}
-      <span class="text-base font-medium text-text-secondary"> · Par {data.par} · SI {data.strokeIndex}</span>
+      <span class="text-text-secondary text-base font-medium">
+        · Par {data.par} · SI {data.strokeIndex}</span
+      >
     </h1>
   </section>
 
   <section class="space-y-3">
     {#each rows as row (row.id)}
-      <article class="space-y-3 rounded-2xl border border-border bg-surface p-card-padding shadow-sm">
+      <article
+        class="border-border bg-surface p-card-padding space-y-3 rounded-2xl border shadow-sm"
+      >
         <div class="flex items-start justify-between gap-2">
           <div class="min-w-0">
-            <p class="flex items-center gap-2 text-base font-semibold text-text-primary" style={teamStyle(row.player.teamColor)}>
-              <span class="h-2.5 w-2.5 shrink-0 rounded-full border border-border bg-[var(--team-color)]" aria-hidden="true"></span>
+            <p
+              class="text-text-primary flex items-center gap-2 text-base font-semibold"
+              style={teamStyle(row.player.teamColor)}
+            >
+              <span
+                class="border-border h-2.5 w-2.5 shrink-0 rounded-full border bg-[var(--team-color)]"
+                aria-hidden="true"
+              ></span>
               <span class="truncate">{row.player.name}</span>
             </p>
-            <p class="text-sm text-text-secondary">
+            <p class="text-text-secondary text-sm">
               {#if row.isTeamEntry}
                 {row.teammateNames.join(' / ')}
               {:else}
@@ -145,7 +157,9 @@
               {/if}
             </p>
             {#if row.player.courseHandicap !== null}
-              <p class="text-xs text-text-muted">Course HCP {row.player.courseHandicap.toFixed(1)}</p>
+              <p class="text-text-muted text-xs">
+                Course HCP {row.player.courseHandicap.toFixed(1)}
+              </p>
             {/if}
           </div>
           <StrokeDots strokes={row.strokesOnHole} />
@@ -192,13 +206,13 @@
   <div class="grid grid-cols-2 gap-2">
     <a
       href={backHref}
-      class="inline-flex min-h-touch items-center justify-center rounded-lg border border-border bg-transparent px-4 text-sm font-semibold text-text-primary transition hover:bg-surface-raised"
+      class="min-h-touch border-border text-text-primary hover:bg-surface-raised inline-flex items-center justify-center rounded-lg border bg-transparent px-4 text-sm font-semibold transition"
     >
       &larr; Back
     </a>
     <button
       type="button"
-      class="inline-flex min-h-touch items-center justify-center rounded-lg bg-accent px-4 text-sm font-semibold text-accent-text transition hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-60"
+      class="min-h-touch bg-accent text-accent-text hover:bg-accent-hover inline-flex items-center justify-center rounded-lg px-4 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60"
       disabled={isSaving}
       on:click={saveAndNext}
     >
@@ -209,7 +223,7 @@
 
 {#if errorMessage}
   <div
-    class="fixed inset-x-3 bottom-3 z-40 rounded-xl border border-status-down bg-surface-raised px-4 py-3 text-sm font-medium text-status-down shadow-lg"
+    class="border-status-down bg-surface-raised text-status-down fixed inset-x-3 bottom-3 z-40 rounded-xl border px-4 py-3 text-sm font-medium shadow-lg"
     role="alert"
   >
     {errorMessage}

@@ -109,7 +109,8 @@ function parseRoundNotes(notes: string | null): { name: string | null; status: R
     }
 
     const payload = parsed as { name?: unknown; status?: unknown };
-    const name = typeof payload.name === 'string' && payload.name.trim().length > 0 ? payload.name : null;
+    const name =
+      typeof payload.name === 'string' && payload.name.trim().length > 0 ? payload.name : null;
     const status =
       typeof payload.status === 'string' && ROUND_STATUSES.includes(payload.status as RoundStatus)
         ? (payload.status as RoundStatus)
@@ -155,7 +156,10 @@ function mapRoundResponse(round: Round): {
   };
 }
 
-function mapSegmentResponse(segment: RoundSegment, order: number): {
+function mapSegmentResponse(
+  segment: RoundSegment,
+  order: number
+): {
   id: string;
   roundId: string;
   segment: ApiSegment;

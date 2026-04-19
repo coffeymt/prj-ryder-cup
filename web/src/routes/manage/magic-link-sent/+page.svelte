@@ -15,8 +15,7 @@
 
     const domainSections = domainPart.split('.');
     const domainName = domainSections[0] ?? '';
-    const topLevelDomain =
-      domainSections.length > 1 ? `.${domainSections.slice(1).join('.')}` : '';
+    const topLevelDomain = domainSections.length > 1 ? `.${domainSections.slice(1).join('.')}` : '';
     const maskedDomain =
       domainName.length > 1
         ? `${domainName.slice(0, 1)}${'*'.repeat(Math.max(domainName.length - 1, 1))}`
@@ -29,15 +28,17 @@
   $: emailDisplay = email ? maskEmail(email) : 'your inbox';
 </script>
 
-<section class="min-h-dvh bg-bg px-4 py-10 text-text-primary">
+<section class="bg-bg text-text-primary min-h-dvh px-4 py-10">
   <div class="mx-auto flex min-h-[calc(100dvh-5rem)] w-full max-w-xl items-center justify-center">
-    <div class="w-full rounded-2xl border border-border bg-surface p-card-padding shadow-sm sm:p-8">
-      <h1 class="text-2xl font-semibold tracking-tight text-text-primary">Check your email at {emailDisplay}</h1>
-      <p class="mt-3 text-sm text-text-secondary">The link expires in 15 minutes.</p>
+    <div class="border-border bg-surface p-card-padding w-full rounded-2xl border shadow-sm sm:p-8">
+      <h1 class="text-text-primary text-2xl font-semibold tracking-tight">
+        Check your email at {emailDisplay}
+      </h1>
+      <p class="text-text-secondary mt-3 text-sm">The link expires in 15 minutes.</p>
 
       <a
         href="/manage/login"
-        class="mt-6 inline-flex min-h-touch w-full items-center justify-center rounded-lg border border-border bg-transparent px-4 text-base font-semibold text-text-primary transition hover:bg-surface-raised"
+        class="min-h-touch border-border text-text-primary hover:bg-surface-raised mt-6 inline-flex w-full items-center justify-center rounded-lg border bg-transparent px-4 text-base font-semibold transition"
       >
         Didn&apos;t get it? Resend link
       </a>

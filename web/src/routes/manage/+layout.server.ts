@@ -27,7 +27,7 @@ export const load: LayoutServerLoad = async (event) => {
   if (PUBLIC_MANAGE_ROUTES.has(routeId)) {
     return {
       tournaments: [],
-      currentTournamentId: null
+      currentTournamentId: null,
     };
   }
 
@@ -73,7 +73,7 @@ export const load: LayoutServerLoad = async (event) => {
       const newCookieValue = await createCommissionerCookie(
         {
           tournamentId: requestedTournamentId,
-          userId: commissionerUserId
+          userId: commissionerUserId,
         },
         cookieSigningKey
       );
@@ -83,7 +83,7 @@ export const load: LayoutServerLoad = async (event) => {
         sameSite: 'lax',
         path: '/',
         maxAge: COMMISSIONER_COOKIE_MAX_AGE_SECONDS,
-        secure: !dev
+        secure: !dev,
       });
       event.locals.tournamentId = requestedTournamentId;
     }
@@ -97,6 +97,6 @@ export const load: LayoutServerLoad = async (event) => {
 
   return {
     tournaments: sortedTournaments,
-    currentTournamentId
+    currentTournamentId,
   };
 };

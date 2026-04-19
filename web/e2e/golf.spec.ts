@@ -10,7 +10,9 @@ test.describe('Kiawah Golf production smoke tests', () => {
     expect(response?.status()).toBe(200);
 
     await expect(page.getByText(/Kiawah Golf/i).first()).toBeVisible();
-    await expect(page.getByRole('link', { name: /Join|Enter code|Enter Event Code/i }).first()).toBeVisible();
+    await expect(
+      page.getByRole('link', { name: /Join|Enter code|Enter Event Code/i }).first()
+    ).toBeVisible();
   });
 
   test('Join with valid code', async ({ page }) => {
@@ -19,8 +21,12 @@ test.describe('Kiawah Golf production smoke tests', () => {
     expect(response?.status()).toBe(200);
 
     await expect(page).toHaveURL(new RegExp(`/join/${DEMO_CODE}|/t/${DEMO_CODE}`));
-    await expect(page.getByText(/Tap your name to join scoring|Join Tournament|Demo Cup 2026/i).first()).toBeVisible();
-    await expect(page.getByText(/Could not load tournament roster|Internal Error|500/u)).toHaveCount(0);
+    await expect(
+      page.getByText(/Tap your name to join scoring|Join Tournament|Demo Cup 2026/i).first()
+    ).toBeVisible();
+    await expect(
+      page.getByText(/Could not load tournament roster|Internal Error|500/u)
+    ).toHaveCount(0);
   });
 
   test('Join with invalid code', async ({ page }) => {
@@ -28,7 +34,9 @@ test.describe('Kiawah Golf production smoke tests', () => {
     await page.getByLabel(/Event Code/i).fill(INVALID_CODE);
     await page.getByRole('button', { name: /Join Tournament/i }).click();
 
-    await expect(page.getByText(/Tournament not found|valid 6-character event code/i)).toBeVisible();
+    await expect(
+      page.getByText(/Tournament not found|valid 6-character event code/i)
+    ).toBeVisible();
     await expect(page.getByText(/ReferenceError|TypeError|Internal Error|500/u)).toHaveCount(0);
   });
 
@@ -66,7 +74,9 @@ test.describe('Kiawah Golf production smoke tests', () => {
     expect(response).not.toBeNull();
     expect(response?.status()).toBe(200);
 
-    await expect(page.getByText(/Live updates connected|Progress to Win|Live Ticker/i).first()).toBeVisible();
+    await expect(
+      page.getByText(/Live updates connected|Progress to Win|Live Ticker/i).first()
+    ).toBeVisible();
     await page.waitForTimeout(1_000);
     expect(pageErrors).toEqual([]);
   });
@@ -96,7 +106,13 @@ test.describe('Kiawah Golf production smoke tests', () => {
     });
 
     const lowLuminanceElements = await page.evaluate(() => {
-      const selectors = ['.text-muted', '.text-secondary', '.text-text-muted', '.text-text-secondary', 'h1'];
+      const selectors = [
+        '.text-muted',
+        '.text-secondary',
+        '.text-text-muted',
+        '.text-text-secondary',
+        'h1',
+      ];
       const scanned = new Set<Element>();
       const targets: Element[] = [];
 
@@ -118,7 +134,11 @@ test.describe('Kiawah Golf production smoke tests', () => {
         const hexMatch = color.match(/^#([0-9a-f]{6})$/iu);
         if (hexMatch) {
           const value = hexMatch[1];
-          return [Number.parseInt(value.slice(0, 2), 16), Number.parseInt(value.slice(2, 4), 16), Number.parseInt(value.slice(4, 6), 16)];
+          return [
+            Number.parseInt(value.slice(0, 2), 16),
+            Number.parseInt(value.slice(2, 4), 16),
+            Number.parseInt(value.slice(4, 6), 16),
+          ];
         }
 
         return null;
@@ -147,7 +167,9 @@ test.describe('Kiawah Golf production smoke tests', () => {
             ? {
                 selector:
                   element.tagName.toLowerCase() +
-                  (element.className ? `.${String(element.className).trim().replace(/\s+/gu, '.')}` : ''),
+                  (element.className
+                    ? `.${String(element.className).trim().replace(/\s+/gu, '.')}`
+                    : ''),
                 color: computedColor,
                 luminance: value,
                 text: text.slice(0, 80),

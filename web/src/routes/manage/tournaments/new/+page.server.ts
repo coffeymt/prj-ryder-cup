@@ -11,44 +11,44 @@ const ALLOWANCE_FIELDS = [
     key: 'allowanceShamble',
     label: 'Shamble allowance',
     defaultPercent: 85,
-    usgaPercent: 75
+    usgaPercent: 75,
   },
   {
     key: 'allowanceFourball',
     label: 'Four-Ball allowance',
     defaultPercent: 100,
-    usgaPercent: 90
+    usgaPercent: 90,
   },
   {
     key: 'allowanceScrambleLow',
     label: 'Scramble low allowance',
     defaultPercent: 35,
-    usgaPercent: 35
+    usgaPercent: 35,
   },
   {
     key: 'allowanceScrambleHigh',
     label: 'Scramble high allowance',
     defaultPercent: 15,
-    usgaPercent: 15
+    usgaPercent: 15,
   },
   {
     key: 'allowancePinehurstLow',
     label: 'Pinehurst low allowance',
     defaultPercent: 60,
-    usgaPercent: 60
+    usgaPercent: 60,
   },
   {
     key: 'allowancePinehurstHigh',
     label: 'Pinehurst high allowance',
     defaultPercent: 40,
-    usgaPercent: 40
+    usgaPercent: 40,
   },
   {
     key: 'allowanceSingles',
     label: 'Singles allowance',
     defaultPercent: 100,
-    usgaPercent: 100
-  }
+    usgaPercent: 100,
+  },
 ] as const;
 
 type AllowanceFieldConfig = (typeof ALLOWANCE_FIELDS)[number];
@@ -90,7 +90,7 @@ function getDefaultValues(): TournamentFormValues {
     allowanceScrambleHigh: '15',
     allowancePinehurstLow: '60',
     allowancePinehurstHigh: '40',
-    allowanceSingles: '100'
+    allowanceSingles: '100',
   };
 }
 
@@ -118,21 +118,27 @@ function readValues(formData: FormData): TournamentFormValues {
 
   const values: TournamentFormValues = {
     ...defaults,
-    name: typeof formData.get('name') === 'string' ? String(formData.get('name')).trim() : defaults.name,
+    name:
+      typeof formData.get('name') === 'string'
+        ? String(formData.get('name')).trim()
+        : defaults.name,
     startDate:
       typeof formData.get('startDate') === 'string'
         ? String(formData.get('startDate')).trim()
         : defaults.startDate,
     endDate:
-      typeof formData.get('endDate') === 'string' ? String(formData.get('endDate')).trim() : defaults.endDate,
+      typeof formData.get('endDate') === 'string'
+        ? String(formData.get('endDate')).trim()
+        : defaults.endDate,
     pointsToWin:
       typeof formData.get('pointsToWin') === 'string'
         ? String(formData.get('pointsToWin')).trim()
         : defaults.pointsToWin,
     spectatorAccess:
-      formData.get('spectatorAccess') === 'public' || formData.get('spectatorAccess') === 'requireCode'
+      formData.get('spectatorAccess') === 'public' ||
+      formData.get('spectatorAccess') === 'requireCode'
         ? (formData.get('spectatorAccess') as SpectatorAccess)
-        : defaults.spectatorAccess
+        : defaults.spectatorAccess,
   };
 
   for (const allowanceField of ALLOWANCE_FIELD_KEYS) {
@@ -172,7 +178,11 @@ function validateValues(values: TournamentFormValues): {
     errors.endDate = 'End date must be on or after the start date.';
   }
 
-  const parsedPointsToWin = parseBoundedNumber(values.pointsToWin, MIN_POINTS_TO_WIN, Number.POSITIVE_INFINITY);
+  const parsedPointsToWin = parseBoundedNumber(
+    values.pointsToWin,
+    MIN_POINTS_TO_WIN,
+    Number.POSITIVE_INFINITY
+  );
 
   if (parsedPointsToWin === null) {
     errors.pointsToWin = `Points to win must be at least ${MIN_POINTS_TO_WIN}.`;
@@ -196,7 +206,12 @@ function validateValues(values: TournamentFormValues): {
     parsedAllowances[allowanceField] = parsedValue;
   }
 
-  if (Object.keys(errors).length > 0 || parsedStartDate === null || parsedEndDate === null || parsedPointsToWin === null) {
+  if (
+    Object.keys(errors).length > 0 ||
+    parsedStartDate === null ||
+    parsedEndDate === null ||
+    parsedPointsToWin === null
+  ) {
     return { errors, parsed: null };
   }
 
@@ -208,8 +223,8 @@ function validateValues(values: TournamentFormValues): {
       endDate: values.endDate,
       pointsToWin: parsedPointsToWin,
       spectatorAccess: values.spectatorAccess,
-      ...parsedAllowances
-    }
+      ...parsedAllowances,
+    },
   };
 }
 
@@ -238,7 +253,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 
   return {
     allowanceFields: ALLOWANCE_FIELDS,
-    defaults: getDefaultValues()
+    defaults: getDefaultValues(),
   };
 };
 
@@ -255,7 +270,7 @@ export const actions: Actions = {
     if (!validationResult.parsed) {
       return fail(400, {
         values,
-        errors: validationResult.errors
+        errors: validationResult.errors,
       });
     }
 
@@ -273,7 +288,7 @@ export const actions: Actions = {
       allowanceScrambleHigh: parsedValues.allowanceScrambleHigh / 100,
       allowancePinehurstLow: parsedValues.allowancePinehurstLow / 100,
       allowancePinehurstHigh: parsedValues.allowancePinehurstHigh / 100,
-      allowanceSingles: parsedValues.allowanceSingles / 100
+      allowanceSingles: parsedValues.allowanceSingles / 100,
     };
 
     let response: Response;
@@ -282,27 +297,30 @@ export const actions: Actions = {
       response = await event.fetch('/api/tournaments', {
         method: 'POST',
         headers: {
-          'content-type': 'application/json'
+          'content-type': 'application/json',
         },
-        body: JSON.stringify(requestBody)
+        body: JSON.stringify(requestBody),
       });
     } catch {
       return fail(500, {
         values,
         errors: {
-          form: 'Could not create tournament. Please try again.'
-        }
+          form: 'Could not create tournament. Please try again.',
+        },
       });
     }
 
     if (!response.ok) {
-      const apiError = await readApiErrorMessage(response, 'Could not create tournament. Please try again.');
+      const apiError = await readApiErrorMessage(
+        response,
+        'Could not create tournament. Please try again.'
+      );
 
       return fail(response.status, {
         values,
         errors: {
-          form: apiError
-        }
+          form: apiError,
+        },
       });
     }
 
@@ -313,11 +331,11 @@ export const actions: Actions = {
       return fail(500, {
         values,
         errors: {
-          form: 'Tournament created, but no tournament id was returned.'
-        }
+          form: 'Tournament created, but no tournament id was returned.',
+        },
       });
     }
 
     throw redirect(303, `/manage/tournaments/${newTournamentId}/teams`);
-  }
+  },
 };

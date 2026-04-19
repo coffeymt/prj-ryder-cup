@@ -39,7 +39,11 @@ export async function claimOp(db: D1Database, opId: string, matchId?: string): P
   return claimResult.meta.changes === 1;
 }
 
-export async function isOpProcessed(db: D1Database, opId: string, matchId?: string): Promise<boolean> {
+export async function isOpProcessed(
+  db: D1Database,
+  opId: string,
+  matchId?: string
+): Promise<boolean> {
   const storedOpId = toStoredOpId(opId, matchId);
   const row = await db
     .prepare(

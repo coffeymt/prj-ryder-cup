@@ -36,10 +36,14 @@ describe('requireRole', () => {
 
 describe('requireSameTournament', () => {
   it('passes when the tournament IDs match', () => {
-    expect(() => requireSameTournament(createLocals('spectator', 'tournament-9'), 'tournament-9')).not.toThrow();
+    expect(() =>
+      requireSameTournament(createLocals('spectator', 'tournament-9'), 'tournament-9')
+    ).not.toThrow();
   });
 
   it('throws 403 when the tournament IDs differ', () => {
-    expectForbidden(() => requireSameTournament(createLocals('spectator', 'tournament-9'), 'tournament-11'));
+    expectForbidden(() =>
+      requireSameTournament(createLocals('spectator', 'tournament-9'), 'tournament-11')
+    );
   });
 });

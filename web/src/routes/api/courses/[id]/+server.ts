@@ -79,7 +79,7 @@ export const GET: RequestHandler = async ({ locals, platform, params }) => {
 
   const [tees, holes] = await Promise.all([
     listTeesByCourse(db, params.id),
-    listHolesByCourse(db, params.id)
+    listHolesByCourse(db, params.id),
   ]);
 
   return json({ course, tees, holes });

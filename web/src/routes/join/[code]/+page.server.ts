@@ -63,7 +63,9 @@ function isRosterApiResponse(value: unknown): value is RosterApiResponse {
   return payload.roster.every(isRosterPlayer);
 }
 
-function parsePlayerCookie(setCookieHeader: string | null): { token: string; maxAge: number } | null {
+function parsePlayerCookie(
+  setCookieHeader: string | null
+): { token: string; maxAge: number } | null {
   if (!setCookieHeader) {
     return null;
   }
@@ -94,7 +96,9 @@ export const load: PageServerLoad = async (event) => {
     throw redirect(302, '/join?error=not_found');
   }
 
-  const rosterResponse = await event.fetch(`/api/join/${encodeURIComponent(tournamentCode)}/roster`);
+  const rosterResponse = await event.fetch(
+    `/api/join/${encodeURIComponent(tournamentCode)}/roster`
+  );
 
   if (rosterResponse.status === 404) {
     throw redirect(302, '/join?error=not_found');
@@ -142,13 +146,16 @@ export const actions: Actions = {
     }
 
     const playerId = rawPlayerId.trim();
-    const response = await event.fetch(`/api/join/${encodeURIComponent(tournamentCode)}/select-player`, {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify({ playerId }),
-    });
+    const response = await event.fetch(
+      `/api/join/${encodeURIComponent(tournamentCode)}/select-player`,
+      {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({ playerId }),
+      }
+    );
 
     if (!response.ok) {
       return fail(response.status >= 500 ? 500 : 400, {

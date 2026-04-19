@@ -48,9 +48,9 @@ function parseBody(value: unknown): { body: PointsAdjustBody | null; message: st
     body: {
       teamId: teamId.trim(),
       delta,
-      reason: reason.trim()
+      reason: reason.trim(),
     },
-    message: null
+    message: null,
   };
 }
 
@@ -104,14 +104,14 @@ export const POST: RequestHandler = async (event) => {
     new_value: JSON.stringify({
       teamId: parsed.body.teamId,
       delta: parsed.body.delta,
-      reason: parsed.body.reason
-    })
+      reason: parsed.body.reason,
+    }),
   });
 
   return json({
     teamId: parsed.body.teamId,
     delta: parsed.body.delta,
     reason: parsed.body.reason,
-    appliedAt: auditEntry.created_at
+    appliedAt: auditEntry.created_at,
   });
 };

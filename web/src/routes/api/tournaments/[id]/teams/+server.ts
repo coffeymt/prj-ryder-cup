@@ -150,7 +150,7 @@ export const POST: RequestHandler = async (event) => {
     tournament_id: tournamentId,
     name: body.name.trim(),
     color: body.color,
-    captain_player_id: null
+    captain_player_id: null,
   });
 
   return json({ team }, { status: 201 });

@@ -27,7 +27,13 @@ const ROUND_SEGMENT_COLUMNS = `
   created_at
 `;
 
-const ROUND_UPDATABLE_FIELDS = ['round_number', 'course_id', 'tee_id', 'scheduled_at', 'notes'] as const;
+const ROUND_UPDATABLE_FIELDS = [
+  'round_number',
+  'course_id',
+  'tee_id',
+  'scheduled_at',
+  'notes',
+] as const;
 const ROUND_UPDATABLE_FIELD_SET = new Set<string>(ROUND_UPDATABLE_FIELDS);
 
 function nowIso(): string {
@@ -44,7 +50,7 @@ function normalizeRound(row: Round | null): Round | null {
     id: String(row.id),
     tournament_id: String(row.tournament_id),
     course_id: String(row.course_id),
-    tee_id: String(row.tee_id)
+    tee_id: String(row.tee_id),
   };
 }
 
@@ -56,7 +62,7 @@ function normalizeRoundSegment(row: RoundSegment | null): RoundSegment | null {
   return {
     ...row,
     id: String(row.id),
-    round_id: String(row.round_id)
+    round_id: String(row.round_id),
   };
 }
 
@@ -116,7 +122,10 @@ export async function getRoundById(db: D1Database, id: string): Promise<Round | 
   return normalizeRound(row);
 }
 
-export async function listRoundsByTournament(db: D1Database, tournamentId: string): Promise<Round[]> {
+export async function listRoundsByTournament(
+  db: D1Database,
+  tournamentId: string
+): Promise<Round[]> {
   const result = await db
     .prepare(
       `
@@ -134,7 +143,7 @@ export async function listRoundsByTournament(db: D1Database, tournamentId: strin
     id: String(row.id),
     tournament_id: String(row.tournament_id),
     course_id: String(row.course_id),
-    tee_id: String(row.tee_id)
+    tee_id: String(row.tee_id),
   }));
 }
 
@@ -225,7 +234,10 @@ export async function createRoundSegment(
   return created;
 }
 
-export async function listSegmentsByRound(db: D1Database, roundId: string): Promise<RoundSegment[]> {
+export async function listSegmentsByRound(
+  db: D1Database,
+  roundId: string
+): Promise<RoundSegment[]> {
   const result = await db
     .prepare(
       `
@@ -241,6 +253,6 @@ export async function listSegmentsByRound(db: D1Database, roundId: string): Prom
   return result.results.map((row) => ({
     ...row,
     id: String(row.id),
-    round_id: String(row.round_id)
+    round_id: String(row.round_id),
   }));
 }

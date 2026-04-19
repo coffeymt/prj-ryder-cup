@@ -178,7 +178,11 @@ export const PATCH: RequestHandler = async (event) => {
     throw error(400, '`teamId` is required when `isCaptain` is true.');
   }
 
-  if (body.teamId !== undefined && currentPlayer.team_id !== nextTeamId && body.isCaptain !== true) {
+  if (
+    body.teamId !== undefined &&
+    currentPlayer.team_id !== nextTeamId &&
+    body.isCaptain !== true
+  ) {
     await db
       .prepare(
         `

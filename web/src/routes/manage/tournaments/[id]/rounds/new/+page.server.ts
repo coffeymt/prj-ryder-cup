@@ -4,7 +4,6 @@ import { listPlayersByTournament } from '$lib/db/players';
 import { listRoundsByTournament, listSegmentsByRound } from '$lib/db/rounds';
 import { listTeamsByTournament } from '$lib/db/teams';
 import { getTournamentById } from '$lib/db/tournaments';
-import type { MatchFormat } from '$lib/db/types';
 import { error, fail, redirect, type RequestEvent } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 
@@ -59,7 +58,10 @@ function toActionFailureStatus(status: number): number {
   return status >= 400 && status < 600 ? status : 500;
 }
 
-function toSegmentAllowance(format: ApiFormat, allowanceOverride: number | null): { allowanceConfig?: unknown } {
+function toSegmentAllowance(
+  format: ApiFormat,
+  allowanceOverride: number | null
+): { allowanceConfig?: unknown } {
   if (allowanceOverride === null) {
     return {};
   }
@@ -68,26 +70,20 @@ function toSegmentAllowance(format: ApiFormat, allowanceOverride: number | null)
     return {
       allowanceConfig: {
         lowPct: allowanceOverride,
-        highPct: allowanceOverride
-      }
+        highPct: allowanceOverride,
+      },
     };
   }
 
   return {
     allowanceConfig: {
-      perPlayerPct: allowanceOverride
-    }
+      perPlayerPct: allowanceOverride,
+    },
   };
 }
 
 async function parseApiErrorMessage(response: Response): Promise<string> {
-  let body: unknown = null;
-
-  try {
-    body = await response.json();
-  } catch {
-    body = null;
-  }
+  const body = await response.json().catch(() => null);
 
   if (body && typeof body === 'object' && !Array.isArray(body)) {
     const message = (body as Record<string, unknown>).message;
@@ -174,7 +170,11 @@ function parseSegments(rawValue: string): SegmentFormValue[] {
       throw error(400, `segments[${index}].format is invalid.`);
     }
 
-    if (typeof pointsAtStake !== 'number' || !Number.isFinite(pointsAtStake) || pointsAtStake <= 0) {
+    if (
+      typeof pointsAtStake !== 'number' ||
+      !Number.isFinite(pointsAtStake) ||
+      pointsAtStake <= 0
+    ) {
       throw error(400, `segments[${index}].pointsAtStake must be a positive number.`);
     }
 
@@ -202,7 +202,7 @@ function parseSegments(rawValue: string): SegmentFormValue[] {
       format: format as ApiFormat,
       pointsAtStake,
       allowanceOverride: normalizedOverride,
-      order
+      order,
     };
   });
 
@@ -236,8 +236,14 @@ function parseMatchups(rawValue: string): MatchupFormValue[] {
     }
 
     const row = entry as Record<string, unknown>;
-    const sideAPlayerIds = normalizePlayerIds(row.sideAPlayerIds, `matchups[${index}].sideAPlayerIds`);
-    const sideBPlayerIds = normalizePlayerIds(row.sideBPlayerIds, `matchups[${index}].sideBPlayerIds`);
+    const sideAPlayerIds = normalizePlayerIds(
+      row.sideAPlayerIds,
+      `matchups[${index}].sideAPlayerIds`
+    );
+    const sideBPlayerIds = normalizePlayerIds(
+      row.sideBPlayerIds,
+      `matchups[${index}].sideBPlayerIds`
+    );
     const sideASet = new Set(sideAPlayerIds);
 
     for (const playerId of sideBPlayerIds) {
@@ -248,9 +254,11 @@ function parseMatchups(rawValue: string): MatchupFormValue[] {
 
     return {
       id:
-        typeof row.id === 'string' && row.id.trim().length > 0 ? row.id.trim() : `matchup-${index + 1}`,
+        typeof row.id === 'string' && row.id.trim().length > 0
+          ? row.id.trim()
+          : `matchup-${index + 1}`,
       sideAPlayerIds,
-      sideBPlayerIds
+      sideBPlayerIds,
     };
   });
 
@@ -303,7 +311,7 @@ export const load: PageServerLoad = async (event) => {
     listCourses(db),
     listTeamsByTournament(db, event.params.id),
     listPlayersByTournament(db, event.params.id),
-    listRoundsByTournament(db, event.params.id)
+    listRoundsByTournament(db, event.params.id),
   ]);
 
   if (!tournament) {
@@ -313,12 +321,14 @@ export const load: PageServerLoad = async (event) => {
   const coursesWithTees = await Promise.all(
     courses.map(async (course) => ({
       ...course,
-      tees: await listTeesByCourse(db, course.id)
+      tees: await listTeesByCourse(db, course.id),
     }))
   );
 
   const allSegments = await Promise.all(rounds.map((round) => listSegmentsByRound(db, round.id)));
-  const configuredPoints = allSegments.flat().reduce((sum, segment) => sum + segment.points_available, 0);
+  const configuredPoints = allSegments
+    .flat()
+    .reduce((sum, segment) => sum + segment.points_available, 0);
 
   const [teamA, teamB] = teams;
   const teamAPlayers = teamA ? players.filter((player) => player.team_id === teamA.id) : [];
@@ -333,7 +343,7 @@ export const load: PageServerLoad = async (event) => {
     teamAPlayers,
     teamBPlayers,
     existingConfiguredPoints: configuredPoints,
-    targetPoints: toTargetPoints(tournament.points_to_win)
+    targetPoints: toTargetPoints(tournament.points_to_win),
   };
 };
 
@@ -349,7 +359,7 @@ export const actions: Actions = {
       teeId: normalizeString(formData.get('teeId')),
       dateTime: normalizeString(formData.get('dateTime')),
       segmentsJson: normalizeString(formData.get('segmentsJson')),
-      matchupsJson: normalizeString(formData.get('matchupsJson'))
+      matchupsJson: normalizeString(formData.get('matchupsJson')),
     };
 
     if (!values.roundName) {
@@ -402,7 +412,7 @@ export const actions: Actions = {
       getTournamentById(db, event.params.id),
       listTeamsByTournament(db, event.params.id),
       listPlayersByTournament(db, event.params.id),
-      listCourses(db)
+      listCourses(db),
     ]);
 
     if (!tournament) {
@@ -412,7 +422,7 @@ export const actions: Actions = {
     if (teams.length < 2) {
       return fail(400, {
         error: 'Create two teams before building round matchups.',
-        values
+        values,
       });
     }
 
@@ -432,8 +442,9 @@ export const actions: Actions = {
 
     if (segments.length > 1 && !teeHasNineHoleRatings(selectedTee)) {
       return fail(400, {
-        error: 'This tee is missing 9-hole ratings. Use a single-18 segment or choose a different tee.',
-        values
+        error:
+          'This tee is missing 9-hole ratings. Use a single-18 segment or choose a different tee.',
+        values,
       });
     }
 
@@ -449,7 +460,7 @@ export const actions: Actions = {
         if (!teamAPlayers.has(playerId)) {
           return fail(400, {
             error: `Pairing ${index + 1} includes an invalid Team A player.`,
-            values
+            values,
           });
         }
       }
@@ -458,7 +469,7 @@ export const actions: Actions = {
         if (!teamBPlayers.has(playerId)) {
           return fail(400, {
             error: `Pairing ${index + 1} includes an invalid Team B player.`,
-            values
+            values,
           });
         }
       }
@@ -469,7 +480,7 @@ export const actions: Actions = {
       {
         method: 'POST',
         headers: {
-          'content-type': 'application/json'
+          'content-type': 'application/json',
         },
         body: JSON.stringify({
           name: values.roundName,
@@ -481,16 +492,16 @@ export const actions: Actions = {
             format: segment.format,
             pointsAtStake: segment.pointsAtStake,
             order: segment.order,
-            ...toSegmentAllowance(segment.format, segment.allowanceOverride)
-          }))
-        })
+            ...toSegmentAllowance(segment.format, segment.allowanceOverride),
+          })),
+        }),
       }
     );
 
     if (!createRoundResponse.ok) {
       return fail(toActionFailureStatus(createRoundResponse.status), {
         error: await parseApiErrorMessage(createRoundResponse),
-        values
+        values,
       });
     }
 
@@ -502,7 +513,7 @@ export const actions: Actions = {
     if (!createdRoundId) {
       return fail(500, {
         error: 'Round was created, but no round id was returned.',
-        values
+        values,
       });
     }
 
@@ -523,12 +534,12 @@ export const actions: Actions = {
           pointsAtStake: pointsPerMatch,
           sideA: {
             teamId: teamA.id,
-            playerIds: matchup.sideAPlayerIds
+            playerIds: matchup.sideAPlayerIds,
           },
           sideB: {
             teamId: teamB.id,
-            playerIds: matchup.sideBPlayerIds
-          }
+            playerIds: matchup.sideBPlayerIds,
+          },
         });
       }
     }
@@ -538,11 +549,11 @@ export const actions: Actions = {
       {
         method: 'POST',
         headers: {
-          'content-type': 'application/json'
+          'content-type': 'application/json',
         },
         body: JSON.stringify({
-          matches: matchPayload
-        })
+          matches: matchPayload,
+        }),
       }
     );
 
@@ -550,10 +561,10 @@ export const actions: Actions = {
       return fail(toActionFailureStatus(createMatchesResponse.status), {
         error: `Round was created, but matchups could not be created: ${await parseApiErrorMessage(createMatchesResponse)}.`,
         values,
-        createdRoundId
+        createdRoundId,
       });
     }
 
     throw redirect(303, `/manage/tournaments/${event.params.id}/rounds/${createdRoundId}`);
-  }
+  },
 };

@@ -28,11 +28,14 @@ function normalizeAuditLog(row: AuditLog | null): AuditLog | null {
     ...row,
     id: String(row.id),
     tournament_id: String(row.tournament_id),
-    actor_player_id: row.actor_player_id === null ? null : String(row.actor_player_id)
+    actor_player_id: row.actor_player_id === null ? null : String(row.actor_player_id),
   };
 }
 
-export async function writeAuditEntry(db: D1Database, data: WriteAuditEntryInput): Promise<AuditLog> {
+export async function writeAuditEntry(
+  db: D1Database,
+  data: WriteAuditEntryInput
+): Promise<AuditLog> {
   const createdAt = data.created_at ?? nowIso();
 
   await db
@@ -108,6 +111,6 @@ export async function listAuditByTournament(
     ...row,
     id: String(row.id),
     tournament_id: String(row.tournament_id),
-    actor_player_id: row.actor_player_id === null ? null : String(row.actor_player_id)
+    actor_player_id: row.actor_player_id === null ? null : String(row.actor_player_id),
   }));
 }

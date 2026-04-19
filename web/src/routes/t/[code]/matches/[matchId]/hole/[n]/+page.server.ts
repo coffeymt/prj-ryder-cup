@@ -5,14 +5,19 @@ import {
   getMatchById,
   listHoleResultsByMatch,
   listPlayersBySide,
-  listSidesByMatch
+  listSidesByMatch,
 } from '$lib/db/matches';
 import { getPlayerById } from '$lib/db/players';
 import { getRoundById, listSegmentsByRound } from '$lib/db/rounds';
 import type { MatchFormat, MatchHoleResult, RoundSegment, Team, Tournament } from '$lib/db/types';
 import { computePerPlayerHandicaps, computeTeamHandicaps } from '$lib/engine/allowances';
 import { computeMatchState } from '$lib/engine/matchState';
-import type { Allowance, PlayerHandicapInput, TeeData, TournamentAllowances } from '$lib/engine/types';
+import type {
+  Allowance,
+  PlayerHandicapInput,
+  TeeData,
+  TournamentAllowances,
+} from '$lib/engine/types';
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
@@ -40,7 +45,7 @@ const FORMAT_LABELS: Record<MatchFormat, string> = {
   PINEHURST: 'Pinehurst',
   SHAMBLE: 'Shamble',
   FOURBALL: 'Four-Ball',
-  SINGLES: 'Singles'
+  SINGLES: 'Singles',
 };
 
 function getDb(platform: App.Platform | undefined): D1Database {
@@ -100,7 +105,10 @@ function segmentLabel(segmentType: RoundSegment['segment_type']): string {
   return '18';
 }
 
-function toOverallHoleResults(rows: MatchHoleResult[], totalHoles: number): Array<{
+function toOverallHoleResults(
+  rows: MatchHoleResult[],
+  totalHoles: number
+): Array<{
   holeNumber: number;
   result: MatchHoleResult['result'];
   sideANet: number | null;
@@ -126,7 +134,7 @@ function toOverallHoleResults(rows: MatchHoleResult[], totalHoles: number): Arra
       holeNumber,
       result: row?.result ?? 'PENDING',
       sideANet: row?.side_a_net ?? null,
-      sideBNet: row?.side_b_net ?? null
+      sideBNet: row?.side_b_net ?? null,
     });
   }
 
@@ -168,25 +176,25 @@ function normalizeTournamentAllowances(tournament: Tournament): TournamentAllowa
     scramble: {
       type: 'blended',
       lowPct: tournament.allowance_scramble_low,
-      highPct: tournament.allowance_scramble_high
+      highPct: tournament.allowance_scramble_high,
     },
     pinehurst: {
       type: 'blended',
       lowPct: tournament.allowance_pinehurst_low,
-      highPct: tournament.allowance_pinehurst_high
+      highPct: tournament.allowance_pinehurst_high,
     },
     shamble: {
       type: 'perPlayer',
-      pct: tournament.allowance_shamble
+      pct: tournament.allowance_shamble,
     },
     fourBall: {
       type: 'perPlayer',
-      pct: tournament.allowance_fourball
+      pct: tournament.allowance_fourball,
     },
     singles: {
       type: 'perPlayer',
-      pct: tournament.allowance_singles
-    }
+      pct: tournament.allowance_singles,
+    },
   };
 }
 
@@ -214,13 +222,13 @@ function resolveAllowance(
     return {
       type: 'blended',
       lowPct: override,
-      highPct: override
+      highPct: override,
     };
   }
 
   return {
     type: 'perPlayer',
-    pct: override
+    pct: override,
   };
 }
 
@@ -247,8 +255,8 @@ function asTeeData(
         holeNumber: hole.hole_number,
         par: hole.par as TeeData['holes'][number]['par'],
         strokeIndex: hole.stroke_index as TeeData['holes'][number]['strokeIndex'],
-        yardage: hole.yardage ?? undefined
-      }))
+        yardage: hole.yardage ?? undefined,
+      })),
   };
 }
 
@@ -263,7 +271,9 @@ async function loadSideWithPlayers(
   }
 
   const sidePlayers = await listPlayersBySide(db, side.id);
-  const players = await Promise.all(sidePlayers.map((sidePlayer) => getPlayerById(db, sidePlayer.player_id)));
+  const players = await Promise.all(
+    sidePlayers.map((sidePlayer) => getPlayerById(db, sidePlayer.player_id))
+  );
 
   if (players.some((player) => player === null)) {
     throw error(500, 'Match side references a missing player.');
@@ -278,8 +288,8 @@ async function loadSideWithPlayers(
     players: players.map((player) => ({
       id: player!.id,
       name: player!.name,
-      handicapIndex: player!.handicap_index
-    }))
+      handicapIndex: player!.handicap_index,
+    })),
   };
 }
 
@@ -301,7 +311,7 @@ function latestScoreForPlayer(
   return {
     grossStrokes: latest.gross_strokes,
     conceded: latest.is_conceded === 1,
-    pickedUp: latest.is_picked_up === 1
+    pickedUp: latest.is_picked_up === 1,
   };
 }
 
@@ -351,14 +361,16 @@ export const load: PageServerLoad = async (event) => {
 
   requireSameTournament(event.locals, round.tournament_id);
 
-  const [segments, sides, holeScores, holeResults, teesByCourse, holesByCourse] = await Promise.all([
-    listSegmentsByRound(db, round.id),
-    listSidesByMatch(db, match.id),
-    listHoleScoresByMatch(db, match.id),
-    listHoleResultsByMatch(db, match.id),
-    listTeesByCourse(db, round.course_id),
-    listHolesByCourse(db, round.course_id)
-  ]);
+  const [segments, sides, holeScores, holeResults, teesByCourse, holesByCourse] = await Promise.all(
+    [
+      listSegmentsByRound(db, round.id),
+      listSidesByMatch(db, match.id),
+      listHoleScoresByMatch(db, match.id),
+      listHoleResultsByMatch(db, match.id),
+      listTeesByCourse(db, round.course_id),
+      listHolesByCourse(db, round.course_id),
+    ]
+  );
 
   if (segments.length === 0) {
     throw error(500, 'Round has no segments configured.');
@@ -440,18 +452,18 @@ export const load: PageServerLoad = async (event) => {
     const sideAInputs: PlayerHandicapInput[] = sideA.players.map((player, index) => ({
       playerId: index + 1,
       sideId: 1,
-      handicapIndex: player.handicapIndex as PlayerHandicapInput['handicapIndex']
+      handicapIndex: player.handicapIndex as PlayerHandicapInput['handicapIndex'],
     }));
     const sideBInputs: PlayerHandicapInput[] = sideB.players.map((player, index) => ({
       playerId: sideA.players.length + index + 1,
       sideId: 2,
-      handicapIndex: player.handicapIndex as PlayerHandicapInput['handicapIndex']
+      handicapIndex: player.handicapIndex as PlayerHandicapInput['handicapIndex'],
     }));
 
     const teamHandicaps = computeTeamHandicaps(
       [
         { sideId: 1, players: sideAInputs },
-        { sideId: 2, players: sideBInputs }
+        { sideId: 2, players: sideBInputs },
       ],
       teeData,
       segmentForHole.segment_type,
@@ -461,7 +473,12 @@ export const load: PageServerLoad = async (event) => {
     const sideAHandicap = teamHandicaps.find((entry) => entry.sideId === 1);
     const sideBHandicap = teamHandicaps.find((entry) => entry.sideId === 2);
 
-    if (!sideAHandicap || !sideBHandicap || sideA.players.length === 0 || sideB.players.length === 0) {
+    if (
+      !sideAHandicap ||
+      !sideBHandicap ||
+      sideA.players.length === 0 ||
+      sideB.players.length === 0
+    ) {
       throw error(500, 'Unable to compute team handicap data for this hole.');
     }
 
@@ -472,14 +489,14 @@ export const load: PageServerLoad = async (event) => {
         name: sideA.teamName,
         teamName: sideA.teamName,
         teamColor: sideA.teamColor,
-        courseHandicap: Number(sideAHandicap.teamCourseHandicap)
+        courseHandicap: Number(sideAHandicap.teamCourseHandicap),
       },
       sideLabel: 'A',
       submitPlayerId: sideA.players[0].id,
       strokesOnHole: Number(sideAHandicap.strokeMap[holeNumber] ?? 0),
       currentScore: latestScoreForPlayer(holeScores, holeNumber, sideA.players[0].id),
       isTeamEntry: true,
-      teammateNames: sideA.players.map((player) => player.name)
+      teammateNames: sideA.players.map((player) => player.name),
     });
 
     holePlayers.push({
@@ -489,14 +506,14 @@ export const load: PageServerLoad = async (event) => {
         name: sideB.teamName,
         teamName: sideB.teamName,
         teamColor: sideB.teamColor,
-        courseHandicap: Number(sideBHandicap.teamCourseHandicap)
+        courseHandicap: Number(sideBHandicap.teamCourseHandicap),
       },
       sideLabel: 'B',
       submitPlayerId: sideB.players[0].id,
       strokesOnHole: Number(sideBHandicap.strokeMap[holeNumber] ?? 0),
       currentScore: latestScoreForPlayer(holeScores, holeNumber, sideB.players[0].id),
       isTeamEntry: true,
-      teammateNames: sideB.players.map((player) => player.name)
+      teammateNames: sideB.players.map((player) => player.name),
     });
   } else {
     if (allowance.type !== 'perPlayer') {
@@ -521,8 +538,8 @@ export const load: PageServerLoad = async (event) => {
           input: {
             playerId: enginePlayerId,
             sideId: engineSideId,
-            handicapIndex: player.handicapIndex as PlayerHandicapInput['handicapIndex']
-          }
+            handicapIndex: player.handicapIndex as PlayerHandicapInput['handicapIndex'],
+          },
         });
         enginePlayerId += 1;
       }
@@ -553,14 +570,14 @@ export const load: PageServerLoad = async (event) => {
           name: entry.player.name,
           teamName: team.teamName,
           teamColor: team.teamColor,
-          courseHandicap: Number(handicap.courseHandicap)
+          courseHandicap: Number(handicap.courseHandicap),
         },
         sideLabel: entry.sideLabel,
         submitPlayerId: entry.player.id,
         strokesOnHole: Number(handicap.strokeMap[holeNumber] ?? 0),
         currentScore: latestScoreForPlayer(holeScores, holeNumber, entry.player.id),
         isTeamEntry: false,
-        teammateNames: [entry.player.name]
+        teammateNames: [entry.player.name],
       });
     }
   }
@@ -572,7 +589,7 @@ export const load: PageServerLoad = async (event) => {
       teamAName: sideA.teamName,
       teamBName: sideB.teamName,
       teamAColor: sideA.teamColor,
-      teamBColor: sideB.teamColor
+      teamBColor: sideB.teamColor,
     },
     holeNumber,
     par: hole.par,
@@ -582,6 +599,6 @@ export const load: PageServerLoad = async (event) => {
     segmentLabel: `${segmentLabel(segmentForHole.segment_type)} — ${FORMAT_LABELS[effectiveFormat]}`,
     matchState: matchStateLabel,
     isFormatChangeHole: resolveFormatChangeAtTurn(holeNumber, segments, match.format_override),
-    isTeamEntryMode
+    isTeamEntryMode,
   };
 };

@@ -1,4 +1,11 @@
-import type { Match, MatchHoleResult, MatchResult, MatchResultStatus, MatchSide, MatchSidePlayer } from './types';
+import type {
+  Match,
+  MatchHoleResult,
+  MatchResult,
+  MatchResultStatus,
+  MatchSide,
+  MatchSidePlayer,
+} from './types';
 
 type CreateMatchInput = Omit<Match, 'created_at'> & Partial<Pick<Match, 'created_at'>>;
 type CreateMatchSideInput = Omit<MatchSide, 'created_at'> & Partial<Pick<MatchSide, 'created_at'>>;
@@ -63,7 +70,7 @@ function normalizeMatch(row: Match | null): Match | null {
   return {
     ...row,
     id: String(row.id),
-    round_id: String(row.round_id)
+    round_id: String(row.round_id),
   };
 }
 
@@ -76,33 +83,7 @@ function normalizeMatchSide(row: MatchSide | null): MatchSide | null {
     ...row,
     id: String(row.id),
     match_id: String(row.match_id),
-    team_id: String(row.team_id)
-  };
-}
-
-function normalizeMatchSidePlayer(row: MatchSidePlayer | null): MatchSidePlayer | null {
-  if (!row) {
-    return null;
-  }
-
-  return {
-    ...row,
-    id: String(row.id),
-    match_side_id: String(row.match_side_id),
-    player_id: String(row.player_id)
-  };
-}
-
-function normalizeMatchHoleResult(row: MatchHoleResult | null): MatchHoleResult | null {
-  if (!row) {
-    return null;
-  }
-
-  return {
-    ...row,
-    id: String(row.id),
-    match_id: String(row.match_id),
-    segment_id: String(row.segment_id)
+    team_id: String(row.team_id),
   };
 }
 
@@ -160,11 +141,14 @@ export async function listMatchesByRound(db: D1Database, roundId: string): Promi
   return result.results.map((row) => ({
     ...row,
     id: String(row.id),
-    round_id: String(row.round_id)
+    round_id: String(row.round_id),
   }));
 }
 
-export async function listMatchesByTournament(db: D1Database, tournamentId: string): Promise<Match[]> {
+export async function listMatchesByTournament(
+  db: D1Database,
+  tournamentId: string
+): Promise<Match[]> {
   const result = await db
     .prepare(
       `
@@ -181,7 +165,7 @@ export async function listMatchesByTournament(db: D1Database, tournamentId: stri
   return result.results.map((row) => ({
     ...row,
     id: String(row.id),
-    round_id: String(row.round_id)
+    round_id: String(row.round_id),
   }));
 }
 
@@ -254,7 +238,10 @@ export async function updateMatchStatus(
     .run();
 }
 
-export async function createMatchSide(db: D1Database, data: CreateMatchSideInput): Promise<MatchSide> {
+export async function createMatchSide(
+  db: D1Database,
+  data: CreateMatchSideInput
+): Promise<MatchSide> {
   const createdAt = data.created_at ?? nowIso();
 
   await db
@@ -305,7 +292,7 @@ export async function listSidesByMatch(db: D1Database, matchId: string): Promise
     ...row,
     id: String(row.id),
     match_id: String(row.match_id),
-    team_id: String(row.team_id)
+    team_id: String(row.team_id),
   }));
 }
 
@@ -325,7 +312,10 @@ export async function addPlayerToSide(
     .run();
 }
 
-export async function listPlayersBySide(db: D1Database, matchSideId: string): Promise<MatchSidePlayer[]> {
+export async function listPlayersBySide(
+  db: D1Database,
+  matchSideId: string
+): Promise<MatchSidePlayer[]> {
   const result = await db
     .prepare(
       `
@@ -342,7 +332,7 @@ export async function listPlayersBySide(db: D1Database, matchSideId: string): Pr
     ...row,
     id: String(row.id),
     match_side_id: String(row.match_side_id),
-    player_id: String(row.player_id)
+    player_id: String(row.player_id),
   }));
 }
 
@@ -388,7 +378,10 @@ export async function upsertMatchHoleResult(
     .run();
 }
 
-export async function listHoleResultsByMatch(db: D1Database, matchId: string): Promise<MatchHoleResult[]> {
+export async function listHoleResultsByMatch(
+  db: D1Database,
+  matchId: string
+): Promise<MatchHoleResult[]> {
   const result = await db
     .prepare(
       `
@@ -405,6 +398,6 @@ export async function listHoleResultsByMatch(db: D1Database, matchId: string): P
     ...row,
     id: String(row.id),
     match_id: String(row.match_id),
-    segment_id: String(row.segment_id)
+    segment_id: String(row.segment_id),
   }));
 }

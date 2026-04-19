@@ -103,11 +103,15 @@ function normalizeTee(row: Tee | null): Tee | null {
   return {
     ...row,
     id: String(row.id),
-    course_id: String(row.course_id)
+    course_id: String(row.course_id),
   };
 }
 
-async function getTeeByCourseAndId(db: D1Database, courseId: string, teeId: string): Promise<Tee | null> {
+async function getTeeByCourseAndId(
+  db: D1Database,
+  courseId: string,
+  teeId: string
+): Promise<Tee | null> {
   const row = await db
     .prepare(
       `
@@ -154,33 +158,45 @@ export const PATCH: RequestHandler = async ({ locals, platform, params, request 
   }
 
   if (hasAnyKey(body, ['cr9F', 'cr9f'])) {
-    updates.push(['cr9f', readOptionalNullableNumber(getFirstDefined(body, ['cr9F', 'cr9f']), 'cr9F')]);
+    updates.push([
+      'cr9f',
+      readOptionalNullableNumber(getFirstDefined(body, ['cr9F', 'cr9f']), 'cr9F'),
+    ]);
   }
 
   if (hasAnyKey(body, ['slope9F', 'slope9f'])) {
     updates.push([
       'slope9f',
-      readOptionalNullableInteger(getFirstDefined(body, ['slope9F', 'slope9f']), 'slope9F')
+      readOptionalNullableInteger(getFirstDefined(body, ['slope9F', 'slope9f']), 'slope9F'),
     ]);
   }
 
   if (hasAnyKey(body, ['par9F', 'par9f'])) {
-    updates.push(['par9f', readOptionalNullableInteger(getFirstDefined(body, ['par9F', 'par9f']), 'par9F')]);
+    updates.push([
+      'par9f',
+      readOptionalNullableInteger(getFirstDefined(body, ['par9F', 'par9f']), 'par9F'),
+    ]);
   }
 
   if (hasAnyKey(body, ['cr9B', 'cr9b'])) {
-    updates.push(['cr9b', readOptionalNullableNumber(getFirstDefined(body, ['cr9B', 'cr9b']), 'cr9B')]);
+    updates.push([
+      'cr9b',
+      readOptionalNullableNumber(getFirstDefined(body, ['cr9B', 'cr9b']), 'cr9B'),
+    ]);
   }
 
   if (hasAnyKey(body, ['slope9B', 'slope9b'])) {
     updates.push([
       'slope9b',
-      readOptionalNullableInteger(getFirstDefined(body, ['slope9B', 'slope9b']), 'slope9B')
+      readOptionalNullableInteger(getFirstDefined(body, ['slope9B', 'slope9b']), 'slope9B'),
     ]);
   }
 
   if (hasAnyKey(body, ['par9B', 'par9b'])) {
-    updates.push(['par9b', readOptionalNullableInteger(getFirstDefined(body, ['par9B', 'par9b']), 'par9B')]);
+    updates.push([
+      'par9b',
+      readOptionalNullableInteger(getFirstDefined(body, ['par9B', 'par9b']), 'par9B'),
+    ]);
   }
 
   if (updates.length === 0) {

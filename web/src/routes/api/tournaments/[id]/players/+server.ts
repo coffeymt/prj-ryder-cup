@@ -189,7 +189,7 @@ export const POST: RequestHandler = async (event) => {
     tournament_id: tournamentId,
     team_id: teamId,
     name: body.displayName.trim(),
-    handicap_index: body.handicapIndex
+    handicap_index: body.handicapIndex,
   });
 
   if (body.isCaptain === true && teamId) {

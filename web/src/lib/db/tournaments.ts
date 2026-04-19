@@ -37,7 +37,7 @@ const TOURNAMENT_UPDATABLE_FIELDS = [
   'allowance_pinehurst_high',
   'allowance_shamble',
   'allowance_fourball',
-  'allowance_singles'
+  'allowance_singles',
 ] as const;
 
 const TOURNAMENT_UPDATABLE_FIELD_SET = new Set<string>(TOURNAMENT_UPDATABLE_FIELDS);
@@ -53,11 +53,14 @@ function normalizeTournament(row: Tournament | null): Tournament | null {
 
   return {
     ...row,
-    id: String(row.id)
+    id: String(row.id),
   };
 }
 
-export async function createTournament(db: D1Database, data: CreateTournamentInput): Promise<Tournament> {
+export async function createTournament(
+  db: D1Database,
+  data: CreateTournamentInput
+): Promise<Tournament> {
   const createdAt = data.created_at ?? nowIso();
   const updatedAt = data.updated_at ?? createdAt;
 
@@ -132,7 +135,10 @@ export async function getTournamentById(db: D1Database, id: string): Promise<Tou
   return normalizeTournament(row);
 }
 
-export async function getTournamentByCode(db: D1Database, code: string): Promise<Tournament | null> {
+export async function getTournamentByCode(
+  db: D1Database,
+  code: string
+): Promise<Tournament | null> {
   const row = await db
     .prepare(
       `
@@ -210,7 +216,11 @@ export async function updateTournament(
   return getTournamentById(db, id);
 }
 
-export async function updateTournamentCode(db: D1Database, id: string, code: string): Promise<void> {
+export async function updateTournamentCode(
+  db: D1Database,
+  id: string,
+  code: string
+): Promise<void> {
   await db
     .prepare(
       `

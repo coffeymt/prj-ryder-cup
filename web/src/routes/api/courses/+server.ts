@@ -191,7 +191,7 @@ function parseTeeInput(value: unknown, index: number): TeeCreateInput {
     par9f: readOptionalNullableInteger(getFirstDefined(tee, ['par9F', 'par9f']), 'par9F'),
     cr9b: readOptionalNullableNumber(getFirstDefined(tee, ['cr9B', 'cr9b']), 'cr9B'),
     slope9b: readOptionalNullableInteger(getFirstDefined(tee, ['slope9B', 'slope9b']), 'slope9B'),
-    par9b: readOptionalNullableInteger(getFirstDefined(tee, ['par9B', 'par9b']), 'par9B')
+    par9b: readOptionalNullableInteger(getFirstDefined(tee, ['par9B', 'par9b']), 'par9B'),
   };
 }
 
@@ -202,7 +202,10 @@ function parseHoleInput(value: unknown, index: number): HoleInput {
   const strokeIndex = readRequiredInteger(hole, 'strokeIndex');
 
   if (holeNumber < MIN_HOLE_NUMBER || holeNumber > MAX_HOLE_NUMBER) {
-    throw error(400, `holes[${index}].holeNumber must be between ${MIN_HOLE_NUMBER} and ${MAX_HOLE_NUMBER}.`);
+    throw error(
+      400,
+      `holes[${index}].holeNumber must be between ${MIN_HOLE_NUMBER} and ${MAX_HOLE_NUMBER}.`
+    );
   }
 
   if (strokeIndex < MIN_STROKE_INDEX || strokeIndex > MAX_STROKE_INDEX) {
@@ -305,20 +308,23 @@ export const POST: RequestHandler = async ({ locals, platform, request }) => {
   const statements: D1PreparedStatement[] = [];
 
   statements.push(
-    db.prepare(
-      `
+    db
+      .prepare(
+        `
         INSERT INTO courses (id, name, location, is_seed, created_at, updated_at)
         VALUES (?1, ?2, ?3, 0, ?4, ?5)
       `
-    ).bind(courseId, name, location, timestamp, timestamp)
+      )
+      .bind(courseId, name, location, timestamp, timestamp)
   );
 
   tees.forEach((tee, index) => {
     const teeId = teeIds[index];
 
     statements.push(
-      db.prepare(
-        `
+      db
+        .prepare(
+          `
           INSERT INTO tees (
             id,
             course_id,
@@ -337,34 +343,45 @@ export const POST: RequestHandler = async ({ locals, platform, request }) => {
           )
           VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14)
         `
-      ).bind(
-        teeId,
-        courseId,
-        tee.name,
-        tee.colorHex,
-        tee.cr18,
-        tee.slope18,
-        tee.par18,
-        tee.cr9f,
-        tee.slope9f,
-        tee.par9f,
-        tee.cr9b,
-        tee.slope9b,
-        tee.par9b,
-        timestamp
-      )
+        )
+        .bind(
+          teeId,
+          courseId,
+          tee.name,
+          tee.colorHex,
+          tee.cr18,
+          tee.slope18,
+          tee.par18,
+          tee.cr9f,
+          tee.slope9f,
+          tee.par9f,
+          tee.cr9b,
+          tee.slope9b,
+          tee.par9b,
+          timestamp
+        )
     );
   });
 
   for (const teeId of teeIds) {
     for (const hole of holes) {
       statements.push(
-        db.prepare(
-          `
+        db
+          .prepare(
+            `
             INSERT INTO holes (id, tee_id, hole_number, par, yardage, stroke_index, created_at)
             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)
           `
-        ).bind(generateRowId(), teeId, hole.holeNumber, hole.par, null, hole.strokeIndex, timestamp)
+          )
+          .bind(
+            generateRowId(),
+            teeId,
+            hole.holeNumber,
+            hole.par,
+            null,
+            hole.strokeIndex,
+            timestamp
+          )
       );
     }
   }
@@ -388,7 +405,7 @@ export const POST: RequestHandler = async ({ locals, platform, request }) => {
     {
       course,
       tees: createdTees,
-      holes: createdHoles
+      holes: createdHoles,
     },
     { status: 201 }
   );

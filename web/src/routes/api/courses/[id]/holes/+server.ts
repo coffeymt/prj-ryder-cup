@@ -80,7 +80,10 @@ function parseHoleInput(value: unknown, index: number): HoleInput {
   const strokeIndex = readRequiredInteger(hole, 'strokeIndex');
 
   if (holeNumber < MIN_HOLE_NUMBER || holeNumber > MAX_HOLE_NUMBER) {
-    throw error(400, `holes[${index}].holeNumber must be between ${MIN_HOLE_NUMBER} and ${MAX_HOLE_NUMBER}.`);
+    throw error(
+      400,
+      `holes[${index}].holeNumber must be between ${MIN_HOLE_NUMBER} and ${MAX_HOLE_NUMBER}.`
+    );
   }
 
   if (par <= 0) {
@@ -162,8 +165,9 @@ export const PUT: RequestHandler = async ({ locals, platform, params, request })
   const statements: D1PreparedStatement[] = [];
 
   statements.push(
-    db.prepare(
-      `
+    db
+      .prepare(
+        `
         DELETE FROM holes
         WHERE tee_id IN (
           SELECT id
@@ -171,18 +175,29 @@ export const PUT: RequestHandler = async ({ locals, platform, params, request })
           WHERE course_id = ?1
         )
       `
-    ).bind(params.id)
+      )
+      .bind(params.id)
   );
 
   for (const tee of tees) {
     for (const hole of holes) {
       statements.push(
-        db.prepare(
-          `
+        db
+          .prepare(
+            `
             INSERT INTO holes (id, tee_id, hole_number, par, yardage, stroke_index, created_at)
             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)
           `
-        ).bind(generateRowId(), tee.id, hole.holeNumber, hole.par, null, hole.strokeIndex, timestamp)
+          )
+          .bind(
+            generateRowId(),
+            tee.id,
+            hole.holeNumber,
+            hole.par,
+            null,
+            hole.strokeIndex,
+            timestamp
+          )
       );
     }
   }

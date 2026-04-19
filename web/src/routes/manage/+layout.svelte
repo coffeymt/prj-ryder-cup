@@ -21,9 +21,7 @@
   $: isAuthRoute = AUTH_ROUTE_IDS.has($page.route.id ?? '');
   $: currentTournamentId = data.currentTournamentId;
   $: tournamentBasePath = currentTournamentId ? `/manage/tournaments/${currentTournamentId}` : null;
-  $: navLinks = tournamentBasePath
-    ? buildNavigationLinks(currentPath, tournamentBasePath)
-    : [];
+  $: navLinks = tournamentBasePath ? buildNavigationLinks(currentPath, tournamentBasePath) : [];
 
   afterNavigate(() => {
     mobileNavOpen = false;
@@ -39,28 +37,28 @@
       {
         label: 'Overview',
         href: tournamentPath,
-        active: pathname === tournamentPath
+        active: pathname === tournamentPath,
       },
       {
         label: 'Teams & Players',
         href: `${tournamentPath}/teams`,
-        active: isPathPrefix(pathname, `${tournamentPath}/teams`)
+        active: isPathPrefix(pathname, `${tournamentPath}/teams`),
       },
       {
         label: 'Courses',
         href: '/manage/courses',
-        active: isPathPrefix(pathname, '/manage/courses')
+        active: isPathPrefix(pathname, '/manage/courses'),
       },
       {
         label: 'Rounds',
         href: `${tournamentPath}/rounds`,
-        active: isPathPrefix(pathname, `${tournamentPath}/rounds`)
+        active: isPathPrefix(pathname, `${tournamentPath}/rounds`),
       },
       {
         label: 'Overrides',
         href: `${tournamentPath}/overrides`,
-        active: isPathPrefix(pathname, `${tournamentPath}/overrides`)
-      }
+        active: isPathPrefix(pathname, `${tournamentPath}/overrides`),
+      },
     ];
   }
 
@@ -74,7 +72,7 @@
 
     try {
       const response = await fetch('/api/auth/logout', {
-        method: 'POST'
+        method: 'POST',
       });
 
       if (!response.ok) {
@@ -93,13 +91,15 @@
 {#if isAuthRoute}
   <slot />
 {:else}
-  <div class="min-h-dvh bg-bg text-text-primary">
-    <header class="border-b border-border bg-surface">
-      <div class="mx-auto flex w-full max-w-7xl items-center justify-between gap-3 px-3 py-3 sm:px-4">
+  <div class="bg-bg text-text-primary min-h-dvh">
+    <header class="border-border bg-surface border-b">
+      <div
+        class="mx-auto flex w-full max-w-7xl items-center justify-between gap-3 px-3 py-3 sm:px-4"
+      >
         <div class="flex items-center gap-2">
           <button
             type="button"
-            class="inline-flex min-h-touch min-w-touch items-center justify-center rounded-lg border border-border bg-transparent text-text-primary transition hover:bg-surface-raised md:hidden"
+            class="min-h-touch min-w-touch border-border text-text-primary hover:bg-surface-raised inline-flex items-center justify-center rounded-lg border bg-transparent transition md:hidden"
             aria-label={mobileNavOpen ? 'Close navigation' : 'Open navigation'}
             aria-expanded={mobileNavOpen}
             aria-controls="manage-side-nav"
@@ -124,7 +124,9 @@
             {/if}
           </button>
 
-          <a href="/manage" class="text-lg font-semibold tracking-tight text-text-primary">Kiawah Golf</a>
+          <a href="/manage" class="text-text-primary text-lg font-semibold tracking-tight"
+            >Kiawah Golf</a
+          >
         </div>
 
         <div class="hidden min-w-0 flex-1 justify-center sm:flex">
@@ -137,13 +139,13 @@
         <div class="flex items-center gap-2">
           <a
             href="/manage/tournaments/new"
-            class="inline-flex min-h-touch items-center justify-center rounded-lg bg-accent px-4 text-sm font-semibold text-accent-text transition hover:bg-accent-hover"
+            class="min-h-touch bg-accent text-accent-text hover:bg-accent-hover inline-flex items-center justify-center rounded-lg px-4 text-sm font-semibold transition"
           >
             + New Tournament
           </a>
           <button
             type="button"
-            class="inline-flex min-h-touch items-center justify-center rounded-lg border border-border bg-transparent px-4 text-sm font-semibold text-text-primary transition hover:bg-surface-raised disabled:cursor-not-allowed disabled:opacity-50"
+            class="min-h-touch border-border text-text-primary hover:bg-surface-raised inline-flex items-center justify-center rounded-lg border bg-transparent px-4 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50"
             on:click={handleLogout}
             disabled={isLoggingOut}
             aria-busy={isLoggingOut}
@@ -153,12 +155,15 @@
         </div>
       </div>
 
-      <div class="border-t border-border px-3 py-3 sm:hidden">
-        <TournamentSwitcher tournaments={data.tournaments} currentTournamentId={data.currentTournamentId} />
+      <div class="border-border border-t px-3 py-3 sm:hidden">
+        <TournamentSwitcher
+          tournaments={data.tournaments}
+          currentTournamentId={data.currentTournamentId}
+        />
       </div>
 
       {#if logoutError}
-        <p class="px-3 pb-3 text-sm text-status-down sm:px-4">{logoutError}</p>
+        <p class="text-status-down px-3 pb-3 text-sm sm:px-4">{logoutError}</p>
       {/if}
     </header>
 
@@ -166,7 +171,7 @@
       {#if mobileNavOpen}
         <button
           type="button"
-          class="absolute inset-0 z-20 bg-text-primary/40 md:hidden"
+          class="bg-text-primary/40 absolute inset-0 z-20 md:hidden"
           aria-label="Close navigation menu"
           on:click={() => (mobileNavOpen = false)}
         ></button>
@@ -174,18 +179,20 @@
 
       <aside
         id="manage-side-nav"
-        class={`absolute inset-y-0 left-0 z-30 w-72 border-r border-border bg-surface p-4 transition-transform md:static md:w-64 md:translate-x-0 ${
+        class={`border-border bg-surface absolute inset-y-0 left-0 z-30 w-72 border-r p-4 transition-transform md:static md:w-64 md:translate-x-0 ${
           mobileNavOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div class="mb-3 text-xs font-semibold uppercase tracking-wide text-text-secondary">Tournament Menu</div>
+        <div class="text-text-secondary mb-3 text-xs font-semibold tracking-wide uppercase">
+          Tournament Menu
+        </div>
 
         {#if navLinks.length > 0}
           <nav aria-label="Tournament navigation" class="space-y-1">
             {#each navLinks as link (link.href)}
               <a
                 href={link.href}
-                class={`flex min-h-touch items-center rounded-lg px-3 text-sm font-semibold transition ${
+                class={`min-h-touch flex items-center rounded-lg px-3 text-sm font-semibold transition ${
                   link.active
                     ? 'bg-accent text-accent-text'
                     : 'text-text-primary hover:bg-surface-raised hover:text-text-primary'
@@ -197,11 +204,13 @@
             {/each}
           </nav>
         {:else}
-          <div class="rounded-xl border border-border bg-surface-raised p-card-padding text-sm text-text-secondary shadow-sm">
+          <div
+            class="border-border bg-surface-raised p-card-padding text-text-secondary rounded-xl border text-sm shadow-sm"
+          >
             Create your first tournament to unlock manager navigation.
             <a
               href="/manage/tournaments/new"
-              class="mt-3 inline-flex min-h-touch items-center font-semibold text-accent underline"
+              class="min-h-touch text-accent mt-3 inline-flex items-center font-semibold underline"
             >
               Create tournament
             </a>

@@ -1,204 +1,207 @@
-import { requireSameTournament } from '$lib/auth/guards'
-import { getTournamentByCode } from '$lib/db/tournaments'
-import { listTeamsByTournament } from '$lib/db/teams'
-import type { MatchFormat, SegmentType, Tournament } from '$lib/db/types'
-import { error, json, type RequestHandler } from '@sveltejs/kit'
+import { requireSameTournament } from '$lib/auth/guards';
+import { getTournamentByCode } from '$lib/db/tournaments';
+import { listTeamsByTournament } from '$lib/db/teams';
+import type { MatchFormat, SegmentType, Tournament } from '$lib/db/types';
+import { error, json, type RequestHandler } from '@sveltejs/kit';
 
-type LiveTournamentStatus = 'active' | 'complete'
-type LiveRoundStatus = 'pending' | 'in_progress' | 'complete'
-type LiveMatchStatus = 'pending' | 'in_progress' | 'closed'
+type LiveTournamentStatus = 'active' | 'complete';
+type LiveRoundStatus = 'pending' | 'in_progress' | 'complete';
+type LiveMatchStatus = 'pending' | 'in_progress' | 'closed';
 
 type LiveSide = {
-  teamId: string
-  playerNames: string[]
-  points: number
-}
+  teamId: string;
+  playerNames: string[];
+  points: number;
+};
 
 type LiveMatch = {
-  id: string
-  segment: SegmentType
-  format: string
-  sideA: LiveSide
-  sideB: LiveSide
-  status: LiveMatchStatus
-  closeNotation: string | null
-  matchState: string
-}
+  id: string;
+  segment: SegmentType;
+  format: string;
+  sideA: LiveSide;
+  sideB: LiveSide;
+  status: LiveMatchStatus;
+  closeNotation: string | null;
+  matchState: string;
+};
 
 type LiveRound = {
-  id: string
-  name: string
-  date: string
-  status: LiveRoundStatus
-  matches: LiveMatch[]
-}
+  id: string;
+  name: string;
+  date: string;
+  status: LiveRoundStatus;
+  matches: LiveMatch[];
+};
 
 type LiveTeam = {
-  id: string
-  name: string
-  color: string
-  totalPoints: number
-}
+  id: string;
+  name: string;
+  color: string;
+  totalPoints: number;
+};
 
 export type LiveSnapshot = {
   tournament: {
-    id: string
-    name: string
-    pointsToWin: number
-    status: LiveTournamentStatus
-  }
-  teams: LiveTeam[]
-  rounds: LiveRound[]
-  lastUpdated: string
-}
+    id: string;
+    name: string;
+    pointsToWin: number;
+    status: LiveTournamentStatus;
+  };
+  teams: LiveTeam[];
+  rounds: LiveRound[];
+  lastUpdated: string;
+};
 
 type TeamPointRow = {
-  team_id: string | number
-  total_points: number | null
-}
+  team_id: string | number;
+  total_points: number | null;
+};
 
 type RoundRow = {
-  id: string | number
-  round_number: number
-  course_name: string | null
-  scheduled_at: string
-}
+  id: string | number;
+  round_number: number;
+  course_name: string | null;
+  scheduled_at: string;
+};
 
 type SegmentRow = {
-  id: string | number
-  round_id: string | number
-  segment_type: SegmentType
-  format: MatchFormat
-  hole_start: number
-}
+  id: string | number;
+  round_id: string | number;
+  segment_type: SegmentType;
+  format: MatchFormat;
+  hole_start: number;
+};
 
 type MatchRow = {
-  match_id: string | number
-  round_id: string | number
-  match_number: number
-  format_override: MatchFormat | null
-  result_status: 'PENDING' | 'IN_PROGRESS' | 'FINAL' | null
-  close_notation: string | null
-  side_a_points: number | null
-  side_b_points: number | null
-  side_a_holes_won: number | null
-  side_b_holes_won: number | null
-  segment_type: SegmentType | null
-  segment_format: MatchFormat | null
-}
+  match_id: string | number;
+  round_id: string | number;
+  match_number: number;
+  format_override: MatchFormat | null;
+  result_status: 'PENDING' | 'IN_PROGRESS' | 'FINAL' | null;
+  close_notation: string | null;
+  side_a_points: number | null;
+  side_b_points: number | null;
+  side_a_holes_won: number | null;
+  side_b_holes_won: number | null;
+  segment_type: SegmentType | null;
+  segment_format: MatchFormat | null;
+};
 
 type SidePlayerRow = {
-  match_id: string | number
-  side_label: 'A' | 'B'
-  team_id: string | number
-  player_name: string | null
-}
+  match_id: string | number;
+  side_label: 'A' | 'B';
+  team_id: string | number;
+  player_name: string | null;
+};
 
 type LastUpdatedRow = {
-  last_updated: string | null
-}
+  last_updated: string | null;
+};
 
 type MutableSide = {
-  teamId: string
-  playerNames: string[]
-}
+  teamId: string;
+  playerNames: string[];
+};
 
 const FORMAT_LABELS: Record<MatchFormat, string> = {
   SCRAMBLE: 'Scramble',
   PINEHURST: 'Pinehurst',
   SHAMBLE: 'Shamble',
   FOURBALL: 'Fourball',
-  SINGLES: 'Singles'
-}
+  SINGLES: 'Singles',
+};
 
 function getDb(platform: App.Platform | undefined): D1Database {
-  const db = platform?.env.DB
+  const db = platform?.env.DB;
 
   if (!db) {
-    throw error(500, 'Database binding is not configured.')
+    throw error(500, 'Database binding is not configured.');
   }
 
-  return db
+  return db;
 }
 
 function normalizeTournamentCode(code: string): string {
-  const normalized = code.trim().toUpperCase()
+  const normalized = code.trim().toUpperCase();
 
   if (normalized.length === 0) {
-    throw error(400, 'Tournament code is required.')
+    throw error(400, 'Tournament code is required.');
   }
 
-  return normalized
+  return normalized;
 }
 
 function assertLiveReadAccess(locals: App.Locals, tournament: Tournament): void {
   if (tournament.public_ticker_enabled === 1) {
-    return
+    return;
   }
 
   if (locals.role === 'anonymous') {
-    throw error(403, 'Forbidden')
+    throw error(403, 'Forbidden');
   }
 
-  requireSameTournament(locals, tournament.id)
+  requireSameTournament(locals, tournament.id);
 }
 
 function toLiveMatchStatus(status: MatchRow['result_status']): LiveMatchStatus {
   if (status === 'FINAL') {
-    return 'closed'
+    return 'closed';
   }
 
   if (status === 'IN_PROGRESS') {
-    return 'in_progress'
+    return 'in_progress';
   }
 
-  return 'pending'
+  return 'pending';
 }
 
 function toMatchState(sideAHolesWon: number | null, sideBHolesWon: number | null): string {
   if (sideAHolesWon === null || sideBHolesWon === null) {
-    return 'AS'
+    return 'AS';
   }
 
-  const margin = Number(sideAHolesWon) - Number(sideBHolesWon)
+  const margin = Number(sideAHolesWon) - Number(sideBHolesWon);
 
   if (margin === 0) {
-    return 'AS'
+    return 'AS';
   }
 
-  const leader = margin > 0 ? 'A' : 'B'
-  return `${leader} ${Math.abs(margin)} UP`
+  const leader = margin > 0 ? 'A' : 'B';
+  return `${leader} ${Math.abs(margin)} UP`;
 }
 
 function computeRoundStatus(matches: LiveMatch[]): LiveRoundStatus {
   if (matches.length === 0) {
-    return 'pending'
+    return 'pending';
   }
 
   if (matches.every((match) => match.status === 'closed')) {
-    return 'complete'
+    return 'complete';
   }
 
   if (matches.some((match) => match.status !== 'pending')) {
-    return 'in_progress'
+    return 'in_progress';
   }
 
-  return 'pending'
+  return 'pending';
 }
 
 function computeTournamentStatus(rounds: LiveRound[]): LiveTournamentStatus {
   if (rounds.length > 0 && rounds.every((round) => round.status === 'complete')) {
-    return 'complete'
+    return 'complete';
   }
 
-  return 'active'
+  return 'active';
 }
 
 function createMutableSide(): MutableSide {
-  return { teamId: '', playerNames: [] }
+  return { teamId: '', playerNames: [] };
 }
 
-async function loadTeamPointTotals(db: D1Database, tournamentId: string): Promise<Map<string, number>> {
+async function loadTeamPointTotals(
+  db: D1Database,
+  tournamentId: string
+): Promise<Map<string, number>> {
   const result = await db
     .prepare(
       `
@@ -220,11 +223,9 @@ async function loadTeamPointTotals(db: D1Database, tournamentId: string): Promis
       `
     )
     .bind(tournamentId)
-    .all<TeamPointRow>()
+    .all<TeamPointRow>();
 
-  return new Map(
-    result.results.map((row) => [String(row.team_id), Number(row.total_points ?? 0)])
-  )
+  return new Map(result.results.map((row) => [String(row.team_id), Number(row.total_points ?? 0)]));
 }
 
 async function loadRounds(db: D1Database, tournamentId: string): Promise<RoundRow[]> {
@@ -243,9 +244,9 @@ async function loadRounds(db: D1Database, tournamentId: string): Promise<RoundRo
       `
     )
     .bind(tournamentId)
-    .all<RoundRow>()
+    .all<RoundRow>();
 
-  return result.results
+  return result.results;
 }
 
 async function loadSegments(db: D1Database, tournamentId: string): Promise<SegmentRow[]> {
@@ -265,9 +266,9 @@ async function loadSegments(db: D1Database, tournamentId: string): Promise<Segme
       `
     )
     .bind(tournamentId)
-    .all<SegmentRow>()
+    .all<SegmentRow>();
 
-  return result.results
+  return result.results;
 }
 
 async function loadMatches(db: D1Database, tournamentId: string): Promise<MatchRow[]> {
@@ -296,9 +297,9 @@ async function loadMatches(db: D1Database, tournamentId: string): Promise<MatchR
       `
     )
     .bind(tournamentId)
-    .all<MatchRow>()
+    .all<MatchRow>();
 
-  return result.results
+  return result.results;
 }
 
 async function loadSidePlayers(db: D1Database, tournamentId: string): Promise<SidePlayerRow[]> {
@@ -320,9 +321,9 @@ async function loadSidePlayers(db: D1Database, tournamentId: string): Promise<Si
       `
     )
     .bind(tournamentId)
-    .all<SidePlayerRow>()
+    .all<SidePlayerRow>();
 
-  return result.results
+  return result.results;
 }
 
 async function loadLastUpdated(db: D1Database, tournamentId: string): Promise<string | null> {
@@ -337,93 +338,104 @@ async function loadLastUpdated(db: D1Database, tournamentId: string): Promise<st
       `
     )
     .bind(tournamentId)
-    .first<LastUpdatedRow>()
+    .first<LastUpdatedRow>();
 
-  return row?.last_updated ?? null
+  return row?.last_updated ?? null;
 }
 
 function buildSidesByMatch(rows: SidePlayerRow[]): Map<string, { A: MutableSide; B: MutableSide }> {
-  const sidesByMatch = new Map<string, { A: MutableSide; B: MutableSide }>()
+  const sidesByMatch = new Map<string, { A: MutableSide; B: MutableSide }>();
 
   for (const row of rows) {
-    const matchId = String(row.match_id)
-    const existing = sidesByMatch.get(matchId) ?? { A: createMutableSide(), B: createMutableSide() }
-    const side = row.side_label === 'A' ? existing.A : existing.B
+    const matchId = String(row.match_id);
+    const existing = sidesByMatch.get(matchId) ?? {
+      A: createMutableSide(),
+      B: createMutableSide(),
+    };
+    const side = row.side_label === 'A' ? existing.A : existing.B;
 
     if (!side.teamId) {
-      side.teamId = String(row.team_id)
+      side.teamId = String(row.team_id);
     }
 
     if (row.player_name && !side.playerNames.includes(row.player_name)) {
-      side.playerNames.push(row.player_name)
+      side.playerNames.push(row.player_name);
     }
 
-    sidesByMatch.set(matchId, existing)
+    sidesByMatch.set(matchId, existing);
   }
 
-  return sidesByMatch
+  return sidesByMatch;
 }
 
 function buildFirstSegmentByRound(rows: SegmentRow[]): Map<string, SegmentRow> {
-  const firstSegmentByRound = new Map<string, SegmentRow>()
+  const firstSegmentByRound = new Map<string, SegmentRow>();
 
   for (const row of rows) {
-    const roundId = String(row.round_id)
+    const roundId = String(row.round_id);
 
     if (!firstSegmentByRound.has(roundId)) {
-      firstSegmentByRound.set(roundId, row)
+      firstSegmentByRound.set(roundId, row);
     }
   }
 
-  return firstSegmentByRound
+  return firstSegmentByRound;
 }
 
 async function buildLiveSnapshot(db: D1Database, tournament: Tournament): Promise<LiveSnapshot> {
-  const [teams, teamPointTotals, roundsData, segmentsData, matchesData, sidePlayerData, lastUpdated] =
-    await Promise.all([
-      listTeamsByTournament(db, tournament.id),
-      loadTeamPointTotals(db, tournament.id),
-      loadRounds(db, tournament.id),
-      loadSegments(db, tournament.id),
-      loadMatches(db, tournament.id),
-      loadSidePlayers(db, tournament.id),
-      loadLastUpdated(db, tournament.id)
-    ])
+  const [
+    teams,
+    teamPointTotals,
+    roundsData,
+    segmentsData,
+    matchesData,
+    sidePlayerData,
+    lastUpdated,
+  ] = await Promise.all([
+    listTeamsByTournament(db, tournament.id),
+    loadTeamPointTotals(db, tournament.id),
+    loadRounds(db, tournament.id),
+    loadSegments(db, tournament.id),
+    loadMatches(db, tournament.id),
+    loadSidePlayers(db, tournament.id),
+    loadLastUpdated(db, tournament.id),
+  ]);
 
   const teamsPayload: LiveTeam[] = teams.map((team) => ({
     id: team.id,
     name: team.name,
     color: team.color,
-    totalPoints: teamPointTotals.get(team.id) ?? 0
-  }))
+    totalPoints: teamPointTotals.get(team.id) ?? 0,
+  }));
 
   const rounds: LiveRound[] = roundsData.map((round) => ({
     id: String(round.id),
     name: round.course_name ?? `Round ${round.round_number}`,
     date: round.scheduled_at,
     status: 'pending',
-    matches: []
-  }))
+    matches: [],
+  }));
 
-  const roundsById = new Map(rounds.map((round) => [round.id, round]))
-  const sidesByMatch = buildSidesByMatch(sidePlayerData)
-  const firstSegmentByRound = buildFirstSegmentByRound(segmentsData)
+  const roundsById = new Map(rounds.map((round) => [round.id, round]));
+  const sidesByMatch = buildSidesByMatch(sidePlayerData);
+  const firstSegmentByRound = buildFirstSegmentByRound(segmentsData);
 
   for (const matchRow of matchesData) {
-    const matchId = String(matchRow.match_id)
-    const roundId = String(matchRow.round_id)
-    const round = roundsById.get(roundId)
+    const matchId = String(matchRow.match_id);
+    const roundId = String(matchRow.round_id);
+    const round = roundsById.get(roundId);
 
     if (!round) {
-      continue
+      continue;
     }
 
-    const fallbackSegment = firstSegmentByRound.get(roundId)
-    const segment = matchRow.segment_type ?? fallbackSegment?.segment_type ?? 'FULL18'
-    const formatCode = matchRow.format_override ?? matchRow.segment_format ?? fallbackSegment?.format ?? 'SINGLES'
-    const sides = sidesByMatch.get(matchId) ?? { A: createMutableSide(), B: createMutableSide() }
-    const sideAPoints = Number(matchRow.side_a_points ?? 0)
-    const sideBPoints = Number(matchRow.side_b_points ?? 0)
+    const fallbackSegment = firstSegmentByRound.get(roundId);
+    const segment = matchRow.segment_type ?? fallbackSegment?.segment_type ?? 'FULL18';
+    const formatCode =
+      matchRow.format_override ?? matchRow.segment_format ?? fallbackSegment?.format ?? 'SINGLES';
+    const sides = sidesByMatch.get(matchId) ?? { A: createMutableSide(), B: createMutableSide() };
+    const sideAPoints = Number(matchRow.side_a_points ?? 0);
+    const sideBPoints = Number(matchRow.side_b_points ?? 0);
 
     round.matches.push({
       id: matchId,
@@ -432,21 +444,21 @@ async function buildLiveSnapshot(db: D1Database, tournament: Tournament): Promis
       sideA: {
         teamId: sides.A.teamId,
         playerNames: sides.A.playerNames,
-        points: sideAPoints
+        points: sideAPoints,
       },
       sideB: {
         teamId: sides.B.teamId,
         playerNames: sides.B.playerNames,
-        points: sideBPoints
+        points: sideBPoints,
       },
       status: toLiveMatchStatus(matchRow.result_status),
       closeNotation: matchRow.close_notation,
-      matchState: toMatchState(matchRow.side_a_holes_won, matchRow.side_b_holes_won)
-    })
+      matchState: toMatchState(matchRow.side_a_holes_won, matchRow.side_b_holes_won),
+    });
   }
 
   for (const round of rounds) {
-    round.status = computeRoundStatus(round.matches)
+    round.status = computeRoundStatus(round.matches);
   }
 
   return {
@@ -454,12 +466,12 @@ async function buildLiveSnapshot(db: D1Database, tournament: Tournament): Promis
       id: tournament.id,
       name: tournament.name,
       pointsToWin: tournament.points_to_win,
-      status: computeTournamentStatus(rounds)
+      status: computeTournamentStatus(rounds),
     },
     teams: teamsPayload,
     rounds,
-    lastUpdated: lastUpdated ?? tournament.updated_at
-  }
+    lastUpdated: lastUpdated ?? tournament.updated_at,
+  };
 }
 
 export async function _getLiveSnapshot(
@@ -467,19 +479,19 @@ export async function _getLiveSnapshot(
   locals: App.Locals,
   code: string
 ): Promise<LiveSnapshot> {
-  const db = getDb(platform)
-  const tournamentCode = normalizeTournamentCode(code)
-  const tournament = await getTournamentByCode(db, tournamentCode)
+  const db = getDb(platform);
+  const tournamentCode = normalizeTournamentCode(code);
+  const tournament = await getTournamentByCode(db, tournamentCode);
 
   if (!tournament) {
-    throw error(404, 'Tournament not found.')
+    throw error(404, 'Tournament not found.');
   }
 
-  assertLiveReadAccess(locals, tournament)
-  return buildLiveSnapshot(db, tournament)
+  assertLiveReadAccess(locals, tournament);
+  return buildLiveSnapshot(db, tournament);
 }
 
 export const GET: RequestHandler = async ({ platform, locals, params }) => {
-  const snapshot = await _getLiveSnapshot(platform, locals, params.code)
-  return json(snapshot)
-}
+  const snapshot = await _getLiveSnapshot(platform, locals, params.code);
+  return json(snapshot);
+};

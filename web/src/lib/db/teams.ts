@@ -27,7 +27,7 @@ function normalizeTeam(row: Team | null): Team | null {
     ...row,
     id: String(row.id),
     tournament_id: String(row.tournament_id),
-    captain_player_id: row.captain_player_id === null ? null : String(row.captain_player_id)
+    captain_player_id: row.captain_player_id === null ? null : String(row.captain_player_id),
   };
 }
 
@@ -86,11 +86,15 @@ export async function listTeamsByTournament(db: D1Database, tournamentId: string
     ...row,
     id: String(row.id),
     tournament_id: String(row.tournament_id),
-    captain_player_id: row.captain_player_id === null ? null : String(row.captain_player_id)
+    captain_player_id: row.captain_player_id === null ? null : String(row.captain_player_id),
   }));
 }
 
-export async function updateTeam(db: D1Database, id: string, data: Partial<Team>): Promise<Team | null> {
+export async function updateTeam(
+  db: D1Database,
+  id: string,
+  data: Partial<Team>
+): Promise<Team | null> {
   const assignments = Object.entries(data).filter(
     ([field, value]) => TEAM_UPDATABLE_FIELD_SET.has(field) && value !== undefined
   );

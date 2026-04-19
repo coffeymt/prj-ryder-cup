@@ -46,13 +46,7 @@ function requireCommissionerAccess(event: RequestEvent, tournamentId: string): v
 }
 
 async function parseApiErrorMessage(response: Response): Promise<string> {
-  let body: unknown = null;
-
-  try {
-    body = await response.json();
-  } catch {
-    body = null;
-  }
+  const body = await response.json().catch(() => null);
 
   if (body && typeof body === 'object' && !Array.isArray(body)) {
     const message = (body as Record<string, unknown>).message;
@@ -122,16 +116,19 @@ export const actions: Actions = {
       });
     }
 
-    const response = await event.fetch(`/api/tournaments/${encodeURIComponent(tournamentId)}/teams`, {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify({
-        name,
-        color,
-      }),
-    });
+    const response = await event.fetch(
+      `/api/tournaments/${encodeURIComponent(tournamentId)}/teams`,
+      {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+          color,
+        }),
+      }
+    );
 
     if (!response.ok) {
       return fail(toActionFailureStatus(response.status), {

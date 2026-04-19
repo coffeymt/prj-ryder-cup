@@ -245,7 +245,12 @@ async function getMatchSidePayload(
 
 async function buildMatchDetailPayload(
   db: D1Database,
-  match: { id: string; round_id: string; match_number: number; format_override: MatchFormat | null },
+  match: {
+    id: string;
+    round_id: string;
+    match_number: number;
+    format_override: MatchFormat | null;
+  },
   segmentById: Map<string, RoundSegment>
 ): Promise<{
   id: string;
@@ -294,7 +299,9 @@ async function buildMatchDetailPayload(
     matchNumber: match.match_number,
     format: match.format_override ? DB_FORMAT_TO_API[match.format_override] : null,
     status: latestResult?.status ?? 'PENDING',
-    segment: latestResult ? toApiSegment(segmentById.get(latestResult.segment_id)?.segment_type ?? 'OVERALL') : null,
+    segment: latestResult
+      ? toApiSegment(segmentById.get(latestResult.segment_id)?.segment_type ?? 'OVERALL')
+      : null,
     sides: sidePayloads,
     results: matchResults.map((result) => ({
       id: result.id,

@@ -22,15 +22,17 @@
 
   $: mergedValues = {
     ...data.tournament,
-    ...(form?.values ?? {})
+    ...(form?.values ?? {}),
   };
 
   $: eventCode = form?.eventCode ?? data.eventCode;
   $: formErrors = form?.errors ?? {};
   $: saveErrors =
-    form?.action === 'save' ? (formErrors as Record<string, string | undefined>) : ({} as Record<string, string>);
-  $: allowanceSectionOpen = data.allowanceFields.some(
-    (allowanceField) => Boolean(saveErrors[allowanceField.key])
+    form?.action === 'save'
+      ? (formErrors as Record<string, string | undefined>)
+      : ({} as Record<string, string>);
+  $: allowanceSectionOpen = data.allowanceFields.some((allowanceField) =>
+    Boolean(saveErrors[allowanceField.key])
   );
 
   const saveEnhance: SubmitFunction = () => {
@@ -76,35 +78,43 @@
 
 <section class="mx-auto w-full max-w-4xl space-y-6">
   <header class="space-y-2">
-    <h1 class="text-2xl font-semibold tracking-tight text-text-primary sm:text-3xl">Tournament settings</h1>
-    <p class="text-sm text-text-secondary sm:text-base">
+    <h1 class="text-text-primary text-2xl font-semibold tracking-tight sm:text-3xl">
+      Tournament settings
+    </h1>
+    <p class="text-text-secondary text-sm sm:text-base">
       Update event details, allowances, spectator visibility, and access code controls.
     </p>
   </header>
 
   {#if form?.success}
-    <p class="rounded-lg border border-status-up/30 bg-status-up/10 px-4 py-3 text-sm text-status-up">
+    <p
+      class="border-status-up/30 bg-status-up/10 text-status-up rounded-lg border px-4 py-3 text-sm"
+    >
       {form.success}
     </p>
   {/if}
 
   {#if formErrors.form}
-    <p class="rounded-lg border border-status-down/30 bg-status-down/10 px-4 py-3 text-sm text-status-down">
+    <p
+      class="border-status-down/30 bg-status-down/10 text-status-down rounded-lg border px-4 py-3 text-sm"
+    >
       {formErrors.form}
     </p>
   {/if}
 
-  <div class="rounded-2xl border border-border bg-surface p-card-padding shadow-sm sm:p-6">
-    <div class="flex flex-col gap-4 rounded-xl border border-border bg-surface-raised p-card-padding sm:flex-row sm:items-center sm:justify-between">
+  <div class="border-border bg-surface p-card-padding rounded-2xl border shadow-sm sm:p-6">
+    <div
+      class="border-border bg-surface-raised p-card-padding flex flex-col gap-4 rounded-xl border sm:flex-row sm:items-center sm:justify-between"
+    >
       <div class="space-y-1">
-        <p class="text-xs font-semibold uppercase tracking-wide text-text-secondary">Event code</p>
-        <p class="text-2xl font-semibold tracking-widest text-text-primary">{eventCode}</p>
+        <p class="text-text-secondary text-xs font-semibold tracking-wide uppercase">Event code</p>
+        <p class="text-text-primary text-2xl font-semibold tracking-widest">{eventCode}</p>
       </div>
 
       <form method="POST" action="?/regenerate" use:enhance={regenerateEnhance}>
         <button
           type="submit"
-          class="inline-flex min-h-touch w-full items-center justify-center rounded-lg border border-border bg-transparent px-4 text-sm font-semibold text-text-primary transition hover:bg-surface-raised disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+          class="min-h-touch border-border text-text-primary hover:bg-surface-raised inline-flex w-full items-center justify-center rounded-lg border bg-transparent px-4 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
           disabled={isRegenerating}
           aria-busy={isRegenerating}
         >
@@ -114,11 +124,11 @@
     </div>
   </div>
 
-  <div class="rounded-2xl border border-border bg-surface p-card-padding shadow-sm sm:p-6">
+  <div class="border-border bg-surface p-card-padding rounded-2xl border shadow-sm sm:p-6">
     <form method="POST" action="?/save" use:enhance={saveEnhance} class="space-y-6">
       <div class="grid gap-4 sm:grid-cols-2">
         <div class="sm:col-span-2">
-          <label for="name" class="text-sm font-semibold text-text-primary">Tournament name</label>
+          <label for="name" class="text-text-primary text-sm font-semibold">Tournament name</label>
           <input
             id="name"
             name="name"
@@ -128,15 +138,15 @@
             value={mergedValues.name}
             aria-invalid={saveErrors.name ? 'true' : undefined}
             aria-describedby={saveErrors.name ? 'name-error' : undefined}
-            class="mt-2 min-h-touch w-full rounded-lg border border-border bg-bg px-4 text-base text-text-primary outline-none transition focus:border-accent focus:ring-1 focus:ring-accent"
+            class="min-h-touch border-border bg-bg text-text-primary focus:border-accent focus:ring-accent mt-2 w-full rounded-lg border px-4 text-base transition outline-none focus:ring-1"
           />
           {#if saveErrors.name}
-            <p id="name-error" class="mt-2 text-sm text-status-down">{saveErrors.name}</p>
+            <p id="name-error" class="text-status-down mt-2 text-sm">{saveErrors.name}</p>
           {/if}
         </div>
 
         <div>
-          <label for="startDate" class="text-sm font-semibold text-text-primary">Start date</label>
+          <label for="startDate" class="text-text-primary text-sm font-semibold">Start date</label>
           <input
             id="startDate"
             name="startDate"
@@ -145,15 +155,15 @@
             value={mergedValues.startDate}
             aria-invalid={saveErrors.startDate ? 'true' : undefined}
             aria-describedby={saveErrors.startDate ? 'startDate-error' : undefined}
-            class="mt-2 min-h-touch w-full rounded-lg border border-border bg-bg px-4 text-base text-text-primary outline-none transition focus:border-accent focus:ring-1 focus:ring-accent"
+            class="min-h-touch border-border bg-bg text-text-primary focus:border-accent focus:ring-accent mt-2 w-full rounded-lg border px-4 text-base transition outline-none focus:ring-1"
           />
           {#if saveErrors.startDate}
-            <p id="startDate-error" class="mt-2 text-sm text-status-down">{saveErrors.startDate}</p>
+            <p id="startDate-error" class="text-status-down mt-2 text-sm">{saveErrors.startDate}</p>
           {/if}
         </div>
 
         <div>
-          <label for="endDate" class="text-sm font-semibold text-text-primary">End date</label>
+          <label for="endDate" class="text-text-primary text-sm font-semibold">End date</label>
           <input
             id="endDate"
             name="endDate"
@@ -162,15 +172,17 @@
             value={mergedValues.endDate}
             aria-invalid={saveErrors.endDate ? 'true' : undefined}
             aria-describedby={saveErrors.endDate ? 'endDate-error' : undefined}
-            class="mt-2 min-h-touch w-full rounded-lg border border-border bg-bg px-4 text-base text-text-primary outline-none transition focus:border-accent focus:ring-1 focus:ring-accent"
+            class="min-h-touch border-border bg-bg text-text-primary focus:border-accent focus:ring-accent mt-2 w-full rounded-lg border px-4 text-base transition outline-none focus:ring-1"
           />
           {#if saveErrors.endDate}
-            <p id="endDate-error" class="mt-2 text-sm text-status-down">{saveErrors.endDate}</p>
+            <p id="endDate-error" class="text-status-down mt-2 text-sm">{saveErrors.endDate}</p>
           {/if}
         </div>
 
         <div class="sm:col-span-2">
-          <label for="pointsToWin" class="text-sm font-semibold text-text-primary">Points to win</label>
+          <label for="pointsToWin" class="text-text-primary text-sm font-semibold"
+            >Points to win</label
+          >
           <input
             id="pointsToWin"
             name="pointsToWin"
@@ -181,60 +193,73 @@
             value={mergedValues.pointsToWin}
             aria-invalid={saveErrors.pointsToWin ? 'true' : undefined}
             aria-describedby={saveErrors.pointsToWin ? 'pointsToWin-error' : undefined}
-            class="mt-2 min-h-touch w-full rounded-lg border border-border bg-bg px-4 text-base text-text-primary outline-none transition focus:border-accent focus:ring-1 focus:ring-accent sm:max-w-xs"
+            class="min-h-touch border-border bg-bg text-text-primary focus:border-accent focus:ring-accent mt-2 w-full rounded-lg border px-4 text-base transition outline-none focus:ring-1 sm:max-w-xs"
           />
           {#if saveErrors.pointsToWin}
-            <p id="pointsToWin-error" class="mt-2 text-sm text-status-down">{saveErrors.pointsToWin}</p>
+            <p id="pointsToWin-error" class="text-status-down mt-2 text-sm">
+              {saveErrors.pointsToWin}
+            </p>
           {/if}
         </div>
       </div>
 
       <fieldset class="space-y-3">
-        <legend class="text-sm font-semibold text-text-primary">Spectator access</legend>
+        <legend class="text-text-primary text-sm font-semibold">Spectator access</legend>
         <div class="grid gap-3">
-          <label class="flex min-h-touch cursor-pointer items-start gap-3 rounded-lg border border-border bg-surface-raised px-4 py-3">
+          <label
+            class="min-h-touch border-border bg-surface-raised flex cursor-pointer items-start gap-3 rounded-lg border px-4 py-3"
+          >
             <input
               type="radio"
               name="spectatorAccess"
               value="requireCode"
               checked={mergedValues.spectatorAccess !== 'public'}
-              class="mt-1 h-4 w-4 border-border text-accent focus:ring-accent"
+              class="border-border text-accent focus:ring-accent mt-1 h-4 w-4"
             />
             <span class="space-y-1">
-              <span class="block text-sm font-semibold text-text-primary">Require event code (default)</span>
-              <span class="block text-xs text-text-secondary">
+              <span class="text-text-primary block text-sm font-semibold"
+                >Require event code (default)</span
+              >
+              <span class="text-text-secondary block text-xs">
                 Spectators must enter the event code before viewing the ticker.
               </span>
             </span>
           </label>
 
-          <label class="flex min-h-touch cursor-pointer items-start gap-3 rounded-lg border border-border bg-surface-raised px-4 py-3">
+          <label
+            class="min-h-touch border-border bg-surface-raised flex cursor-pointer items-start gap-3 rounded-lg border px-4 py-3"
+          >
             <input
               type="radio"
               name="spectatorAccess"
               value="public"
               checked={mergedValues.spectatorAccess === 'public'}
-              class="mt-1 h-4 w-4 border-border text-accent focus:ring-accent"
+              class="border-border text-accent focus:ring-accent mt-1 h-4 w-4"
             />
             <span class="space-y-1">
-              <span class="block text-sm font-semibold text-text-primary">Fully public ticker</span>
-              <span class="block text-xs text-text-secondary">Anyone with the URL can view live scoring updates.</span>
+              <span class="text-text-primary block text-sm font-semibold">Fully public ticker</span>
+              <span class="text-text-secondary block text-xs"
+                >Anyone with the URL can view live scoring updates.</span
+              >
             </span>
           </label>
         </div>
       </fieldset>
 
-      <details class="rounded-xl border border-border bg-surface-raised p-card-padding" open={allowanceSectionOpen}>
-        <summary class="cursor-pointer text-sm font-semibold text-text-primary">
+      <details
+        class="border-border bg-surface-raised p-card-padding rounded-xl border"
+        open={allowanceSectionOpen}
+      >
+        <summary class="text-text-primary cursor-pointer text-sm font-semibold">
           Per-format allowances (optional overrides)
         </summary>
-        <p class="mt-2 text-xs text-text-secondary">
+        <p class="text-text-secondary mt-2 text-xs">
           Defaults are pre-filled. Use a USGA button to quickly apply the standard recommendation.
         </p>
 
         <div class="mt-4 grid gap-4">
           {#each data.allowanceFields as allowanceField (allowanceField.key)}
-            <div class="rounded-lg border border-border bg-surface p-3 sm:p-4">
+            <div class="border-border bg-surface rounded-lg border p-3 sm:p-4">
               <AllowanceField
                 format={allowanceField.key}
                 label={allowanceField.label}
@@ -242,7 +267,7 @@
                 usgsaStandard={allowanceField.usgaPercent}
               />
               {#if saveErrors[allowanceField.key]}
-                <p class="mt-2 text-sm text-status-down">{saveErrors[allowanceField.key]}</p>
+                <p class="text-status-down mt-2 text-sm">{saveErrors[allowanceField.key]}</p>
               {/if}
             </div>
           {/each}
@@ -252,7 +277,7 @@
       <div class="pt-2">
         <button
           type="submit"
-          class="inline-flex min-h-touch w-full items-center justify-center rounded-lg bg-accent px-4 text-sm font-semibold text-accent-text transition hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:px-6"
+          class="min-h-touch bg-accent text-accent-text hover:bg-accent-hover inline-flex w-full items-center justify-center rounded-lg px-4 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:px-6"
           disabled={isSaving}
           aria-busy={isSaving}
         >
@@ -262,16 +287,18 @@
     </form>
   </div>
 
-  <div class="rounded-2xl border border-status-down/30 bg-status-down/10 p-card-padding shadow-sm sm:p-6">
-    <h2 class="text-base font-semibold text-status-down">Danger zone</h2>
-    <p class="mt-2 text-sm text-status-down">
+  <div
+    class="border-status-down/30 bg-status-down/10 p-card-padding rounded-2xl border shadow-sm sm:p-6"
+  >
+    <h2 class="text-status-down text-base font-semibold">Danger zone</h2>
+    <p class="text-status-down mt-2 text-sm">
       Archiving removes this tournament from active management workflows.
     </p>
 
     <form method="POST" action="?/archive" use:enhance={archiveEnhance} class="mt-4">
       <button
         type="submit"
-        class="inline-flex min-h-touch w-full items-center justify-center rounded-lg bg-status-down px-4 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:px-6"
+        class="min-h-touch bg-status-down inline-flex w-full items-center justify-center rounded-lg px-4 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:px-6"
         disabled={isArchiving}
         aria-busy={isArchiving}
       >

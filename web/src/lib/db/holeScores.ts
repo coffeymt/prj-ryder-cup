@@ -35,11 +35,15 @@ function normalizeHoleScore(row: HoleScore | null): HoleScore | null {
     match_id: String(row.match_id),
     player_id: row.player_id === null ? null : String(row.player_id),
     match_side_id: String(row.match_side_id),
-    entered_by_player_id: row.entered_by_player_id === null ? null : String(row.entered_by_player_id)
+    entered_by_player_id:
+      row.entered_by_player_id === null ? null : String(row.entered_by_player_id),
   };
 }
 
-export async function createHoleScore(db: D1Database, data: CreateHoleScoreInput): Promise<HoleScore> {
+export async function createHoleScore(
+  db: D1Database,
+  data: CreateHoleScoreInput
+): Promise<HoleScore> {
   const enteredAt = data.entered_at ?? nowIso();
   const updatedAt = data.updated_at ?? enteredAt;
 
@@ -143,11 +147,15 @@ export async function listHoleScoresByMatch(db: D1Database, matchId: string): Pr
     match_id: String(row.match_id),
     player_id: row.player_id === null ? null : String(row.player_id),
     match_side_id: String(row.match_side_id),
-    entered_by_player_id: row.entered_by_player_id === null ? null : String(row.entered_by_player_id)
+    entered_by_player_id:
+      row.entered_by_player_id === null ? null : String(row.entered_by_player_id),
   }));
 }
 
-export async function upsertHoleScore(db: D1Database, data: UpsertHoleScoreInput): Promise<HoleScore> {
+export async function upsertHoleScore(
+  db: D1Database,
+  data: UpsertHoleScoreInput
+): Promise<HoleScore> {
   const existing = await db
     .prepare(
       `

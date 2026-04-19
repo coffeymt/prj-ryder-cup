@@ -135,30 +135,30 @@ function parseTees(value: unknown): TeePayload[] {
       cr18: readRequiredNumber(tee.cr18, `Tee ${index + 1} CR 18`, { min: 1 }),
       slope18: readRequiredNumber(tee.slope18, `Tee ${index + 1} Slope 18`, {
         integer: true,
-        min: 1
+        min: 1,
       }),
       par18: readRequiredNumber(tee.par18, `Tee ${index + 1} Par 18`, {
         integer: true,
-        min: 1
+        min: 1,
       }),
       cr9F: readOptionalNumber(tee.cr9F ?? tee.cr9f, `Tee ${index + 1} CR 9F`, { min: 1 }),
       slope9F: readOptionalNumber(tee.slope9F ?? tee.slope9f, `Tee ${index + 1} Slope 9F`, {
         integer: true,
-        min: 1
+        min: 1,
       }),
       par9F: readOptionalNumber(tee.par9F ?? tee.par9f, `Tee ${index + 1} Par 9F`, {
         integer: true,
-        min: 1
+        min: 1,
       }),
       cr9B: readOptionalNumber(tee.cr9B ?? tee.cr9b, `Tee ${index + 1} CR 9B`, { min: 1 }),
       slope9B: readOptionalNumber(tee.slope9B ?? tee.slope9b, `Tee ${index + 1} Slope 9B`, {
         integer: true,
-        min: 1
+        min: 1,
       }),
       par9B: readOptionalNumber(tee.par9B ?? tee.par9b, `Tee ${index + 1} Par 9B`, {
         integer: true,
-        min: 1
-      })
+        min: 1,
+      }),
     };
   });
 }
@@ -179,12 +179,12 @@ function parseHoles(value: unknown): HolePayload[] {
     const hole = asObject(entry);
     const holeNumber = readRequiredNumber(hole.holeNumber, `Hole ${index + 1} number`, {
       integer: true,
-      min: 1
+      min: 1,
     });
     const par = readRequiredNumber(hole.par, `Hole ${holeNumber} par`, { integer: true, min: 1 });
     const strokeIndex = readRequiredNumber(hole.strokeIndex, `Hole ${holeNumber} stroke index`, {
       integer: true,
-      min: MIN_STROKE_INDEX
+      min: MIN_STROKE_INDEX,
     });
 
     if (holeNumber > HOLE_COUNT) {
@@ -215,7 +215,7 @@ function parseHoles(value: unknown): HolePayload[] {
     return {
       holeNumber,
       par,
-      strokeIndex
+      strokeIndex,
     };
   });
 
@@ -263,26 +263,26 @@ export const actions: Actions = {
       holes = parseHoles(parseJsonField(formData, 'holesJson'));
     } catch (cause) {
       return fail(400, {
-        error: cause instanceof Error ? cause.message : 'Could not create course.'
+        error: cause instanceof Error ? cause.message : 'Could not create course.',
       });
     }
 
     const response = await event.fetch('/api/courses', {
       method: 'POST',
       headers: {
-        'content-type': 'application/json'
+        'content-type': 'application/json',
       },
       body: JSON.stringify({
         name,
         location,
         tees,
-        holes
-      })
+        holes,
+      }),
     });
 
     if (!response.ok) {
       return fail(response.status >= 500 ? 500 : 400, {
-        error: await readApiErrorMessage(response, 'Could not create course.')
+        error: await readApiErrorMessage(response, 'Could not create course.'),
       });
     }
 
@@ -293,10 +293,10 @@ export const actions: Actions = {
 
     if (createdCourseId === undefined || createdCourseId === null) {
       return fail(500, {
-        error: 'Course was created but could not be loaded.'
+        error: 'Course was created but could not be loaded.',
       });
     }
 
     throw redirect(303, `/manage/courses/${String(createdCourseId)}`);
-  }
+  },
 };

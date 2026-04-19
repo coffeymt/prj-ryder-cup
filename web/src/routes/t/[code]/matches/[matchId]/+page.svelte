@@ -33,59 +33,76 @@
 <div class="space-y-4">
   <a
     href={`/t/${encodeURIComponent(data.tournament.code)}`}
-    class="inline-flex min-h-touch items-center rounded-lg border border-border bg-transparent px-4 text-sm font-semibold text-text-primary transition hover:bg-surface-raised"
+    class="min-h-touch border-border text-text-primary hover:bg-surface-raised inline-flex items-center rounded-lg border bg-transparent px-4 text-sm font-semibold transition"
   >
     &larr; Back to Dashboard
   </a>
 
-  <section class="space-y-3 rounded-2xl border border-border bg-surface p-card-padding shadow-sm sm:p-5">
+  <section
+    class="border-border bg-surface p-card-padding space-y-3 rounded-2xl border shadow-sm sm:p-5"
+  >
     <div class="flex flex-wrap items-start justify-between gap-3">
       <div>
-        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-text-muted">Match {data.match.matchNumber}</p>
-        <h2 class="mt-1 font-display text-xl font-semibold text-text-primary">{data.match.formatName}</h2>
-        <p class="mt-1 text-sm font-medium text-text-secondary">{data.match.segmentLabel}</p>
+        <p class="text-text-muted text-xs font-semibold tracking-[0.2em] uppercase">
+          Match {data.match.matchNumber}
+        </p>
+        <h2 class="font-display text-text-primary mt-1 text-xl font-semibold">
+          {data.match.formatName}
+        </h2>
+        <p class="text-text-secondary mt-1 text-sm font-medium">{data.match.segmentLabel}</p>
       </div>
-      <p class={`rounded-full px-3 py-1 text-sm font-semibold ${matchStateClasses(data.matchState)}`}>{data.matchState}</p>
+      <p
+        class={`rounded-full px-3 py-1 text-sm font-semibold ${matchStateClasses(data.matchState)}`}
+      >
+        {data.matchState}
+      </p>
     </div>
 
     <div class="grid gap-2 sm:grid-cols-2">
       {#each data.sides as side (side.id)}
         <article
-          class="rounded-xl border border-border bg-surface-raised p-3"
+          class="border-border bg-surface-raised rounded-xl border p-3"
           style={sideStyle(side.teamColor)}
         >
-          <p class="flex items-center gap-2 text-sm font-semibold text-text-primary">
-            <span class="h-2.5 w-2.5 rounded-full border border-border bg-[var(--team-color)]" aria-hidden="true"></span>
+          <p class="text-text-primary flex items-center gap-2 text-sm font-semibold">
+            <span
+              class="border-border h-2.5 w-2.5 rounded-full border bg-[var(--team-color)]"
+              aria-hidden="true"
+            ></span>
             {side.teamName}
           </p>
-          <p class="mt-1 text-sm text-text-secondary">{side.players.map((player) => player.name).join(' / ')}</p>
+          <p class="text-text-secondary mt-1 text-sm">
+            {side.players.map((player) => player.name).join(' / ')}
+          </p>
         </article>
       {/each}
     </div>
 
     <a
       href={`/t/${encodeURIComponent(data.tournament.code)}/matches/${encodeURIComponent(data.match.id)}/hole/${data.currentHole}`}
-      class="inline-flex min-h-touch w-full items-center justify-center rounded-lg bg-accent px-4 py-3 text-base font-semibold text-accent-text transition hover:bg-accent-hover"
+      class="min-h-touch bg-accent text-accent-text hover:bg-accent-hover inline-flex w-full items-center justify-center rounded-lg px-4 py-3 text-base font-semibold transition"
     >
       Enter Hole {data.currentHole}
     </a>
   </section>
 
-  <section class="rounded-2xl border border-border bg-surface p-card-padding shadow-sm sm:p-5">
-    <h3 class="font-display text-lg font-semibold text-text-primary">Completed Holes</h3>
+  <section class="border-border bg-surface p-card-padding rounded-2xl border shadow-sm sm:p-5">
+    <h3 class="font-display text-text-primary text-lg font-semibold">Completed Holes</h3>
 
     {#if data.completedHoles.length === 0}
-      <p class="mt-3 rounded-xl border border-dashed border-border px-4 py-5 text-sm text-text-secondary">
+      <p
+        class="border-border text-text-secondary mt-3 rounded-xl border border-dashed px-4 py-5 text-sm"
+      >
         No completed holes yet.
       </p>
     {:else}
       <ul class="mt-3 space-y-2">
-        {#each data.completedHoles as hole}
-          <li class="rounded-xl border border-border bg-surface-raised px-3 py-2.5">
-            <p class="text-sm font-semibold text-text-primary">Hole {hole.holeNumber}</p>
-            <p class="text-sm text-text-secondary">{hole.resultLabel}</p>
+        {#each data.completedHoles as hole (hole.holeNumber)}
+          <li class="border-border bg-surface-raised rounded-xl border px-3 py-2.5">
+            <p class="text-text-primary text-sm font-semibold">Hole {hole.holeNumber}</p>
+            <p class="text-text-secondary text-sm">{hole.resultLabel}</p>
             {#if hole.sideANet !== null && hole.sideBNet !== null}
-              <p class="text-xs text-text-muted">Net {hole.sideANet} vs {hole.sideBNet}</p>
+              <p class="text-text-muted text-xs">Net {hole.sideANet} vs {hole.sideBNet}</p>
             {/if}
           </li>
         {/each}

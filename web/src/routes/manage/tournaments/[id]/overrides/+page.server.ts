@@ -79,7 +79,7 @@ function createToast(kind: ToastKind, message: string): ToastPayload {
   return {
     id: crypto.randomUUID(),
     kind,
-    message
+    message,
   };
 }
 
@@ -205,7 +205,10 @@ async function parseApiErrorMessage(response: Response): Promise<string> {
   return response.statusText || 'Request failed.';
 }
 
-async function loadLatestMatchResults(db: D1Database, tournamentId: string): Promise<Map<string, MatchResultRow>> {
+async function loadLatestMatchResults(
+  db: D1Database,
+  tournamentId: string
+): Promise<Map<string, MatchResultRow>> {
   const result = await db
     .prepare(
       `
@@ -237,7 +240,7 @@ async function loadLatestMatchResults(db: D1Database, tournamentId: string): Pro
     latestByMatch.set(matchId, {
       ...row,
       match_id: matchId,
-      segment_id: String(row.segment_id)
+      segment_id: String(row.segment_id),
     });
   }
 
@@ -247,7 +250,9 @@ async function loadLatestMatchResults(db: D1Database, tournamentId: string): Pro
 async function loadSidePlayers(
   db: D1Database,
   tournamentId: string
-): Promise<Map<string, { sideATeamName: string; sideBTeamName: string; players: ParsedMatchPlayer[] }>> {
+): Promise<
+  Map<string, { sideATeamName: string; sideBTeamName: string; players: ParsedMatchPlayer[] }>
+> {
   const result = await db
     .prepare(
       `
@@ -271,7 +276,10 @@ async function loadSidePlayers(
     .bind(tournamentId)
     .all<MatchSidePlayerRow>();
 
-  const byMatch = new Map<string, { sideATeamName: string; sideBTeamName: string; players: ParsedMatchPlayer[] }>();
+  const byMatch = new Map<
+    string,
+    { sideATeamName: string; sideBTeamName: string; players: ParsedMatchPlayer[] }
+  >();
   const seenPlayerKeys = new Set<string>();
 
   for (const row of result.results) {
@@ -279,7 +287,7 @@ async function loadSidePlayers(
     const entry = byMatch.get(matchId) ?? {
       sideATeamName: '',
       sideBTeamName: '',
-      players: []
+      players: [],
     };
 
     if (row.side_label === 'A' && !entry.sideATeamName) {
@@ -300,7 +308,7 @@ async function loadSidePlayers(
           name: row.player_name,
           sideLabel: row.side_label,
           teamId: String(row.team_id),
-          teamName: row.team_name
+          teamName: row.team_name,
         });
 
         seenPlayerKeys.add(playerKey);
@@ -319,7 +327,9 @@ function resolvePointsAtStake(
   latestResult: MatchResultRow | null
 ): number | null {
   if (latestResult) {
-    const matchingSegment = segments.find((segment) => segment.id === String(latestResult.segment_id));
+    const matchingSegment = segments.find(
+      (segment) => segment.id === String(latestResult.segment_id)
+    );
     if (matchingSegment) {
       return matchingSegment.points_available;
     }
@@ -342,7 +352,12 @@ function resolvePointsAtStake(
   return overall ? overall.points_available : null;
 }
 
-function toMatchLabel(roundNumber: number, matchNumber: number, sideAName: string, sideBName: string): string {
+function toMatchLabel(
+  roundNumber: number,
+  matchNumber: number,
+  sideAName: string,
+  sideBName: string
+): string {
   const sideSummary =
     sideAName.length > 0 && sideBName.length > 0 ? ` (${sideAName} vs ${sideBName})` : '';
   return `Round ${roundNumber} - Match ${matchNumber}${sideSummary}`;
@@ -378,11 +393,15 @@ async function getMatchContext(
   return {
     ...row,
     id: String(row.id),
-    round_id: String(row.round_id)
+    round_id: String(row.round_id),
   };
 }
 
-async function isPlayerInMatch(db: D1Database, matchId: string, playerId: string): Promise<boolean> {
+async function isPlayerInMatch(
+  db: D1Database,
+  matchId: string,
+  playerId: string
+): Promise<boolean> {
   const row = await db
     .prepare(
       `
@@ -410,7 +429,7 @@ function createFailure(
   return fail(status, {
     panel,
     errors,
-    toast: createToast('error', toastMessage)
+    toast: createToast('error', toastMessage),
   });
 }
 
@@ -425,7 +444,7 @@ export const load: PageServerLoad = async (event) => {
       listTeamsByTournament(db, tournamentId),
       listPlayersByTournament(db, tournamentId),
       loadLatestMatchResults(db, tournamentId),
-      loadSidePlayers(db, tournamentId)
+      loadSidePlayers(db, tournamentId),
     ]);
 
   if (!tournament) {
@@ -454,7 +473,7 @@ export const load: PageServerLoad = async (event) => {
       const sides = sidePlayersByMatch.get(match.id) ?? {
         sideATeamName: '',
         sideBTeamName: '',
-        players: []
+        players: [],
       };
 
       return {
@@ -462,14 +481,19 @@ export const load: PageServerLoad = async (event) => {
         roundId: match.round_id,
         roundNumber: round.round_number,
         matchNumber: match.match_number,
-        label: toMatchLabel(round.round_number, match.match_number, sides.sideATeamName, sides.sideBTeamName),
+        label: toMatchLabel(
+          round.round_number,
+          match.match_number,
+          sides.sideATeamName,
+          sides.sideBTeamName
+        ),
         status: latestResult?.status ?? 'PENDING',
         pointsAtStake,
         sideAPoints: latestResult?.side_a_points ?? null,
         sideBPoints: latestResult?.side_b_points ?? null,
         sideATeamName: sides.sideATeamName,
         sideBTeamName: sides.sideBTeamName,
-        players: sides.players
+        players: sides.players,
       };
     })
     .filter((match): match is ParsedMatch => match !== null)
@@ -486,7 +510,7 @@ export const load: PageServerLoad = async (event) => {
     rounds,
     matches: parsedMatches,
     teams,
-    players
+    players,
   };
 };
 
@@ -496,8 +520,10 @@ export const actions: Actions = {
     const formData = await event.request.formData();
     const errors: Record<string, string> = {};
 
-    const matchId = typeof formData.get('matchId') === 'string' ? String(formData.get('matchId')).trim() : '';
-    const playerId = typeof formData.get('playerId') === 'string' ? String(formData.get('playerId')).trim() : '';
+    const matchId =
+      typeof formData.get('matchId') === 'string' ? String(formData.get('matchId')).trim() : '';
+    const playerId =
+      typeof formData.get('playerId') === 'string' ? String(formData.get('playerId')).trim() : '';
     const holeNumber = parseIntegerInRange(formData.get('holeNumber'), 1, 18);
     const grossStrokes = parseOptionalInteger(formData.get('grossStrokes'));
     const conceded = formData.get('conceded') !== null;
@@ -529,7 +555,8 @@ export const actions: Actions = {
     }
 
     if (!conceded && !pickedUp && grossStrokes === null) {
-      errors.grossStrokes = 'Gross strokes are required when neither conceded nor picked up is selected.';
+      errors.grossStrokes =
+        'Gross strokes are required when neither conceded nor picked up is selected.';
     }
 
     if (!reason) {
@@ -542,18 +569,22 @@ export const actions: Actions = {
 
     const matchContext = await getMatchContext(db, tournamentId, matchId);
     if (!matchContext) {
-      return createFailure('editScore', { matchId: 'Selected match was not found in this tournament.' });
+      return createFailure('editScore', {
+        matchId: 'Selected match was not found in this tournament.',
+      });
     }
 
     const playerBelongsToMatch = await isPlayerInMatch(db, matchId, playerId);
     if (!playerBelongsToMatch) {
-      return createFailure('editScore', { playerId: 'Selected player is not assigned to this match.' });
+      return createFailure('editScore', {
+        playerId: 'Selected player is not assigned to this match.',
+      });
     }
 
     const response = await event.fetch(`/api/matches/${encodeURIComponent(matchId)}/override`, {
       method: 'POST',
       headers: {
-        'content-type': 'application/json'
+        'content-type': 'application/json',
       },
       body: JSON.stringify({
         action: 'edit_score',
@@ -562,8 +593,8 @@ export const actions: Actions = {
         grossStrokes,
         conceded,
         pickedUp,
-        reason
-      })
+        reason,
+      }),
     });
 
     if (!response.ok) {
@@ -577,7 +608,7 @@ export const actions: Actions = {
 
     return {
       panel: 'editScore',
-      toast: createToast('success', 'Hole score override saved.')
+      toast: createToast('success', 'Hole score override saved.'),
     };
   },
 
@@ -586,7 +617,8 @@ export const actions: Actions = {
     const formData = await event.request.formData();
     const errors: Record<string, string> = {};
 
-    const matchId = typeof formData.get('matchId') === 'string' ? String(formData.get('matchId')).trim() : '';
+    const matchId =
+      typeof formData.get('matchId') === 'string' ? String(formData.get('matchId')).trim() : '';
     const sideAPoints = parseNonNegativeNumber(formData.get('sideAPoints'));
     const sideBPoints = parseNonNegativeNumber(formData.get('sideBPoints'));
     const reason = parseReason(formData.get('reason'));
@@ -613,7 +645,9 @@ export const actions: Actions = {
 
     const matchContext = await getMatchContext(db, tournamentId, matchId);
     if (!matchContext) {
-      return createFailure('forceClose', { matchId: 'Selected match was not found in this tournament.' });
+      return createFailure('forceClose', {
+        matchId: 'Selected match was not found in this tournament.',
+      });
     }
 
     const latestResultByMatch = await loadLatestMatchResults(db, tournamentId);
@@ -621,7 +655,7 @@ export const actions: Actions = {
 
     if (latestResult?.status === 'FINAL') {
       return createFailure('forceClose', {
-        matchId: 'This match is already final and cannot be force-closed again.'
+        matchId: 'This match is already final and cannot be force-closed again.',
       });
     }
 
@@ -646,14 +680,14 @@ export const actions: Actions = {
     const response = await event.fetch(`/api/matches/${encodeURIComponent(matchId)}/override`, {
       method: 'POST',
       headers: {
-        'content-type': 'application/json'
+        'content-type': 'application/json',
       },
       body: JSON.stringify({
         action: 'force_close',
         sideAPoints,
         sideBPoints,
-        reason
-      })
+        reason,
+      }),
     });
 
     if (!response.ok) {
@@ -667,7 +701,7 @@ export const actions: Actions = {
 
     return {
       panel: 'forceClose',
-      toast: createToast('success', 'Match was force-closed successfully.')
+      toast: createToast('success', 'Match was force-closed successfully.'),
     };
   },
 
@@ -676,7 +710,8 @@ export const actions: Actions = {
     const formData = await event.request.formData();
     const errors: Record<string, string> = {};
 
-    const teamId = typeof formData.get('teamId') === 'string' ? String(formData.get('teamId')).trim() : '';
+    const teamId =
+      typeof formData.get('teamId') === 'string' ? String(formData.get('teamId')).trim() : '';
     const delta = parseFiniteNumber(formData.get('delta'));
     const reason = parseReason(formData.get('reason'));
 
@@ -698,20 +733,25 @@ export const actions: Actions = {
 
     const team = await getTeamById(db, teamId);
     if (!team || team.tournament_id !== tournamentId) {
-      return createFailure('pointsAdjust', { teamId: 'Selected team is not part of this tournament.' });
+      return createFailure('pointsAdjust', {
+        teamId: 'Selected team is not part of this tournament.',
+      });
     }
 
-    const response = await event.fetch(`/api/tournaments/${encodeURIComponent(tournamentId)}/points-adjust`, {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json'
-      },
-      body: JSON.stringify({
-        teamId,
-        delta,
-        reason
-      })
-    });
+    const response = await event.fetch(
+      `/api/tournaments/${encodeURIComponent(tournamentId)}/points-adjust`,
+      {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          teamId,
+          delta,
+          reason,
+        }),
+      }
+    );
 
     if (!response.ok) {
       const errorMessage = await parseApiErrorMessage(response);
@@ -724,7 +764,7 @@ export const actions: Actions = {
 
     return {
       panel: 'pointsAdjust',
-      toast: createToast('success', 'Manual point adjustment recorded.')
+      toast: createToast('success', 'Manual point adjustment recorded.'),
     };
-  }
+  },
 };

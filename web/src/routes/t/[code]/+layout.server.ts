@@ -82,7 +82,7 @@ export const load: LayoutServerLoad = async (event) => {
 
   const [player, allTeams] = await Promise.all([
     loadCurrentPlayer(db, event.locals, tournament),
-    listTeamsByTournament(db, tournament.id)
+    listTeamsByTournament(db, tournament.id),
   ]);
   const team = await loadCurrentTeam(db, player);
 
@@ -90,6 +90,6 @@ export const load: LayoutServerLoad = async (event) => {
     tournament,
     player,
     team,
-    allTeams
+    allTeams,
   };
 };

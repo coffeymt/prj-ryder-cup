@@ -4,7 +4,7 @@ import {
   getMatchById,
   listHoleResultsByMatch,
   listPlayersBySide,
-  listSidesByMatch
+  listSidesByMatch,
 } from '$lib/db/matches';
 import { getPlayerById } from '$lib/db/players';
 import { getRoundById, listSegmentsByRound } from '$lib/db/rounds';
@@ -31,7 +31,7 @@ const FORMAT_LABELS: Record<MatchFormat, string> = {
   PINEHURST: 'Pinehurst',
   SHAMBLE: 'Shamble',
   FOURBALL: 'Four-Ball',
-  SINGLES: 'Singles'
+  SINGLES: 'Singles',
 };
 
 function getDb(platform: App.Platform | undefined): D1Database {
@@ -81,7 +81,10 @@ function resolveSegmentForHole(segments: RoundSegment[], holeNumber: number): Ro
   return covering[0] ?? null;
 }
 
-function toOverallHoleResults(rows: MatchHoleResult[], totalHoles: number): Array<{
+function toOverallHoleResults(
+  rows: MatchHoleResult[],
+  totalHoles: number
+): Array<{
   holeNumber: number;
   result: MatchHoleResult['result'];
   sideANet: number | null;
@@ -107,14 +110,18 @@ function toOverallHoleResults(rows: MatchHoleResult[], totalHoles: number): Arra
       holeNumber,
       result: row?.result ?? 'PENDING',
       sideANet: row?.side_a_net ?? null,
-      sideBNet: row?.side_b_net ?? null
+      sideBNet: row?.side_b_net ?? null,
     });
   }
 
   return results;
 }
 
-function toResultLabel(result: MatchHoleResult['result'], sideAName: string, sideBName: string): string {
+function toResultLabel(
+  result: MatchHoleResult['result'],
+  sideAName: string,
+  sideBName: string
+): string {
   if (result === 'A_WINS') {
     return `${sideAName} won`;
   }
@@ -193,7 +200,9 @@ async function loadSidePlayers(
   }
 
   const sidePlayers = await listPlayersBySide(db, side.id);
-  const players = await Promise.all(sidePlayers.map((sidePlayer) => getPlayerById(db, sidePlayer.player_id)));
+  const players = await Promise.all(
+    sidePlayers.map((sidePlayer) => getPlayerById(db, sidePlayer.player_id))
+  );
 
   if (players.some((player) => player === null)) {
     throw error(500, 'Match side references a missing player.');
@@ -208,8 +217,8 @@ async function loadSidePlayers(
     players: players.map((player) => ({
       id: player!.id,
       name: player!.name,
-      handicapIndex: player!.handicap_index
-    }))
+      handicapIndex: player!.handicap_index,
+    })),
   };
 }
 
@@ -240,14 +249,16 @@ export const load: PageServerLoad = async (event) => {
     listSegmentsByRound(db, round.id),
     listSidesByMatch(db, match.id),
     listHoleScoresByMatch(db, match.id),
-    listHoleResultsByMatch(db, match.id)
+    listHoleResultsByMatch(db, match.id),
   ]);
 
   if (segments.length === 0) {
     throw error(500, 'Round has no segments configured.');
   }
 
-  const loadedSides = await Promise.all(sides.map((side) => loadSidePlayers(db, parentData.allTeams, side)));
+  const loadedSides = await Promise.all(
+    sides.map((side) => loadSidePlayers(db, parentData.allTeams, side))
+  );
   const sideA = loadedSides.find((side) => side.sideLabel === 'A');
   const sideB = loadedSides.find((side) => side.sideLabel === 'B');
 
@@ -281,7 +292,7 @@ export const load: PageServerLoad = async (event) => {
       matchNumber: match.match_number,
       totalHoles,
       formatName: FORMAT_LABELS[activeFormat],
-      segmentLabel: `${segmentLabel(activeSegment.segment_type)} — ${FORMAT_LABELS[activeFormat]}`
+      segmentLabel: `${segmentLabel(activeSegment.segment_type)} — ${FORMAT_LABELS[activeFormat]}`,
     },
     sides: loadedSides,
     players: loadedSides.flatMap((side) =>
@@ -289,7 +300,7 @@ export const load: PageServerLoad = async (event) => {
         ...player,
         sideLabel: side.sideLabel,
         teamName: side.teamName,
-        teamColor: side.teamColor
+        teamColor: side.teamColor,
       }))
     ),
     holeScores: holeScores.map((score) => ({
@@ -298,7 +309,7 @@ export const load: PageServerLoad = async (event) => {
       sideId: score.match_side_id,
       grossStrokes: score.gross_strokes,
       conceded: score.is_conceded === 1,
-      pickedUp: score.is_picked_up === 1
+      pickedUp: score.is_picked_up === 1,
     })),
     completedHoles: holeResults
       .filter((holeResult) => holeResult.result !== 'PENDING')
@@ -307,9 +318,9 @@ export const load: PageServerLoad = async (event) => {
         result: holeResult.result,
         resultLabel: toResultLabel(holeResult.result, sideA.teamName, sideB.teamName),
         sideANet: holeResult.side_a_net,
-        sideBNet: holeResult.side_b_net
+        sideBNet: holeResult.side_b_net,
       })),
     currentHole,
-    matchState: toMatchStateLabel(overallState, sideA.teamName, sideB.teamName)
+    matchState: toMatchStateLabel(overallState, sideA.teamName, sideB.teamName),
   };
 };

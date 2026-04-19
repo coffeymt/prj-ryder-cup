@@ -32,16 +32,16 @@ export function useOutbox() {
           method: 'POST',
           headers: {
             'content-type': 'application/json',
-            'Idempotency-Key': opId
+            'Idempotency-Key': opId,
           },
-          body: requestBody
+          body: requestBody,
         });
       } catch {
         await enqueue({
           opId,
           endpoint,
           method: 'POST',
-          body: requestBody
+          body: requestBody,
         });
         outcome = 'queued';
         return outcome;
@@ -65,7 +65,7 @@ export function useOutbox() {
   return {
     pendingCount,
     submitScore,
-    refreshCount
+    refreshCount,
   };
 }
 

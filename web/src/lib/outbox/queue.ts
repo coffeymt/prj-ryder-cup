@@ -1,9 +1,6 @@
 import { db, type OutboxEntry } from './db';
 
-type EnqueueEntry = Omit<
-  OutboxEntry,
-  'id' | 'attempts' | 'lastAttemptAt' | 'status' | 'createdAt'
->;
+type EnqueueEntry = Omit<OutboxEntry, 'id' | 'attempts' | 'lastAttemptAt' | 'status' | 'createdAt'>;
 
 export async function enqueue(entry: EnqueueEntry): Promise<number> {
   if (!db) {
@@ -15,7 +12,7 @@ export async function enqueue(entry: EnqueueEntry): Promise<number> {
     createdAt: Date.now(),
     attempts: 0,
     lastAttemptAt: null,
-    status: 'pending'
+    status: 'pending',
   });
 }
 
@@ -24,10 +21,7 @@ export async function getPendingEntries(): Promise<OutboxEntry[]> {
     return [];
   }
 
-  return db.outbox
-    .where('status')
-    .equals('pending')
-    .sortBy('createdAt');
+  return db.outbox.where('status').equals('pending').sortBy('createdAt');
 }
 
 export async function markSynced(id: number): Promise<void> {

@@ -44,7 +44,7 @@ describe('syncOutbox', () => {
         createdAt: 2,
         attempts: 0,
         lastAttemptAt: null,
-        status: 'pending'
+        status: 'pending',
       },
       {
         opId: '00000000-0000-4000-8000-000000000100',
@@ -54,8 +54,8 @@ describe('syncOutbox', () => {
         createdAt: 1,
         attempts: 0,
         lastAttemptAt: null,
-        status: 'pending'
-      }
+        status: 'pending',
+      },
     ]);
 
     fetchMock.mockResolvedValue(new Response('{}', { status: 200 }));
@@ -90,7 +90,7 @@ describe('syncOutbox', () => {
       opId: '00000000-0000-4000-8000-000000000102',
       endpoint: '/api/matches/match-2/holes',
       method: 'POST',
-      body: JSON.stringify({ holeNumber: 3 })
+      body: JSON.stringify({ holeNumber: 3 }),
     });
 
     fetchMock.mockResolvedValue(new Response('bad request', { status: 400 }));
@@ -108,7 +108,7 @@ describe('syncOutbox', () => {
       opId: '00000000-0000-4000-8000-000000000103',
       endpoint: '/api/matches/match-3/holes',
       method: 'POST',
-      body: JSON.stringify({ holeNumber: 4 })
+      body: JSON.stringify({ holeNumber: 4 }),
     });
 
     fetchMock.mockResolvedValue(new Response('server error', { status: 503 }));

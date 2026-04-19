@@ -16,7 +16,7 @@
     { value: 'Pinehurst', label: 'Pinehurst' },
     { value: 'Shamble', label: 'Shamble' },
     { value: 'FourBall', label: 'Four-Ball' },
-    { value: 'Singles', label: 'Singles' }
+    { value: 'Singles', label: 'Singles' },
   ];
 
   export let segments: Segment[] = [];
@@ -29,7 +29,7 @@
       format: 'FourBall',
       pointsAtStake: 1,
       allowanceOverride: null,
-      order
+      order,
     };
   }
 
@@ -37,13 +37,14 @@
     return {
       segment: input.segment,
       format: input.format,
-      pointsAtStake: Number.isFinite(input.pointsAtStake) && input.pointsAtStake > 0 ? input.pointsAtStake : 1,
+      pointsAtStake:
+        Number.isFinite(input.pointsAtStake) && input.pointsAtStake > 0 ? input.pointsAtStake : 1,
       allowanceOverride:
         input.allowanceOverride === null ||
         (Number.isFinite(input.allowanceOverride) && input.allowanceOverride >= 0)
           ? input.allowanceOverride
           : null,
-      order
+      order,
     };
   }
 
@@ -72,7 +73,10 @@
   }
 
   function deriveShape(value: Segment[]): SegmentShape {
-    const keys = value.map((entry) => entry.segment).sort().join('|');
+    const keys = value
+      .map((entry) => entry.segment)
+      .sort()
+      .join('|');
 
     if (keys === '18') {
       return 'single18';
@@ -114,7 +118,9 @@
     );
     const next = shapeSegments(nextShape).map((segmentKey, index) => {
       const existing = currentBySegment.get(segmentKey);
-      return existing ? normalizeSegment(existing, index + 1) : defaultSegment(segmentKey, index + 1);
+      return existing
+        ? normalizeSegment(existing, index + 1)
+        : defaultSegment(segmentKey, index + 1);
     });
 
     emit(next);
@@ -128,7 +134,7 @@
       entry.segment === segmentKey
         ? {
             ...entry,
-            ...patch
+            ...patch,
           }
         : entry
     );
@@ -148,64 +154,74 @@
 
 <section class="space-y-4">
   <fieldset class="space-y-3">
-    <legend class="text-sm font-semibold text-text-primary">Segment shape</legend>
+    <legend class="text-text-primary text-sm font-semibold">Segment shape</legend>
     <div class="grid gap-3 sm:grid-cols-3">
-      <label class="flex min-h-touch cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface px-3 py-2">
+      <label
+        class="min-h-touch border-border bg-surface flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-2"
+      >
         <input
           type="radio"
           name="segment-shape"
           checked={shape === 'single18'}
           on:change={() => changeShape('single18')}
-          class="h-4 w-4 border-border text-accent focus:ring-accent"
+          class="border-border text-accent focus:ring-accent h-4 w-4"
         />
-        <span class="text-sm font-semibold text-text-primary">Single 18</span>
+        <span class="text-text-primary text-sm font-semibold">Single 18</span>
       </label>
 
-      <label class="flex min-h-touch cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface px-3 py-2">
+      <label
+        class="min-h-touch border-border bg-surface flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-2"
+      >
         <input
           type="radio"
           name="segment-shape"
           checked={shape === 'split'}
           on:change={() => changeShape('split')}
-          class="h-4 w-4 border-border text-accent focus:ring-accent"
+          class="border-border text-accent focus:ring-accent h-4 w-4"
         />
-        <span class="text-sm font-semibold text-text-primary">Split F9/B9</span>
+        <span class="text-text-primary text-sm font-semibold">Split F9/B9</span>
       </label>
 
-      <label class="flex min-h-touch cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface px-3 py-2">
+      <label
+        class="min-h-touch border-border bg-surface flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-2"
+      >
         <input
           type="radio"
           name="segment-shape"
           checked={shape === 'three'}
           on:change={() => changeShape('three')}
-          class="h-4 w-4 border-border text-accent focus:ring-accent"
+          class="border-border text-accent focus:ring-accent h-4 w-4"
         />
-        <span class="text-sm font-semibold text-text-primary">F9/B9/Overall</span>
+        <span class="text-text-primary text-sm font-semibold">F9/B9/Overall</span>
       </label>
     </div>
   </fieldset>
 
   {#if splitWarningVisible}
-    <p class="rounded-lg border border-status-halved/30 bg-status-halved/10 px-3 py-2 text-sm font-medium text-status-halved">
+    <p
+      class="border-status-halved/30 bg-status-halved/10 text-status-halved rounded-lg border px-3 py-2 text-sm font-medium"
+    >
       This tee is missing 9-hole ratings, so split formats may not score as expected.
     </p>
   {/if}
 
   <div class="space-y-3">
     {#each localSegments as segment (segment.segment)}
-      <article class="space-y-3 rounded-xl border border-border bg-surface-raised p-4">
-        <h3 class="text-sm font-semibold uppercase tracking-wide text-text-secondary">{segmentLabel(segment.segment)}</h3>
+      <article class="border-border bg-surface-raised space-y-3 rounded-xl border p-4">
+        <h3 class="text-text-secondary text-sm font-semibold tracking-wide uppercase">
+          {segmentLabel(segment.segment)}
+        </h3>
 
         <div class="grid gap-3 sm:grid-cols-3">
-          <label class="space-y-1 text-sm text-text-primary">
+          <label class="text-text-primary space-y-1 text-sm">
             <span class="font-medium">Format</span>
             <select
               value={segment.format}
               on:change={(event) =>
                 updateSegment(segment.segment, {
-                  format: (event.currentTarget as HTMLSelectElement).value as SegmentFormat
+                  format: (event.currentTarget as HTMLSelectElement).value as SegmentFormat,
                 })}
-              class="min-h-touch w-full rounded-lg border border-border bg-bg px-4 text-base outline-none transition focus:border-accent focus:ring-1 focus:ring-accent"
+              class="min-h-touch border-border bg-bg focus:border-accent focus:ring-accent w-full rounded-lg border px-4 text-base transition outline-none focus:ring-1"
             >
               {#each FORMAT_OPTIONS as option (option.value)}
                 <option value={option.value}>{option.label}</option>
@@ -213,7 +229,7 @@
             </select>
           </label>
 
-          <label class="space-y-1 text-sm text-text-primary">
+          <label class="text-text-primary space-y-1 text-sm">
             <span class="font-medium">Points</span>
             <input
               type="number"
@@ -222,13 +238,13 @@
               value={segment.pointsAtStake}
               on:input={(event) =>
                 updateSegment(segment.segment, {
-                  pointsAtStake: Number((event.currentTarget as HTMLInputElement).value)
+                  pointsAtStake: Number((event.currentTarget as HTMLInputElement).value),
                 })}
-              class="min-h-touch w-full rounded-lg border border-border bg-bg px-4 text-base outline-none transition focus:border-accent focus:ring-1 focus:ring-accent"
+              class="min-h-touch border-border bg-bg focus:border-accent focus:ring-accent w-full rounded-lg border px-4 text-base transition outline-none focus:ring-1"
             />
           </label>
 
-          <label class="space-y-1 text-sm text-text-primary">
+          <label class="text-text-primary space-y-1 text-sm">
             <span class="font-medium">Allowance override % (optional)</span>
             <input
               type="number"
@@ -237,10 +253,12 @@
               value={segment.allowanceOverride ?? ''}
               on:input={(event) =>
                 updateSegment(segment.segment, {
-                  allowanceOverride: readOptionalNumber((event.currentTarget as HTMLInputElement).value)
+                  allowanceOverride: readOptionalNumber(
+                    (event.currentTarget as HTMLInputElement).value
+                  ),
                 })}
               placeholder="Use tournament default"
-              class="min-h-touch w-full rounded-lg border border-border bg-bg px-4 text-base outline-none transition focus:border-accent focus:ring-1 focus:ring-accent"
+              class="min-h-touch border-border bg-bg focus:border-accent focus:ring-accent w-full rounded-lg border px-4 text-base transition outline-none focus:ring-1"
             />
           </label>
         </div>

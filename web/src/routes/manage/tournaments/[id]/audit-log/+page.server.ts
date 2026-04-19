@@ -19,7 +19,7 @@ type ParsedAuditEntry = {
 const ACTION_LABELS: Record<string, string> = {
   OVERRIDE_SCORE: 'Edit Hole Score',
   FORCE_CLOSE: 'Force Close Match',
-  POINTS_ADJUST: 'Manual Points Adjustment'
+  POINTS_ADJUST: 'Manual Points Adjustment',
 };
 
 function getDb(platform: App.Platform | undefined): D1Database {
@@ -163,7 +163,7 @@ export const load: PageServerLoad = async (event) => {
   const [tournament, entries, players] = await Promise.all([
     getTournamentById(db, tournamentId),
     listAuditByTournament(db, tournamentId),
-    listPlayersByTournament(db, tournamentId)
+    listPlayersByTournament(db, tournamentId),
   ]);
 
   if (!tournament) {
@@ -181,7 +181,7 @@ export const load: PageServerLoad = async (event) => {
       actionLabel: toActionLabel(entry.action),
       actor: resolveActor(entry, playerNamesById),
       details: extractDetails(entry, payload),
-      reason: extractReason(payload)
+      reason: extractReason(payload),
     };
   });
 
@@ -194,6 +194,6 @@ export const load: PageServerLoad = async (event) => {
   return {
     tournament,
     entries: parsedEntries,
-    actionOptions
+    actionOptions,
   };
 };

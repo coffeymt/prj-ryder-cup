@@ -48,14 +48,16 @@
 
 <div class="min-h-screen bg-[var(--color-bg)]" style={wrapperStyle(teamAColor, teamBColor)}>
   <header
-    class={`border-b border-border bg-surface backdrop-blur ${
-      data.team?.color ? 'border-l-4 border-l-team-a' : ''
+    class={`border-border bg-surface border-b backdrop-blur ${
+      data.team?.color ? 'border-l-team-a border-l-4' : ''
     }`}
   >
-    <div class="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
+    <div
+      class="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6"
+    >
       <div class="min-w-0 space-y-1">
-        <p class="text-xs font-semibold uppercase tracking-[0.22em] text-text-muted">Tournament</p>
-        <h1 class="truncate font-display text-lg font-semibold tracking-tight text-text-primary">
+        <p class="text-text-muted text-xs font-semibold tracking-[0.22em] uppercase">Tournament</p>
+        <h1 class="font-display text-text-primary truncate text-lg font-semibold tracking-tight">
           {data.tournament.name}
         </h1>
       </div>
@@ -63,14 +65,17 @@
       <div class="ml-auto flex items-center gap-2">
         {#if data.team}
           <span
-            class="inline-flex min-h-touch items-center gap-2 rounded-full border border-border bg-surface-raised px-3 text-sm font-medium text-text-primary"
+            class="min-h-touch border-border bg-surface-raised text-text-primary inline-flex items-center gap-2 rounded-full border px-3 text-sm font-medium"
             title={data.team.name}
           >
-            <span class="h-2.5 w-2.5 rounded-full border border-border bg-team-a" aria-hidden="true"></span>
+            <span class="border-border bg-team-a h-2.5 w-2.5 rounded-full border" aria-hidden="true"
+            ></span>
             <span class="max-w-[8rem] truncate">{data.team.name}</span>
           </span>
         {:else}
-          <span class="inline-flex min-h-touch items-center rounded-full border border-border bg-surface-raised px-3 text-sm font-medium text-text-secondary">
+          <span
+            class="min-h-touch border-border bg-surface-raised text-text-secondary inline-flex items-center rounded-full border px-3 text-sm font-medium"
+          >
             Spectator
           </span>
         {/if}
@@ -80,7 +85,7 @@
 
         <a
           href={`/t/${encodeURIComponent(data.tournament.code)}/live`}
-          class="inline-flex min-h-touch items-center justify-center rounded-full bg-accent px-4 text-sm font-semibold text-accent-text transition hover:bg-accent-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          class="min-h-touch bg-accent text-accent-text hover:bg-accent-hover focus-visible:outline-accent inline-flex items-center justify-center rounded-full px-4 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
         >
           Live Scores
         </a>

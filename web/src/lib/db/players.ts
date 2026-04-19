@@ -28,7 +28,7 @@ function normalizePlayer(row: Player | null): Player | null {
     ...row,
     id: String(row.id),
     tournament_id: String(row.tournament_id),
-    team_id: row.team_id === null ? null : String(row.team_id)
+    team_id: row.team_id === null ? null : String(row.team_id),
   };
 }
 
@@ -70,7 +70,10 @@ export async function getPlayerById(db: D1Database, id: string): Promise<Player 
   return normalizePlayer(row);
 }
 
-export async function listPlayersByTournament(db: D1Database, tournamentId: string): Promise<Player[]> {
+export async function listPlayersByTournament(
+  db: D1Database,
+  tournamentId: string
+): Promise<Player[]> {
   const result = await db
     .prepare(
       `
@@ -87,7 +90,7 @@ export async function listPlayersByTournament(db: D1Database, tournamentId: stri
     ...row,
     id: String(row.id),
     tournament_id: String(row.tournament_id),
-    team_id: row.team_id === null ? null : String(row.team_id)
+    team_id: row.team_id === null ? null : String(row.team_id),
   }));
 }
 
@@ -108,7 +111,7 @@ export async function listPlayersByTeam(db: D1Database, teamId: string): Promise
     ...row,
     id: String(row.id),
     tournament_id: String(row.tournament_id),
-    team_id: row.team_id === null ? null : String(row.team_id)
+    team_id: row.team_id === null ? null : String(row.team_id),
   }));
 }
 
@@ -173,7 +176,14 @@ export async function bulkCreatePlayers(
           VALUES (?1, ?2, ?3, ?4, ?5, ?6)
         `
       )
-      .bind(id, player.tournament_id, player.team_id, player.name, player.handicap_index, createdAt);
+      .bind(
+        id,
+        player.tournament_id,
+        player.team_id,
+        player.name,
+        player.handicap_index,
+        createdAt
+      );
 
     const createdPlayer: Player = {
       id,
@@ -181,7 +191,7 @@ export async function bulkCreatePlayers(
       team_id: player.team_id,
       name: player.name,
       handicap_index: player.handicap_index,
-      created_at: createdAt
+      created_at: createdAt,
     };
 
     return { statement, createdPlayer };

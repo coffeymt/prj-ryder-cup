@@ -10,18 +10,18 @@ import type {
   Round,
   RoundSegment,
   Tee,
-  Tournament
+  Tournament,
 } from '$lib/db/types';
 import type { MatchState } from '$lib/engine/types';
 
 vi.mock('$lib/auth/guards', () => ({
   requireRole: vi.fn(),
-  requireSameTournament: vi.fn()
+  requireSameTournament: vi.fn(),
 }));
 
 vi.mock('$lib/db/holeScores', () => ({
   listHoleScoresByMatch: vi.fn(),
-  upsertHoleScore: vi.fn()
+  upsertHoleScore: vi.fn(),
 }));
 
 vi.mock('$lib/db/matches', () => ({
@@ -30,39 +30,39 @@ vi.mock('$lib/db/matches', () => ({
   listPlayersBySide: vi.fn(),
   listSidesByMatch: vi.fn(),
   updateMatchStatus: vi.fn(),
-  upsertMatchHoleResult: vi.fn()
+  upsertMatchHoleResult: vi.fn(),
 }));
 
 vi.mock('$lib/db/players', () => ({
-  getPlayerById: vi.fn()
+  getPlayerById: vi.fn(),
 }));
 
 vi.mock('$lib/db/processedOps', () => ({
   claimOp: vi.fn(),
   getProcessedOp: vi.fn(),
-  markOpProcessed: vi.fn()
+  markOpProcessed: vi.fn(),
 }));
 
 vi.mock('$lib/db/rounds', () => ({
   getRoundById: vi.fn(),
-  listSegmentsByRound: vi.fn()
+  listSegmentsByRound: vi.fn(),
 }));
 
 vi.mock('$lib/db/tournaments', () => ({
-  getTournamentById: vi.fn()
+  getTournamentById: vi.fn(),
 }));
 
 vi.mock('$lib/db/courses', () => ({
   listHolesByCourse: vi.fn(),
-  listTeesByCourse: vi.fn()
+  listTeesByCourse: vi.fn(),
 }));
 
 vi.mock('$lib/engine/formats/singles', () => ({
-  computeSinglesResults: vi.fn()
+  computeSinglesResults: vi.fn(),
 }));
 
 vi.mock('$lib/engine/matchState', () => ({
-  computeMatchState: vi.fn()
+  computeMatchState: vi.fn(),
 }));
 
 import { POST } from './+server';
@@ -74,7 +74,7 @@ import {
   listPlayersBySide,
   listSidesByMatch,
   updateMatchStatus,
-  upsertMatchHoleResult
+  upsertMatchHoleResult,
 } from '$lib/db/matches';
 import { getPlayerById } from '$lib/db/players';
 import { claimOp, getProcessedOp, markOpProcessed } from '$lib/db/processedOps';
@@ -89,7 +89,7 @@ const FIXTURE_MATCH: Match = {
   round_id: 'round-1',
   match_number: 1,
   format_override: null,
-  created_at: '2026-04-17T00:00:00.000Z'
+  created_at: '2026-04-17T00:00:00.000Z',
 };
 
 const FIXTURE_ROUND: Round = {
@@ -100,7 +100,7 @@ const FIXTURE_ROUND: Round = {
   tee_id: 'tee-1',
   scheduled_at: '2026-04-17T00:00:00.000Z',
   notes: null,
-  created_at: '2026-04-17T00:00:00.000Z'
+  created_at: '2026-04-17T00:00:00.000Z',
 };
 
 const FIXTURE_SEGMENT: RoundSegment = {
@@ -112,7 +112,7 @@ const FIXTURE_SEGMENT: RoundSegment = {
   format: 'SINGLES',
   points_available: 1,
   allowance_override: null,
-  created_at: '2026-04-17T00:00:00.000Z'
+  created_at: '2026-04-17T00:00:00.000Z',
 };
 
 const FIXTURE_TOURNAMENT: Tournament = {
@@ -132,7 +132,7 @@ const FIXTURE_TOURNAMENT: Tournament = {
   allowance_fourball: 1,
   allowance_singles: 1,
   created_at: '2026-04-17T00:00:00.000Z',
-  updated_at: '2026-04-17T00:00:00.000Z'
+  updated_at: '2026-04-17T00:00:00.000Z',
 };
 
 const FIXTURE_TEE: Tee = {
@@ -149,7 +149,7 @@ const FIXTURE_TEE: Tee = {
   cr9b: 36.2,
   slope9b: 133,
   par9b: 36,
-  created_at: '2026-04-17T00:00:00.000Z'
+  created_at: '2026-04-17T00:00:00.000Z',
 };
 
 const FIXTURE_SIDES: MatchSide[] = [
@@ -158,15 +158,15 @@ const FIXTURE_SIDES: MatchSide[] = [
     match_id: 'match-1',
     team_id: 'team-a',
     side_label: 'A',
-    created_at: '2026-04-17T00:00:00.000Z'
+    created_at: '2026-04-17T00:00:00.000Z',
   },
   {
     id: 'side-b',
     match_id: 'match-1',
     team_id: 'team-b',
     side_label: 'B',
-    created_at: '2026-04-17T00:00:00.000Z'
-  }
+    created_at: '2026-04-17T00:00:00.000Z',
+  },
 ];
 
 const FIXTURE_SIDE_A_PLAYERS: MatchSidePlayer[] = [
@@ -174,8 +174,8 @@ const FIXTURE_SIDE_A_PLAYERS: MatchSidePlayer[] = [
     id: 'side-a-player-1',
     match_side_id: 'side-a',
     player_id: 'player-a',
-    created_at: '2026-04-17T00:00:00.000Z'
-  }
+    created_at: '2026-04-17T00:00:00.000Z',
+  },
 ];
 
 const FIXTURE_SIDE_B_PLAYERS: MatchSidePlayer[] = [
@@ -183,8 +183,8 @@ const FIXTURE_SIDE_B_PLAYERS: MatchSidePlayer[] = [
     id: 'side-b-player-1',
     match_side_id: 'side-b',
     player_id: 'player-b',
-    created_at: '2026-04-17T00:00:00.000Z'
-  }
+    created_at: '2026-04-17T00:00:00.000Z',
+  },
 ];
 
 const FIXTURE_PLAYERS_BY_ID: Record<string, Player> = {
@@ -194,7 +194,7 @@ const FIXTURE_PLAYERS_BY_ID: Record<string, Player> = {
     team_id: 'team-a',
     name: 'Player A',
     handicap_index: 8.1,
-    created_at: '2026-04-17T00:00:00.000Z'
+    created_at: '2026-04-17T00:00:00.000Z',
   },
   'player-b': {
     id: 'player-b',
@@ -202,8 +202,8 @@ const FIXTURE_PLAYERS_BY_ID: Record<string, Player> = {
     team_id: 'team-b',
     name: 'Player B',
     handicap_index: 12.3,
-    created_at: '2026-04-17T00:00:00.000Z'
-  }
+    created_at: '2026-04-17T00:00:00.000Z',
+  },
 };
 
 const FIXTURE_HOLE_SCORE: HoleScore = {
@@ -218,7 +218,7 @@ const FIXTURE_HOLE_SCORE: HoleScore = {
   entered_by_player_id: 'player-a',
   entered_at: '2026-04-17T00:00:00.000Z',
   op_id: '01J8XW6BV6H5CVJ6S2B2D1FB8W',
-  updated_at: '2026-04-17T00:00:00.000Z'
+  updated_at: '2026-04-17T00:00:00.000Z',
 };
 
 const FIXTURE_HOLE_RESULT: MatchHoleResult = {
@@ -229,7 +229,7 @@ const FIXTURE_HOLE_RESULT: MatchHoleResult = {
   result: 'A_WINS',
   side_a_net: 4,
   side_b_net: 5,
-  computed_at: '2026-04-17T00:00:00.000Z'
+  computed_at: '2026-04-17T00:00:00.000Z',
 };
 
 const FIXTURE_SEGMENT_MATCH_STATE: MatchState = {
@@ -242,7 +242,7 @@ const FIXTURE_SEGMENT_MATCH_STATE: MatchState = {
   closeNotation: null,
   sideA: { sideId: 1, holesWon: 1, holesSplit: 0, pointsEarned: 1 },
   sideB: { sideId: 2, holesWon: 0, holesSplit: 0, pointsEarned: 0 },
-  holeResults: [{ holeNumber: 1, result: 'A_WINS', sideANet: 4, sideBNet: 5 }]
+  holeResults: [{ holeNumber: 1, result: 'A_WINS', sideANet: 4, sideBNet: 5 }],
 };
 
 const FIXTURE_OVERALL_MATCH_STATE: MatchState = {
@@ -255,7 +255,7 @@ const FIXTURE_OVERALL_MATCH_STATE: MatchState = {
   closeNotation: null,
   sideA: { sideId: 1, holesWon: 2, holesSplit: 0, pointsEarned: 1 },
   sideB: { sideId: 2, holesWon: 0, holesSplit: 0, pointsEarned: 0 },
-  holeResults: [{ holeNumber: 1, result: 'A_WINS', sideANet: 4, sideBNet: 5 }]
+  holeResults: [{ holeNumber: 1, result: 'A_WINS', sideANet: 4, sideBNet: 5 }],
 };
 
 const FIXTURE_HOLES = Array.from({ length: 18 }, (_, index) => ({
@@ -265,7 +265,7 @@ const FIXTURE_HOLES = Array.from({ length: 18 }, (_, index) => ({
   par: 4,
   yardage: 400,
   stroke_index: index + 1,
-  created_at: '2026-04-17T00:00:00.000Z'
+  created_at: '2026-04-17T00:00:00.000Z',
 }));
 
 function createRequestEvent(options?: {
@@ -288,9 +288,9 @@ function createRequestEvent(options?: {
           holeNumber: 1,
           grossStrokes: 4,
           conceded: false,
-          pickedUp: false
+          pickedUp: false,
         }
-      )
+      ),
     }),
     params: { matchId: 'match-1' },
     locals: {
@@ -298,12 +298,12 @@ function createRequestEvent(options?: {
       tournamentId: 'tournament-1',
       playerId: 'player-a',
       userId: null,
-      ...(options?.locals ?? {})
+      ...(options?.locals ?? {}),
     },
     platform: {
-      env: { DB: {} as D1Database }
+      env: { DB: {} as D1Database },
     } as App.Platform,
-    url: new URL('https://example.test/api/matches/match-1/holes')
+    url: new URL('https://example.test/api/matches/match-1/holes'),
   } as unknown as RequestEvent;
 }
 
@@ -346,7 +346,9 @@ beforeEach(() => {
   mockedListPlayersBySide.mockImplementation(async (_db, sideId) =>
     sideId === 'side-a' ? FIXTURE_SIDE_A_PLAYERS : FIXTURE_SIDE_B_PLAYERS
   );
-  mockedGetPlayerById.mockImplementation(async (_db, playerId) => FIXTURE_PLAYERS_BY_ID[playerId] ?? null);
+  mockedGetPlayerById.mockImplementation(
+    async (_db, playerId) => FIXTURE_PLAYERS_BY_ID[playerId] ?? null
+  );
   mockedUpsertHoleScore.mockResolvedValue(FIXTURE_HOLE_SCORE);
   mockedListHoleScoresByMatch.mockResolvedValue([FIXTURE_HOLE_SCORE]);
   mockedComputeSinglesResults.mockReturnValue(FIXTURE_SEGMENT_MATCH_STATE);
@@ -371,7 +373,7 @@ describe('POST /api/matches/:matchId/holes', () => {
     mockedGetProcessedOp.mockResolvedValueOnce({
       op_id: idempotencyKey,
       endpoint: JSON.stringify(firstBody),
-      processed_at: '2026-04-17T00:00:00.000Z'
+      processed_at: '2026-04-17T00:00:00.000Z',
     });
 
     const secondResponse = await POST(createRequestEvent({ idempotencyKey }));
@@ -386,7 +388,7 @@ describe('POST /api/matches/:matchId/holes', () => {
   it('returns the expected response shape for a valid write', async () => {
     const response = await POST(
       createRequestEvent({
-        idempotencyKey: '26f36795-2db8-4dfe-96b0-86dbdb41f2ea'
+        idempotencyKey: '26f36795-2db8-4dfe-96b0-86dbdb41f2ea',
       })
     );
     const body = await response.json();
@@ -396,17 +398,17 @@ describe('POST /api/matches/:matchId/holes', () => {
       holeScore: {
         id: 'score-1',
         match_id: 'match-1',
-        hole_number: 1
+        hole_number: 1,
       },
       holeResult: {
         id: 'hole-result-1',
         match_id: 'match-1',
         hole_number: 1,
-        result: 'A_WINS'
+        result: 'A_WINS',
       },
       matchState: 'A 2 UP',
       matchClosed: false,
-      closeNotation: null
+      closeNotation: null,
     });
   });
 

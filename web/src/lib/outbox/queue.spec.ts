@@ -8,13 +8,7 @@ Dexie.dependencies.IDBKeyRange = IDBKeyRange;
 const queueModule = await import('./queue');
 const dbModule = await import('./db');
 
-const {
-  enqueue,
-  getPendingCount,
-  getPendingEntries,
-  markFailed,
-  markSynced
-} = queueModule;
+const { enqueue, getPendingCount, getPendingEntries, markFailed, markSynced } = queueModule;
 const { db } = dbModule;
 
 if (!db) {
@@ -37,8 +31,8 @@ describe('outbox queue', () => {
       method: 'POST',
       body: JSON.stringify({
         playerId: 'player-1',
-        holeNumber: 1
-      })
+        holeNumber: 1,
+      }),
     });
 
     const inserted = await db.outbox.get(id);
@@ -48,7 +42,7 @@ describe('outbox queue', () => {
       opId: '00000000-0000-4000-8000-000000000001',
       status: 'pending',
       attempts: 0,
-      lastAttemptAt: null
+      lastAttemptAt: null,
     });
     expect(typeof inserted?.createdAt).toBe('number');
   });
@@ -60,8 +54,8 @@ describe('outbox queue', () => {
       method: 'POST',
       body: JSON.stringify({
         playerId: 'player-2',
-        holeNumber: 2
-      })
+        holeNumber: 2,
+      }),
     });
 
     const syncedId = await enqueue({
@@ -70,8 +64,8 @@ describe('outbox queue', () => {
       method: 'POST',
       body: JSON.stringify({
         playerId: 'player-3',
-        holeNumber: 3
-      })
+        holeNumber: 3,
+      }),
     });
 
     const failedId = await enqueue({
@@ -80,8 +74,8 @@ describe('outbox queue', () => {
       method: 'POST',
       body: JSON.stringify({
         playerId: 'player-4',
-        holeNumber: 4
-      })
+        holeNumber: 4,
+      }),
     });
 
     await markSynced(syncedId);
@@ -101,8 +95,8 @@ describe('outbox queue', () => {
       method: 'POST',
       body: JSON.stringify({
         playerId: 'player-5',
-        holeNumber: 5
-      })
+        holeNumber: 5,
+      }),
     });
 
     await markSynced(id);
@@ -118,8 +112,8 @@ describe('outbox queue', () => {
       method: 'POST',
       body: JSON.stringify({
         playerId: 'player-6',
-        holeNumber: 6
-      })
+        holeNumber: 6,
+      }),
     });
 
     await markFailed(id);
@@ -135,8 +129,8 @@ describe('outbox queue', () => {
       method: 'POST',
       body: JSON.stringify({
         playerId: 'player-7',
-        holeNumber: 7
-      })
+        holeNumber: 7,
+      }),
     });
 
     const pendingTwo = await enqueue({
@@ -145,8 +139,8 @@ describe('outbox queue', () => {
       method: 'POST',
       body: JSON.stringify({
         playerId: 'player-8',
-        holeNumber: 8
-      })
+        holeNumber: 8,
+      }),
     });
 
     const synced = await enqueue({
@@ -155,8 +149,8 @@ describe('outbox queue', () => {
       method: 'POST',
       body: JSON.stringify({
         playerId: 'player-9',
-        holeNumber: 9
-      })
+        holeNumber: 9,
+      }),
     });
 
     await markSynced(synced);

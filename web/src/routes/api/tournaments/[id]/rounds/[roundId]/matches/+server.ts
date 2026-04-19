@@ -4,7 +4,6 @@ import {
   addPlayerToSide,
   createMatch,
   createMatchSide,
-  getMatchById,
   listMatchesByRound,
   listPlayersBySide,
   listSidesByMatch,
@@ -18,7 +17,6 @@ import type {
   Match,
   MatchFormat,
   MatchResultStatus,
-  MatchSide,
   Round,
   RoundSegment,
   SegmentType,
@@ -293,7 +291,7 @@ async function getMatchResponse(
   );
 
   const resultRow = await getMatchResultRow(db, match.id);
-  const mappedSegment = resultRow ? segmentById.get(resultRow.segment_id) ?? null : null;
+  const mappedSegment = resultRow ? (segmentById.get(resultRow.segment_id) ?? null) : null;
 
   return {
     id: match.id,
@@ -333,7 +331,8 @@ export const POST: RequestHandler = async ({ params, request, locals, platform }
 
   const existingMatches = await listMatchesByRound(db, params.roundId);
   let nextMatchNumber =
-    existingMatches.reduce((highestMatch, match) => Math.max(highestMatch, match.match_number), 0) + 1;
+    existingMatches.reduce((highestMatch, match) => Math.max(highestMatch, match.match_number), 0) +
+    1;
 
   const createdMatches: Match[] = [];
   const requestedPoints = new Map<string, number>();

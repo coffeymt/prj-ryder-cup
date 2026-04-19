@@ -157,8 +157,8 @@ function validateRow(
       validated: null,
       error: {
         row: rowNumber,
-        issues
-      }
+        issues,
+      },
     };
   }
 
@@ -167,9 +167,9 @@ function validateRow(
       tournament_id: tournamentId,
       team_id: teamId,
       name: row.displayName.trim(),
-      handicap_index: row.handicapIndex
+      handicap_index: row.handicapIndex,
     },
-    error: null
+    error: null,
   };
 }
 
@@ -201,7 +201,7 @@ export const POST: RequestHandler = async (event) => {
     if (!rawRow || typeof rawRow !== 'object' || Array.isArray(rawRow)) {
       validationErrors.push({
         row: rowNumber,
-        issues: ['Row must be an object.']
+        issues: ['Row must be an object.'],
       });
       return;
     }
@@ -227,7 +227,7 @@ export const POST: RequestHandler = async (event) => {
     return json(
       {
         message: 'Validation failed for one or more rows.',
-        errors: validationErrors
+        errors: validationErrors,
       },
       { status: 400 }
     );

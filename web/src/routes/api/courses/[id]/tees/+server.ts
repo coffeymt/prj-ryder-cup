@@ -155,7 +155,7 @@ function parseTeeInput(body: JsonObject): TeeCreateInput {
     par9f: readOptionalNullableInteger(getFirstDefined(body, ['par9F', 'par9f']), 'par9F'),
     cr9b: readOptionalNullableNumber(getFirstDefined(body, ['cr9B', 'cr9b']), 'cr9B'),
     slope9b: readOptionalNullableInteger(getFirstDefined(body, ['slope9B', 'slope9b']), 'slope9B'),
-    par9b: readOptionalNullableInteger(getFirstDefined(body, ['par9B', 'par9b']), 'par9B')
+    par9b: readOptionalNullableInteger(getFirstDefined(body, ['par9B', 'par9b']), 'par9B'),
   };
 }
 

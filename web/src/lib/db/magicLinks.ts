@@ -25,7 +25,7 @@ function normalizeMagicLinkToken(row: MagicLinkToken | null): MagicLinkToken | n
   return {
     ...row,
     id: String(row.id),
-    tournament_id: row.tournament_id === null ? null : String(row.tournament_id)
+    tournament_id: row.tournament_id === null ? null : String(row.tournament_id),
   };
 }
 

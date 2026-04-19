@@ -20,7 +20,10 @@ function escapeHtml(value: string): string {
 }
 
 function getExpiryLabel(expiresAt: Date): string {
-  const minutesUntilExpiry = Math.max(1, Math.ceil((expiresAt.getTime() - Date.now()) / ONE_MINUTE_MS));
+  const minutesUntilExpiry = Math.max(
+    1,
+    Math.ceil((expiresAt.getTime() - Date.now()) / ONE_MINUTE_MS)
+  );
 
   return minutesUntilExpiry === 1 ? '1 minute' : `${minutesUntilExpiry} minutes`;
 }

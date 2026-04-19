@@ -69,7 +69,7 @@
     --nav-height: 56px;
   }
 
-  [data-theme="dark"] {
+  [data-theme='dark'] {
     /* Surface */
     --color-bg: #111827;
     --color-surface: #1f2937;
@@ -88,7 +88,7 @@
   }
 
   @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
+    :root:not([data-theme='light']) {
       /* Surface */
       --color-bg: #111827;
       --color-surface: #1f2937;
@@ -113,7 +113,12 @@
     font-family: var(--font-body);
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: var(--font-display);
   }
 }

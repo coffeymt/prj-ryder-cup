@@ -15,7 +15,7 @@ async function recordRetryAttempt(entry: OutboxEntry): Promise<void> {
 
   await db.outbox.update(entry.id, {
     attempts: entry.attempts + 1,
-    lastAttemptAt: Date.now()
+    lastAttemptAt: Date.now(),
   });
 }
 
@@ -29,9 +29,9 @@ async function syncEntry(entry: OutboxEntry): Promise<'synced' | 'failed' | 'pen
       method: entry.method,
       headers: {
         'content-type': 'application/json',
-        'Idempotency-Key': entry.opId
+        'Idempotency-Key': entry.opId,
       },
-      body: entry.body
+      body: entry.body,
     });
 
     if (response.ok) {
@@ -53,7 +53,9 @@ async function syncEntry(entry: OutboxEntry): Promise<'synced' | 'failed' | 'pen
 }
 
 export async function syncOutbox(): Promise<{ synced: number; failed: number }> {
-  const pendingEntries = (await getPendingEntries()).slice().sort((left, right) => left.createdAt - right.createdAt);
+  const pendingEntries = (await getPendingEntries())
+    .slice()
+    .sort((left, right) => left.createdAt - right.createdAt);
 
   let synced = 0;
   let failed = 0;

@@ -2,7 +2,10 @@ const TOURNAMENT_CODE_LENGTH = 6;
 const TOURNAMENT_CODE_CHARACTERS = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
 const CHARACTER_SET_SIZE = TOURNAMENT_CODE_CHARACTERS.length;
 
-const CODE_PATTERN = new RegExp(`^[${TOURNAMENT_CODE_CHARACTERS}]{${TOURNAMENT_CODE_LENGTH}}$`, 'u');
+const CODE_PATTERN = new RegExp(
+  `^[${TOURNAMENT_CODE_CHARACTERS}]{${TOURNAMENT_CODE_LENGTH}}$`,
+  'u'
+);
 
 function mapByteToCharacter(byteValue: number): string {
   const characterIndex = byteValue % CHARACTER_SET_SIZE;

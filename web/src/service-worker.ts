@@ -26,7 +26,8 @@ const matchesMetadataRoute = (pathname: string): boolean =>
   /^\/api\/live\/.*$/.test(pathname);
 
 registerRoute(
-  ({ url, request }) => isSameOrigin(url) && request.method === 'GET' && matchesMetadataRoute(url.pathname),
+  ({ url, request }) =>
+    isSameOrigin(url) && request.method === 'GET' && matchesMetadataRoute(url.pathname),
   new StaleWhileRevalidate({
     cacheName: 'metadata-cache',
   })

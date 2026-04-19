@@ -81,7 +81,7 @@
     return new Intl.DateTimeFormat('en-US', {
       weekday: 'short',
       month: 'short',
-      day: 'numeric'
+      day: 'numeric',
     }).format(parsedMs);
   }
 
@@ -116,12 +116,12 @@
   $: teamA = {
     name: firstTeam?.name ?? 'Team A',
     color: resolveTeamColor(firstTeam?.color, 'var(--color-accent)'),
-    points: firstTeam?.totalPoints ?? 0
+    points: firstTeam?.totalPoints ?? 0,
   };
   $: teamB = {
     name: secondTeam?.name ?? 'Team B',
     color: resolveTeamColor(secondTeam?.color, 'var(--color-status-down)'),
-    points: secondTeam?.totalPoints ?? 0
+    points: secondTeam?.totalPoints ?? 0,
   };
   $: teamAProgress = progressPercent(teamA.points, pointsToWin);
   $: teamBProgress = progressPercent(teamB.points, pointsToWin);
@@ -144,47 +144,58 @@
             teamName: sideATeam?.name ?? 'Team A',
             teamColor: resolveTeamColor(sideATeam?.color, 'var(--color-accent)'),
             playerNames: match.sideA.playerNames,
-            points: match.sideA.points
+            points: match.sideA.points,
           },
           sideB: {
             teamName: sideBTeam?.name ?? 'Team B',
             teamColor: resolveTeamColor(sideBTeam?.color, 'var(--color-status-down)'),
             playerNames: match.sideB.playerNames,
-            points: match.sideB.points
-          }
+            points: match.sideB.points,
+          },
         };
       })
       .sort((left, right) => {
         const rank = { inProgress: 0, notStarted: 1, closed: 2 } as const;
         return rank[left.status] - rank[right.status];
-      })
+      }),
   }));
 </script>
 
 <svelte:head>
   <title>{snapshot.tournament.name} | Live Ticker</title>
-  <meta name="description" content="Live spectator ticker with team totals and match status updates." />
+  <meta
+    name="description"
+    content="Live spectator ticker with team totals and match status updates."
+  />
 </svelte:head>
 
 <div
   data-theme="dark"
   style={`--color-team-a: ${teamA.color}; --color-team-b: ${teamB.color};`}
-  class="relative -mx-4 -my-5 min-h-[calc(100vh-7rem)] bg-bg px-3 py-4 text-text-primary sm:-mx-6 sm:-my-6 sm:px-6 sm:py-6 2xl:px-8 2xl:py-8 min-[1920px]:px-12 min-[1920px]:py-10"
+  class="bg-bg text-text-primary relative -mx-4 -my-5 min-h-[calc(100vh-7rem)] px-3 py-4 min-[1920px]:px-12 min-[1920px]:py-10 sm:-mx-6 sm:-my-6 sm:px-6 sm:py-6 2xl:px-8 2xl:py-8"
 >
-  <div class="mx-auto w-full max-w-[120rem] space-y-4 sm:space-y-5 2xl:space-y-7 min-[1920px]:space-y-9">
+  <div
+    class="mx-auto w-full max-w-[120rem] space-y-4 min-[1920px]:space-y-9 sm:space-y-5 2xl:space-y-7"
+  >
     <TickerHeader {pointsToWin} {teamA} {teamB} />
 
-    <section class="rounded-2xl border border-border bg-surface p-card-padding shadow-sm sm:p-5 2xl:p-6 min-[1920px]:rounded-3xl min-[1920px]:p-8">
-      <h2 class="text-xs font-semibold uppercase tracking-[0.18em] text-text-secondary sm:text-sm">Progress to Win</h2>
-      <div class="mt-3 grid gap-4 lg:grid-cols-2 min-[1920px]:gap-6">
+    <section
+      class="border-border bg-surface p-card-padding rounded-2xl border shadow-sm min-[1920px]:rounded-3xl min-[1920px]:p-8 sm:p-5 2xl:p-6"
+    >
+      <h2 class="text-text-secondary text-xs font-semibold tracking-[0.18em] uppercase sm:text-sm">
+        Progress to Win
+      </h2>
+      <div class="mt-3 grid gap-4 min-[1920px]:gap-6 lg:grid-cols-2">
         <div class="space-y-2">
           <div class="flex items-center justify-between text-sm min-[1920px]:text-xl">
-            <span class="font-semibold text-team-a">{teamA.name}</span>
-            <span class="tabular-nums text-text-secondary">{formatPoints(teamA.points)} / {formatPoints(pointsToWin)}</span>
+            <span class="text-team-a font-semibold">{teamA.name}</span>
+            <span class="text-text-secondary tabular-nums"
+              >{formatPoints(teamA.points)} / {formatPoints(pointsToWin)}</span
+            >
           </div>
-          <div class="h-3 overflow-hidden rounded-full bg-surface-raised min-[1920px]:h-5">
+          <div class="bg-surface-raised h-3 overflow-hidden rounded-full min-[1920px]:h-5">
             <div
-              class="h-full rounded-full bg-team-a transition-all duration-500"
+              class="bg-team-a h-full rounded-full transition-all duration-500"
               style={`width: ${teamAProgress}%;`}
               aria-label={`${teamA.name} progress`}
             ></div>
@@ -193,12 +204,14 @@
 
         <div class="space-y-2">
           <div class="flex items-center justify-between text-sm min-[1920px]:text-xl">
-            <span class="font-semibold text-team-b">{teamB.name}</span>
-            <span class="tabular-nums text-text-secondary">{formatPoints(teamB.points)} / {formatPoints(pointsToWin)}</span>
+            <span class="text-team-b font-semibold">{teamB.name}</span>
+            <span class="text-text-secondary tabular-nums"
+              >{formatPoints(teamB.points)} / {formatPoints(pointsToWin)}</span
+            >
           </div>
-          <div class="h-3 overflow-hidden rounded-full bg-surface-raised min-[1920px]:h-5">
+          <div class="bg-surface-raised h-3 overflow-hidden rounded-full min-[1920px]:h-5">
             <div
-              class="h-full rounded-full bg-team-b transition-all duration-500"
+              class="bg-team-b h-full rounded-full transition-all duration-500"
               style={`width: ${teamBProgress}%;`}
               aria-label={`${teamB.name} progress`}
             ></div>
@@ -207,26 +220,32 @@
       </div>
     </section>
 
-    <section class="space-y-4 sm:space-y-5 min-[1920px]:space-y-7">
+    <section class="space-y-4 min-[1920px]:space-y-7 sm:space-y-5">
       {#if rounds.length === 0}
         <p
-          class="rounded-2xl border border-dashed border-border bg-surface px-4 py-8 text-center text-sm text-text-secondary min-[1920px]:rounded-3xl min-[1920px]:py-12 min-[1920px]:text-lg"
+          class="border-border bg-surface text-text-secondary rounded-2xl border border-dashed px-4 py-8 text-center text-sm min-[1920px]:rounded-3xl min-[1920px]:py-12 min-[1920px]:text-lg"
         >
           No rounds are available yet.
         </p>
       {:else}
         {#each rounds as round (round.id)}
           <article
-            class="space-y-3 rounded-2xl border border-border bg-surface p-card-padding shadow-sm sm:space-y-4 sm:p-5 2xl:p-6 min-[1920px]:rounded-3xl min-[1920px]:space-y-6 min-[1920px]:p-8"
+            class="border-border bg-surface p-card-padding space-y-3 rounded-2xl border shadow-sm min-[1920px]:space-y-6 min-[1920px]:rounded-3xl min-[1920px]:p-8 sm:space-y-4 sm:p-5 2xl:p-6"
           >
             <div class="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <h2 class="text-xl font-semibold tracking-tight text-text-primary sm:text-2xl min-[1920px]:text-4xl">{round.name}</h2>
-                <p class="text-sm text-text-secondary sm:text-base min-[1920px]:text-xl">{safeDateLabel(round.date)}</p>
+                <h2
+                  class="text-text-primary text-xl font-semibold tracking-tight min-[1920px]:text-4xl sm:text-2xl"
+                >
+                  {round.name}
+                </h2>
+                <p class="text-text-secondary text-sm min-[1920px]:text-xl sm:text-base">
+                  {safeDateLabel(round.date)}
+                </p>
               </div>
 
               <span
-                class={`rounded-full border px-3 py-1 text-xs font-semibold sm:text-sm min-[1920px]:px-5 min-[1920px]:py-2 min-[1920px]:text-lg ${roundStatusClasses(round.status)}`}
+                class={`rounded-full border px-3 py-1 text-xs font-semibold min-[1920px]:px-5 min-[1920px]:py-2 min-[1920px]:text-lg sm:text-sm ${roundStatusClasses(round.status)}`}
               >
                 {formatRoundStatus(round.status)}
               </span>
@@ -234,12 +253,14 @@
 
             {#if round.cards.length === 0}
               <p
-                class="rounded-xl border border-dashed border-border bg-surface-raised px-3 py-5 text-sm text-text-secondary sm:text-base min-[1920px]:px-5 min-[1920px]:py-8 min-[1920px]:text-xl"
+                class="border-border bg-surface-raised text-text-secondary rounded-xl border border-dashed px-3 py-5 text-sm min-[1920px]:px-5 min-[1920px]:py-8 min-[1920px]:text-xl sm:text-base"
               >
                 Matchups for this round have not been published yet.
               </p>
             {:else}
-              <div class="grid gap-3 md:gap-4 xl:grid-cols-2 min-[1920px]:grid-cols-3 min-[1920px]:gap-6">
+              <div
+                class="grid gap-3 min-[1920px]:grid-cols-3 min-[1920px]:gap-6 md:gap-4 xl:grid-cols-2"
+              >
                 {#each round.cards as match (match.id)}
                   <MatchCard {match} />
                 {/each}
@@ -252,13 +273,17 @@
   </div>
 
   <div
-    class="fixed bottom-3 right-3 z-20 rounded-full border border-border bg-surface-raised px-3 py-2 shadow-sm backdrop-blur sm:bottom-4 sm:right-4 sm:px-4 min-[1920px]:bottom-8 min-[1920px]:right-8 min-[1920px]:px-6 min-[1920px]:py-4"
+    class="border-border bg-surface-raised fixed right-3 bottom-3 z-20 rounded-full border px-3 py-2 shadow-sm backdrop-blur min-[1920px]:right-8 min-[1920px]:bottom-8 min-[1920px]:px-6 min-[1920px]:py-4 sm:right-4 sm:bottom-4 sm:px-4"
   >
-    <div class="flex items-center gap-2 text-xs sm:text-sm min-[1920px]:gap-3 min-[1920px]:text-xl">
-      <span class={`h-2.5 w-2.5 rounded-full min-[1920px]:h-4 min-[1920px]:w-4 ${$connected ? 'bg-online' : 'animate-pulse bg-offline'}`}></span>
-      <span class="font-medium text-text-primary">{$connected ? 'Live updates connected' : 'Reconnecting live feed'}</span>
+    <div class="flex items-center gap-2 text-xs min-[1920px]:gap-3 min-[1920px]:text-xl sm:text-sm">
+      <span
+        class={`h-2.5 w-2.5 rounded-full min-[1920px]:h-4 min-[1920px]:w-4 ${$connected ? 'bg-online' : 'bg-offline animate-pulse'}`}
+      ></span>
+      <span class="text-text-primary font-medium"
+        >{$connected ? 'Live updates connected' : 'Reconnecting live feed'}</span
+      >
     </div>
-    <p class="mt-1 text-[11px] text-text-secondary sm:text-xs min-[1920px]:text-base">
+    <p class="text-text-secondary mt-1 text-[11px] min-[1920px]:text-base sm:text-xs">
       Last updated:
       {#if secondsSinceUpdate === null}
         unavailable

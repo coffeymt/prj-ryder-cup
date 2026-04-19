@@ -162,18 +162,20 @@
 
 <section class="space-y-6">
   <div class="space-y-3">
-    <p class="text-xs font-semibold uppercase tracking-[0.2em] text-text-secondary">Commissioner Portal</p>
-    <h1 class="text-2xl font-semibold tracking-tight text-text-primary">{data.tournament.name}</h1>
+    <p class="text-text-secondary text-xs font-semibold tracking-[0.2em] uppercase">
+      Commissioner Portal
+    </p>
+    <h1 class="text-text-primary text-2xl font-semibold tracking-tight">{data.tournament.name}</h1>
     <div class="flex flex-wrap gap-2">
       <a
         href={`/manage/tournaments/${data.tournament.id}/teams`}
-        class="inline-flex min-h-touch items-center rounded-lg border border-border bg-transparent px-4 text-sm font-semibold text-text-primary transition hover:bg-surface-raised"
+        class="min-h-touch border-border text-text-primary hover:bg-surface-raised inline-flex items-center rounded-lg border bg-transparent px-4 text-sm font-semibold transition"
       >
         Teams
       </a>
       <a
         href={`/manage/tournaments/${data.tournament.id}/players`}
-        class="inline-flex min-h-touch items-center rounded-lg bg-accent px-4 text-sm font-semibold text-accent-text"
+        class="min-h-touch bg-accent text-accent-text inline-flex items-center rounded-lg px-4 text-sm font-semibold"
         aria-current="page"
       >
         Players
@@ -183,7 +185,7 @@
 
   {#if formState?.success}
     <p
-      class="rounded-lg border border-status-up/30 bg-status-up/10 px-3 py-2 text-sm font-medium text-status-up"
+      class="border-status-up/30 bg-status-up/10 text-status-up rounded-lg border px-3 py-2 text-sm font-medium"
       role="status"
     >
       {formState.success}
@@ -191,57 +193,70 @@
   {/if}
 
   {#if formState?.error && formState.action === 'deletePlayer'}
-    <p class="rounded-lg border border-status-down/30 bg-status-down/10 px-3 py-2 text-sm font-medium text-status-down">
+    <p
+      class="border-status-down/30 bg-status-down/10 text-status-down rounded-lg border px-3 py-2 text-sm font-medium"
+    >
       {formState.error}
     </p>
   {/if}
 
-  <section class="space-y-4 rounded-2xl border border-border bg-surface p-4 shadow-sm sm:p-5">
-    <h2 class="text-lg font-semibold text-text-primary">Roster</h2>
+  <section class="border-border bg-surface space-y-4 rounded-2xl border p-4 shadow-sm sm:p-5">
+    <h2 class="text-text-primary text-lg font-semibold">Roster</h2>
 
     {#if data.players.length === 0}
-      <p class="rounded-lg border border-dashed border-border bg-surface-raised px-4 py-4 text-sm text-text-secondary">
+      <p
+        class="border-border bg-surface-raised text-text-secondary rounded-lg border border-dashed px-4 py-4 text-sm"
+      >
         No players yet. Add players below or import from CSV.
       </p>
     {:else}
       <div class="space-y-3">
         {#each data.players as player (player.id)}
-          <article class="rounded-xl border border-border bg-surface-raised p-4">
+          <article class="border-border bg-surface-raised rounded-xl border p-4">
             <div class="space-y-3">
               <div class="flex flex-wrap items-start justify-between gap-3">
                 <div class="space-y-1">
-                  <p class="text-base font-semibold text-text-primary">{player.name}</p>
-                  <p class="text-sm text-text-secondary">Handicap Index: {player.handicap_index}</p>
+                  <p class="text-text-primary text-base font-semibold">{player.name}</p>
+                  <p class="text-text-secondary text-sm">Handicap Index: {player.handicap_index}</p>
                 </div>
 
                 {#if isCaptain(player)}
                   <span
-                    class="inline-flex min-h-8 items-center rounded-full border border-status-halved/30 bg-status-halved/10 px-3 text-xs font-semibold uppercase tracking-wide text-status-halved"
+                    class="border-status-halved/30 bg-status-halved/10 text-status-halved inline-flex min-h-8 items-center rounded-full border px-3 text-xs font-semibold tracking-wide uppercase"
                   >
                     Captain
                   </span>
                 {/if}
               </div>
 
-              <div class="flex items-center gap-2 text-sm text-text-primary">
+              <div class="text-text-primary flex items-center gap-2 text-sm">
                 {#if getTeam(player.team_id)}
                   <span
-                    class="h-5 w-5 rounded-full border border-border"
+                    class="border-border h-5 w-5 rounded-full border"
                     style={`background-color: ${getTeam(player.team_id)?.color};`}
                     aria-hidden="true"
                   ></span>
                   <span>{getTeam(player.team_id)?.name}</span>
                 {:else}
-                  <span class="rounded-full border border-border px-2 py-0.5 text-xs">Unassigned</span>
+                  <span class="border-border rounded-full border px-2 py-0.5 text-xs"
+                    >Unassigned</span
+                  >
                 {/if}
               </div>
 
               {#if editingPlayerId === player.id}
-                <form method="POST" action="?/updatePlayer" class="space-y-3 rounded-lg border border-border bg-surface p-3">
+                <form
+                  method="POST"
+                  action="?/updatePlayer"
+                  class="border-border bg-surface space-y-3 rounded-lg border p-3"
+                >
                   <input type="hidden" name="playerId" value={player.id} />
 
                   <div class="space-y-2">
-                    <label for={`edit-name-${player.id}`} class="block text-sm font-semibold text-text-primary">
+                    <label
+                      for={`edit-name-${player.id}`}
+                      class="text-text-primary block text-sm font-semibold"
+                    >
                       Player name
                     </label>
                     <input
@@ -249,13 +264,16 @@
                       name="displayName"
                       type="text"
                       bind:value={editDisplayName}
-                      class="h-11 w-full rounded-lg border border-border px-3 text-sm text-text-primary outline-none transition focus:border-accent focus:ring-1 focus:ring-accent"
+                      class="border-border text-text-primary focus:border-accent focus:ring-accent h-11 w-full rounded-lg border px-3 text-sm transition outline-none focus:ring-1"
                       required
                     />
                   </div>
 
                   <div class="space-y-2">
-                    <label for={`edit-handicap-${player.id}`} class="block text-sm font-semibold text-text-primary">
+                    <label
+                      for={`edit-handicap-${player.id}`}
+                      class="text-text-primary block text-sm font-semibold"
+                    >
                       Handicap index
                     </label>
                     <input
@@ -264,20 +282,23 @@
                       type="number"
                       step="0.1"
                       bind:value={editHandicapIndex}
-                      class="h-11 w-full rounded-lg border border-border px-3 text-sm text-text-primary outline-none transition focus:border-accent focus:ring-1 focus:ring-accent"
+                      class="border-border text-text-primary focus:border-accent focus:ring-accent h-11 w-full rounded-lg border px-3 text-sm transition outline-none focus:ring-1"
                       required
                     />
                   </div>
 
                   <div class="space-y-2">
-                    <label for={`edit-team-${player.id}`} class="block text-sm font-semibold text-text-primary">
+                    <label
+                      for={`edit-team-${player.id}`}
+                      class="text-text-primary block text-sm font-semibold"
+                    >
                       Team
                     </label>
                     <select
                       id={`edit-team-${player.id}`}
                       name="teamId"
                       bind:value={editTeamId}
-                      class="h-11 w-full rounded-lg border border-border px-3 text-sm text-text-primary outline-none transition focus:border-accent focus:ring-1 focus:ring-accent"
+                      class="border-border text-text-primary focus:border-accent focus:ring-accent h-11 w-full rounded-lg border px-3 text-sm transition outline-none focus:ring-1"
                     >
                       <option value="">Unassigned</option>
                       {#each data.teams as team (team.id)}
@@ -287,7 +308,10 @@
                   </div>
 
                   <div class="space-y-2">
-                    <label for={`edit-email-${player.id}`} class="block text-sm font-semibold text-text-primary">
+                    <label
+                      for={`edit-email-${player.id}`}
+                      class="text-text-primary block text-sm font-semibold"
+                    >
                       Email (optional)
                     </label>
                     <input
@@ -295,25 +319,25 @@
                       name="email"
                       type="email"
                       bind:value={editEmail}
-                      class="h-11 w-full rounded-lg border border-border px-3 text-sm text-text-primary outline-none transition focus:border-accent focus:ring-1 focus:ring-accent"
+                      class="border-border text-text-primary focus:border-accent focus:ring-accent h-11 w-full rounded-lg border px-3 text-sm transition outline-none focus:ring-1"
                       placeholder="name@example.com"
                     />
                   </div>
 
                   {#if formState?.action === 'updatePlayer' && formState.error && formState.playerId === player.id}
-                    <p class="text-sm font-medium text-status-down">{formState.error}</p>
+                    <p class="text-status-down text-sm font-medium">{formState.error}</p>
                   {/if}
 
                   <div class="flex flex-wrap gap-2">
                     <button
                       type="submit"
-                      class="inline-flex min-h-touch items-center rounded-lg bg-accent px-4 text-sm font-semibold text-accent-text transition hover:bg-accent-hover"
+                      class="min-h-touch bg-accent text-accent-text hover:bg-accent-hover inline-flex items-center rounded-lg px-4 text-sm font-semibold transition"
                     >
                       Save
                     </button>
                     <button
                       type="button"
-                      class="inline-flex min-h-touch items-center rounded-lg border border-border bg-transparent px-4 text-sm font-semibold text-text-primary transition hover:bg-surface-raised"
+                      class="min-h-touch border-border text-text-primary hover:bg-surface-raised inline-flex items-center rounded-lg border bg-transparent px-4 text-sm font-semibold transition"
                       on:click={cancelEdit}
                     >
                       Cancel
@@ -321,26 +345,31 @@
                   </div>
                 </form>
               {:else}
-                <div class="space-y-3 rounded-lg border border-border bg-surface p-3">
+                <div class="border-border bg-surface space-y-3 rounded-lg border p-3">
                   <form method="POST" action="?/updatePlayer" class="space-y-2">
                     <input type="hidden" name="playerId" value={player.id} />
-                    <label for={`assign-team-${player.id}`} class="block text-sm font-semibold text-text-primary">
+                    <label
+                      for={`assign-team-${player.id}`}
+                      class="text-text-primary block text-sm font-semibold"
+                    >
                       Assign to team
                     </label>
                     <div class="flex flex-col gap-2 sm:flex-row">
                       <select
                         id={`assign-team-${player.id}`}
                         name="teamId"
-                        class="h-11 flex-1 rounded-lg border border-border px-3 text-sm text-text-primary outline-none transition focus:border-accent focus:ring-1 focus:ring-accent"
+                        class="border-border text-text-primary focus:border-accent focus:ring-accent h-11 flex-1 rounded-lg border px-3 text-sm transition outline-none focus:ring-1"
                       >
                         <option value="" selected={!player.team_id}>Unassigned</option>
                         {#each data.teams as team (team.id)}
-                          <option value={team.id} selected={team.id === player.team_id}>{team.name}</option>
+                          <option value={team.id} selected={team.id === player.team_id}
+                            >{team.name}</option
+                          >
                         {/each}
                       </select>
                       <button
                         type="submit"
-                        class="inline-flex min-h-touch items-center justify-center rounded-lg border border-border bg-transparent px-4 text-sm font-semibold text-text-primary transition hover:bg-surface-raised"
+                        class="min-h-touch border-border text-text-primary hover:bg-surface-raised inline-flex items-center justify-center rounded-lg border bg-transparent px-4 text-sm font-semibold transition"
                       >
                         Save Team
                       </button>
@@ -350,14 +379,18 @@
                   <div class="flex flex-wrap gap-2">
                     <form method="POST" action="?/updatePlayer">
                       <input type="hidden" name="playerId" value={player.id} />
-                      <input type="hidden" name="isCaptain" value={isCaptain(player) ? 'false' : 'true'} />
+                      <input
+                        type="hidden"
+                        name="isCaptain"
+                        value={isCaptain(player) ? 'false' : 'true'}
+                      />
                       {#if !isCaptain(player)}
                         <input type="hidden" name="teamId" value={player.team_id ?? ''} />
                       {/if}
                       <button
                         type="submit"
                         disabled={!isCaptain(player) && !player.team_id}
-                        class="inline-flex min-h-touch items-center rounded-lg border border-border bg-transparent px-4 text-sm font-semibold text-text-primary transition hover:bg-surface-raised disabled:cursor-not-allowed disabled:text-text-secondary"
+                        class="min-h-touch border-border text-text-primary hover:bg-surface-raised disabled:text-text-secondary inline-flex items-center rounded-lg border bg-transparent px-4 text-sm font-semibold transition disabled:cursor-not-allowed"
                       >
                         {#if isCaptain(player)}
                           Remove Captain
@@ -369,7 +402,7 @@
 
                     <button
                       type="button"
-                      class="inline-flex min-h-touch items-center rounded-lg border border-border bg-transparent px-4 text-sm font-semibold text-text-primary transition hover:bg-surface-raised"
+                      class="min-h-touch border-border text-text-primary hover:bg-surface-raised inline-flex items-center rounded-lg border bg-transparent px-4 text-sm font-semibold transition"
                       on:click={() => beginEdit(player)}
                     >
                       Edit
@@ -383,7 +416,7 @@
                       <input type="hidden" name="playerId" value={player.id} />
                       <button
                         type="submit"
-                        class="inline-flex min-h-touch items-center rounded-lg border border-status-down/30 bg-surface px-4 text-sm font-medium text-status-down transition hover:bg-status-down/10"
+                        class="min-h-touch border-status-down/30 bg-surface text-status-down hover:bg-status-down/10 inline-flex items-center rounded-lg border px-4 text-sm font-medium transition"
                       >
                         Delete
                       </button>
@@ -391,7 +424,7 @@
                   </div>
 
                   {#if formState?.action === 'updatePlayer' && formState.error && formState.playerId === player.id}
-                    <p class="text-sm font-medium text-status-down">{formState.error}</p>
+                    <p class="text-status-down text-sm font-medium">{formState.error}</p>
                   {/if}
                 </div>
               {/if}
@@ -402,24 +435,30 @@
     {/if}
   </section>
 
-  <section class="space-y-4 rounded-2xl border border-border bg-surface p-4 shadow-sm sm:p-5">
-    <h2 class="text-lg font-semibold text-text-primary">Add Players</h2>
+  <section class="border-border bg-surface space-y-4 rounded-2xl border p-4 shadow-sm sm:p-5">
+    <h2 class="text-text-primary text-lg font-semibold">Add Players</h2>
 
-    <form method="POST" action="?/createPlayer" class="space-y-3 rounded-xl border border-border bg-surface-raised p-4">
+    <form
+      method="POST"
+      action="?/createPlayer"
+      class="border-border bg-surface-raised space-y-3 rounded-xl border p-4"
+    >
       <div class="space-y-2">
-        <label for="create-player-name" class="block text-sm font-semibold text-text-primary">Player name</label>
+        <label for="create-player-name" class="text-text-primary block text-sm font-semibold"
+          >Player name</label
+        >
         <input
           id="create-player-name"
           name="displayName"
           type="text"
           bind:value={createDisplayName}
-          class="h-11 w-full rounded-lg border border-border px-3 text-sm text-text-primary outline-none transition focus:border-accent focus:ring-1 focus:ring-accent"
+          class="border-border text-text-primary focus:border-accent focus:ring-accent h-11 w-full rounded-lg border px-3 text-sm transition outline-none focus:ring-1"
           required
         />
       </div>
 
       <div class="space-y-2">
-        <label for="create-player-handicap" class="block text-sm font-semibold text-text-primary">
+        <label for="create-player-handicap" class="text-text-primary block text-sm font-semibold">
           Handicap index
         </label>
         <input
@@ -428,18 +467,20 @@
           type="number"
           step="0.1"
           bind:value={createHandicapIndex}
-          class="h-11 w-full rounded-lg border border-border px-3 text-sm text-text-primary outline-none transition focus:border-accent focus:ring-1 focus:ring-accent"
+          class="border-border text-text-primary focus:border-accent focus:ring-accent h-11 w-full rounded-lg border px-3 text-sm transition outline-none focus:ring-1"
           required
         />
       </div>
 
       <div class="space-y-2">
-        <label for="create-player-team" class="block text-sm font-semibold text-text-primary">Team (optional)</label>
+        <label for="create-player-team" class="text-text-primary block text-sm font-semibold"
+          >Team (optional)</label
+        >
         <select
           id="create-player-team"
           name="teamId"
           bind:value={createTeamId}
-          class="h-11 w-full rounded-lg border border-border px-3 text-sm text-text-primary outline-none transition focus:border-accent focus:ring-1 focus:ring-accent"
+          class="border-border text-text-primary focus:border-accent focus:ring-accent h-11 w-full rounded-lg border px-3 text-sm transition outline-none focus:ring-1"
         >
           <option value="">Unassigned</option>
           {#each data.teams as team (team.id)}
@@ -449,33 +490,37 @@
       </div>
 
       <div class="space-y-2">
-        <label for="create-player-email" class="block text-sm font-semibold text-text-primary">Email (optional)</label>
+        <label for="create-player-email" class="text-text-primary block text-sm font-semibold"
+          >Email (optional)</label
+        >
         <input
           id="create-player-email"
           name="email"
           type="email"
           bind:value={createEmail}
-          class="h-11 w-full rounded-lg border border-border px-3 text-sm text-text-primary outline-none transition focus:border-accent focus:ring-1 focus:ring-accent"
+          class="border-border text-text-primary focus:border-accent focus:ring-accent h-11 w-full rounded-lg border px-3 text-sm transition outline-none focus:ring-1"
           placeholder="name@example.com"
         />
       </div>
 
       {#if formState?.action === 'createPlayer' && formState.error}
-        <p class="text-sm font-medium text-status-down">{formState.error}</p>
+        <p class="text-status-down text-sm font-medium">{formState.error}</p>
       {/if}
 
       <button
         type="submit"
-        class="inline-flex min-h-touch items-center rounded-lg bg-accent px-4 text-sm font-semibold text-accent-text transition hover:bg-accent-hover"
+        class="min-h-touch bg-accent text-accent-text hover:bg-accent-hover inline-flex items-center rounded-lg px-4 text-sm font-semibold transition"
       >
         Add Player
       </button>
     </form>
 
-    <section class="space-y-3 rounded-xl border border-border bg-surface-raised p-4">
+    <section class="border-border bg-surface-raised space-y-3 rounded-xl border p-4">
       <div class="space-y-1">
-        <h3 class="text-base font-semibold text-text-primary">CSV Bulk Import</h3>
-        <p class="text-sm text-text-secondary">Paste rows in this format: Name, HandicapIndex, Email(optional).</p>
+        <h3 class="text-text-primary text-base font-semibold">CSV Bulk Import</h3>
+        <p class="text-text-secondary text-sm">
+          Paste rows in this format: Name, HandicapIndex, Email(optional).
+        </p>
       </div>
 
       <form method="POST" action="?/bulkImport" class="space-y-3">
@@ -485,21 +530,21 @@
           name="csvText"
           bind:value={csvText}
           rows="7"
-          class="w-full rounded-lg border border-border px-3 py-2 text-sm text-text-primary outline-none transition focus:border-accent focus:ring-1 focus:ring-accent"
+          class="border-border text-text-primary focus:border-accent focus:ring-accent w-full rounded-lg border px-3 py-2 text-sm transition outline-none focus:ring-1"
           placeholder="Player One, 10.2, one@example.com&#10;Player Two, 14.8"
         ></textarea>
 
         <div class="flex flex-wrap gap-2">
           <button
             type="button"
-            class="inline-flex min-h-touch items-center rounded-lg border border-border bg-transparent px-4 text-sm font-semibold text-text-primary transition hover:bg-surface-raised"
+            class="min-h-touch border-border text-text-primary hover:bg-surface-raised inline-flex items-center rounded-lg border bg-transparent px-4 text-sm font-semibold transition"
             on:click={parsePreview}
           >
             Parse &amp; Preview
           </button>
           <button
             type="submit"
-            class="inline-flex min-h-touch items-center rounded-lg bg-accent px-4 text-sm font-semibold text-accent-text transition hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-50"
+            class="min-h-touch bg-accent text-accent-text hover:bg-accent-hover inline-flex items-center rounded-lg px-4 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50"
             disabled={!canConfirmImport}
           >
             Confirm Import
@@ -507,19 +552,19 @@
         </div>
 
         {#if !canConfirmImport && previewParsed}
-          <p class="text-sm text-text-secondary">
+          <p class="text-text-secondary text-sm">
             Resolve all preview errors before confirming import.
           </p>
         {/if}
 
         {#if formState?.action === 'bulkImport' && formState.error}
-          <p class="text-sm font-medium text-status-down">{formState.error}</p>
+          <p class="text-status-down text-sm font-medium">{formState.error}</p>
         {/if}
       </form>
 
       {#if previewParsed}
         <div class="space-y-2">
-          <p class="text-sm font-semibold text-text-primary">
+          <p class="text-text-primary text-sm font-semibold">
             Preview: {previewValidCount} valid, {previewErrorCount} invalid
           </p>
 
@@ -527,17 +572,20 @@
             {#each previewRows as row (row.row)}
               <div
                 class={`rounded-lg border px-3 py-2 text-sm ${
-                  row.errors.length > 0 ? 'border-status-down/30 bg-status-down/10' : 'border-status-up/30 bg-status-up/10'
+                  row.errors.length > 0
+                    ? 'border-status-down/30 bg-status-down/10'
+                    : 'border-status-up/30 bg-status-up/10'
                 }`}
               >
-                <p class="font-semibold text-text-primary">
-                  Row {row.row}: {row.displayName || '(missing name)'} | {row.handicapRaw || '(missing handicap)'}
+                <p class="text-text-primary font-semibold">
+                  Row {row.row}: {row.displayName || '(missing name)'} | {row.handicapRaw ||
+                    '(missing handicap)'}
                   {#if row.email}
                     | {row.email}
                   {/if}
                 </p>
                 {#if row.errors.length > 0}
-                  <ul class="mt-1 space-y-1 text-status-down">
+                  <ul class="text-status-down mt-1 space-y-1">
                     {#each row.errors as issue (issue)}
                       <li>{issue}</li>
                     {/each}
@@ -550,9 +598,9 @@
       {/if}
 
       {#if formState?.action === 'bulkImport' && formState.bulkErrors && formState.bulkErrors.length > 0}
-        <div class="rounded-lg border border-status-down/30 bg-status-down/10 px-3 py-2">
-          <p class="text-sm font-semibold text-status-down">Import errors:</p>
-          <ul class="mt-1 space-y-1 text-sm text-status-down">
+        <div class="border-status-down/30 bg-status-down/10 rounded-lg border px-3 py-2">
+          <p class="text-status-down text-sm font-semibold">Import errors:</p>
+          <ul class="text-status-down mt-1 space-y-1 text-sm">
             {#each formState.bulkErrors as rowError (`${rowError.row}-${rowError.issues.join('|')}`)}
               <li>Row {rowError.row}: {rowError.issues.join(' ')}</li>
             {/each}

@@ -135,15 +135,15 @@ function parseHoleInputs(value: unknown): HoleInput[] {
     const hole = asObject(entry);
     const holeNumber = readRequiredNumber(hole.holeNumber, `Hole ${index + 1} number`, {
       integer: true,
-      min: 1
+      min: 1,
     });
     const par = readRequiredNumber(hole.par, `Hole ${holeNumber} par`, {
       integer: true,
-      min: 1
+      min: 1,
     });
     const strokeIndex = readRequiredNumber(hole.strokeIndex, `Hole ${holeNumber} stroke index`, {
       integer: true,
-      min: 1
+      min: 1,
     });
 
     if (holeNumber > HOLE_COUNT) {
@@ -174,7 +174,7 @@ function parseHoleInputs(value: unknown): HoleInput[] {
     return {
       holeNumber,
       par,
-      strokeIndex
+      strokeIndex,
     };
   });
 
@@ -188,7 +188,7 @@ function toHoleGrid(tees: Tee[], holes: Hole[]): HoleInput[] {
     return Array.from({ length: HOLE_COUNT }, (_, index) => ({
       holeNumber: index + 1,
       par: 4,
-      strokeIndex: index + 1
+      strokeIndex: index + 1,
     }));
   }
 
@@ -207,7 +207,7 @@ function toHoleGrid(tees: Tee[], holes: Hole[]): HoleInput[] {
     return {
       holeNumber,
       par: existing?.par ?? 4,
-      strokeIndex: existing?.stroke_index ?? holeNumber
+      strokeIndex: existing?.stroke_index ?? holeNumber,
     };
   });
 }
@@ -248,7 +248,10 @@ async function readApiErrorMessage(response: Response, fallbackMessage: string):
   }
 }
 
-async function loadCourse(event: Parameters<PageServerLoad>[0], courseId: string): Promise<CourseApiResponse> {
+async function loadCourse(
+  event: Parameters<PageServerLoad>[0],
+  courseId: string
+): Promise<CourseApiResponse> {
   const response = await event.fetch(`/api/courses/${encodeURIComponent(courseId)}`);
 
   if (response.status === 404) {
@@ -270,7 +273,7 @@ export const load: PageServerLoad = async (event) => {
     course: payload.course,
     tees: payload.tees,
     holes: toHoleGrid(payload.tees, payload.holes),
-    splitFormatUnavailable: splitFormatUnavailable(payload.tees)
+    splitFormatUnavailable: splitFormatUnavailable(payload.tees),
   };
 };
 
@@ -285,23 +288,23 @@ export const actions: Actions = {
       const response = await event.fetch(`/api/courses/${encodeURIComponent(event.params.id)}`, {
         method: 'PATCH',
         headers: {
-          'content-type': 'application/json'
+          'content-type': 'application/json',
         },
-        body: JSON.stringify({ name, location })
+        body: JSON.stringify({ name, location }),
       });
 
       if (!response.ok) {
         return fail(response.status >= 500 ? 500 : 400, {
-          error: await readApiErrorMessage(response, 'Could not update course details.')
+          error: await readApiErrorMessage(response, 'Could not update course details.'),
         });
       }
 
       return {
-        success: 'Course details updated.'
+        success: 'Course details updated.',
       };
     } catch (cause) {
       return fail(400, {
-        error: cause instanceof Error ? cause.message : 'Could not update course details.'
+        error: cause instanceof Error ? cause.message : 'Could not update course details.',
       });
     }
   },
@@ -316,51 +319,54 @@ export const actions: Actions = {
         cr18: readRequiredNumber(formData.get('cr18'), 'CR 18', { min: 1 }),
         slope18: readRequiredNumber(formData.get('slope18'), 'Slope 18', {
           integer: true,
-          min: 1
+          min: 1,
         }),
         par18: readRequiredNumber(formData.get('par18'), 'Par 18', {
           integer: true,
-          min: 1
+          min: 1,
         }),
         cr9F: readOptionalNumber(formData.get('cr9F'), 'CR 9F', { min: 1 }),
         slope9F: readOptionalNumber(formData.get('slope9F'), 'Slope 9F', {
           integer: true,
-          min: 1
+          min: 1,
         }),
         par9F: readOptionalNumber(formData.get('par9F'), 'Par 9F', {
           integer: true,
-          min: 1
+          min: 1,
         }),
         cr9B: readOptionalNumber(formData.get('cr9B'), 'CR 9B', { min: 1 }),
         slope9B: readOptionalNumber(formData.get('slope9B'), 'Slope 9B', {
           integer: true,
-          min: 1
+          min: 1,
         }),
         par9B: readOptionalNumber(formData.get('par9B'), 'Par 9B', {
           integer: true,
-          min: 1
-        })
+          min: 1,
+        }),
       };
-      const response = await event.fetch(`/api/courses/${encodeURIComponent(event.params.id)}/tees`, {
-        method: 'POST',
-        headers: {
-          'content-type': 'application/json'
-        },
-        body: JSON.stringify(teePayload)
-      });
+      const response = await event.fetch(
+        `/api/courses/${encodeURIComponent(event.params.id)}/tees`,
+        {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json',
+          },
+          body: JSON.stringify(teePayload),
+        }
+      );
 
       if (!response.ok) {
         return fail(response.status >= 500 ? 500 : 400, {
-          error: await readApiErrorMessage(response, 'Could not add tee.')
+          error: await readApiErrorMessage(response, 'Could not add tee.'),
         });
       }
 
       return {
-        success: 'Tee added.'
+        success: 'Tee added.',
       };
     } catch (cause) {
       return fail(400, {
-        error: cause instanceof Error ? cause.message : 'Could not add tee.'
+        error: cause instanceof Error ? cause.message : 'Could not add tee.',
       });
     }
   },
@@ -375,51 +381,51 @@ export const actions: Actions = {
         cr18: readRequiredNumber(formData.get('cr18'), 'CR 18', { min: 1 }),
         slope18: readRequiredNumber(formData.get('slope18'), 'Slope 18', {
           integer: true,
-          min: 1
+          min: 1,
         }),
         par18: readRequiredNumber(formData.get('par18'), 'Par 18', { integer: true, min: 1 }),
         cr9F: readOptionalNumber(formData.get('cr9F'), 'CR 9F', { min: 1 }),
         slope9F: readOptionalNumber(formData.get('slope9F'), 'Slope 9F', {
           integer: true,
-          min: 1
+          min: 1,
         }),
         par9F: readOptionalNumber(formData.get('par9F'), 'Par 9F', {
           integer: true,
-          min: 1
+          min: 1,
         }),
         cr9B: readOptionalNumber(formData.get('cr9B'), 'CR 9B', { min: 1 }),
         slope9B: readOptionalNumber(formData.get('slope9B'), 'Slope 9B', {
           integer: true,
-          min: 1
+          min: 1,
         }),
         par9B: readOptionalNumber(formData.get('par9B'), 'Par 9B', {
           integer: true,
-          min: 1
-        })
+          min: 1,
+        }),
       };
       const response = await event.fetch(
         `/api/courses/${encodeURIComponent(event.params.id)}/tees/${encodeURIComponent(teeId)}`,
         {
           method: 'PATCH',
           headers: {
-            'content-type': 'application/json'
+            'content-type': 'application/json',
           },
-          body: JSON.stringify(payload)
+          body: JSON.stringify(payload),
         }
       );
 
       if (!response.ok) {
         return fail(response.status >= 500 ? 500 : 400, {
-          error: await readApiErrorMessage(response, 'Could not update tee.')
+          error: await readApiErrorMessage(response, 'Could not update tee.'),
         });
       }
 
       return {
-        success: 'Tee updated.'
+        success: 'Tee updated.',
       };
     } catch (cause) {
       return fail(400, {
-        error: cause instanceof Error ? cause.message : 'Could not update tee.'
+        error: cause instanceof Error ? cause.message : 'Could not update tee.',
       });
     }
   },
@@ -430,27 +436,30 @@ export const actions: Actions = {
     try {
       const formData = await event.request.formData();
       const holes = parseHoleInputs(parseJsonField(formData, 'holesJson'));
-      const response = await event.fetch(`/api/courses/${encodeURIComponent(event.params.id)}/holes`, {
-        method: 'PUT',
-        headers: {
-          'content-type': 'application/json'
-        },
-        body: JSON.stringify({ holes })
-      });
+      const response = await event.fetch(
+        `/api/courses/${encodeURIComponent(event.params.id)}/holes`,
+        {
+          method: 'PUT',
+          headers: {
+            'content-type': 'application/json',
+          },
+          body: JSON.stringify({ holes }),
+        }
+      );
 
       if (!response.ok) {
         return fail(response.status >= 500 ? 500 : 400, {
-          error: await readApiErrorMessage(response, 'Could not update holes.')
+          error: await readApiErrorMessage(response, 'Could not update holes.'),
         });
       }
 
       return {
-        success: 'Holes updated.'
+        success: 'Holes updated.',
       };
     } catch (cause) {
       return fail(400, {
-        error: cause instanceof Error ? cause.message : 'Could not update holes.'
+        error: cause instanceof Error ? cause.message : 'Could not update holes.',
       });
     }
-  }
+  },
 };

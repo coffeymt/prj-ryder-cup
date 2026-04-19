@@ -8,7 +8,7 @@ import {
   listPlayersBySide,
   listSidesByMatch,
   updateMatchStatus,
-  upsertMatchHoleResult
+  upsertMatchHoleResult,
 } from '$lib/db/matches';
 import { getPlayerById } from '$lib/db/players';
 import { claimOp, getProcessedOp, markOpProcessed } from '$lib/db/processedOps';
@@ -22,7 +22,7 @@ import type {
   Player,
   RoundSegment,
   SideLabel,
-  Tournament
+  Tournament,
 } from '$lib/db/types';
 import { computeFourBallResults } from '$lib/engine/formats/fourBall';
 import { computePinehurstResults } from '$lib/engine/formats/pinehurst';
@@ -37,7 +37,7 @@ import type {
   MatchState,
   PlayerHandicapInput,
   TeeData,
-  TournamentAllowances
+  TournamentAllowances,
 } from '$lib/engine/types';
 import { error, json, type RequestEvent, type RequestHandler } from '@sveltejs/kit';
 
@@ -75,20 +75,29 @@ function isValidIdempotencyKey(value: string): boolean {
   return UUID_PATTERN.test(value) || ULID_PATTERN.test(value);
 }
 
-function parseHoleParam(value: string | undefined): { holeNumber: number | null; message: string | null } {
+function parseHoleParam(value: string | undefined): {
+  holeNumber: number | null;
+  message: string | null;
+} {
   if (!value) {
     return { holeNumber: null, message: 'hole route parameter is required.' };
   }
 
   const parsed = Number(value);
   if (!Number.isInteger(parsed) || parsed < 1 || parsed > 18) {
-    return { holeNumber: null, message: 'hole route parameter must be an integer between 1 and 18.' };
+    return {
+      holeNumber: null,
+      message: 'hole route parameter must be an integer between 1 and 18.',
+    };
   }
 
   return { holeNumber: parsed, message: null };
 }
 
-function parseConcedeBody(value: unknown): { body: ConcedeHoleRequestBody | null; message: string | null } {
+function parseConcedeBody(value: unknown): {
+  body: ConcedeHoleRequestBody | null;
+  message: string | null;
+} {
   if (!isRecord(value)) {
     return { body: null, message: 'Request body must be a JSON object.' };
   }
@@ -107,9 +116,9 @@ function parseConcedeBody(value: unknown): { body: ConcedeHoleRequestBody | null
   return {
     body: {
       side,
-      playerId: typeof playerId === 'string' ? playerId.trim() : undefined
+      playerId: typeof playerId === 'string' ? playerId.trim() : undefined,
     },
-    message: null
+    message: null,
   };
 }
 
@@ -118,25 +127,25 @@ function normalizeTournamentAllowances(tournament: Tournament): TournamentAllowa
     scramble: {
       type: 'blended',
       lowPct: tournament.allowance_scramble_low,
-      highPct: tournament.allowance_scramble_high
+      highPct: tournament.allowance_scramble_high,
     },
     pinehurst: {
       type: 'blended',
       lowPct: tournament.allowance_pinehurst_low,
-      highPct: tournament.allowance_pinehurst_high
+      highPct: tournament.allowance_pinehurst_high,
     },
     shamble: {
       type: 'perPlayer',
-      pct: tournament.allowance_shamble
+      pct: tournament.allowance_shamble,
     },
     fourBall: {
       type: 'perPlayer',
-      pct: tournament.allowance_fourball
+      pct: tournament.allowance_fourball,
     },
     singles: {
       type: 'perPlayer',
-      pct: tournament.allowance_singles
-    }
+      pct: tournament.allowance_singles,
+    },
   };
 }
 
@@ -200,8 +209,8 @@ function asTeeData(
         holeNumber: hole.hole_number,
         par: hole.par as TeeData['holes'][number]['par'],
         strokeIndex: hole.stroke_index as TeeData['holes'][number]['strokeIndex'],
-        yardage: hole.yardage ?? undefined
-      }))
+        yardage: hole.yardage ?? undefined,
+      })),
   };
 }
 
@@ -229,13 +238,13 @@ function resolveAllowance(
     return {
       type: 'blended',
       lowPct: override,
-      highPct: override
+      highPct: override,
     };
   }
 
   return {
     type: 'perPlayer',
-    pct: override
+    pct: override,
   };
 }
 
@@ -258,7 +267,7 @@ function toEngineHoleScore(
     grossStrokes: row.gross_strokes,
     isConceded: row.is_conceded === 1,
     isPickedUp: row.is_picked_up === 1,
-    opId: row.op_id
+    opId: row.op_id,
   };
 }
 
@@ -267,7 +276,7 @@ function toEngineHoleResult(row: MatchHoleResult): EngineHoleResult {
     holeNumber: row.hole_number,
     result: row.result,
     sideANet: row.side_a_net,
-    sideBNet: row.side_b_net
+    sideBNet: row.side_b_net,
   };
 }
 
@@ -286,7 +295,7 @@ function buildOverallHoleResults(rows: MatchHoleResult[], totalHoles: number): E
         holeNumber,
         result: 'PENDING',
         sideANet: null,
-        sideBNet: null
+        sideBNet: null,
       }
     );
   }
@@ -294,8 +303,13 @@ function buildOverallHoleResults(rows: MatchHoleResult[], totalHoles: number): E
   return normalized;
 }
 
-async function loadPlayersForSide(db: D1Database, sidePlayers: MatchSidePlayer[]): Promise<Player[]> {
-  const loaded = await Promise.all(sidePlayers.map((sidePlayer) => getPlayerById(db, sidePlayer.player_id)));
+async function loadPlayersForSide(
+  db: D1Database,
+  sidePlayers: MatchSidePlayer[]
+): Promise<Player[]> {
+  const loaded = await Promise.all(
+    sidePlayers.map((sidePlayer) => getPlayerById(db, sidePlayer.player_id))
+  );
   const players: Player[] = [];
 
   for (const player of loaded) {
@@ -324,7 +338,7 @@ function toPlayerHandicapInput(
     return {
       playerId: enginePlayerId,
       sideId: engineSideId,
-      handicapIndex: player.handicap_index as PlayerHandicapInput['handicapIndex']
+      handicapIndex: player.handicap_index as PlayerHandicapInput['handicapIndex'],
     };
   });
 }
@@ -352,12 +366,12 @@ function computeSegmentState(
         {
           sideId: sideAEngineId,
           players: sideAPlayers,
-          holeScores: sideAHoleScores
+          holeScores: sideAHoleScores,
         },
         {
           sideId: sideBEngineId,
           players: sideBPlayers,
-          holeScores: sideBHoleScores
+          holeScores: sideBHoleScores,
         },
         tee,
         segmentType,
@@ -373,12 +387,12 @@ function computeSegmentState(
         {
           sideId: sideAEngineId,
           players: sideAPlayers,
-          holeScores: sideAHoleScores
+          holeScores: sideAHoleScores,
         },
         {
           sideId: sideBEngineId,
           players: sideBPlayers,
-          holeScores: sideBHoleScores
+          holeScores: sideBHoleScores,
         },
         tee,
         segmentType,
@@ -394,12 +408,12 @@ function computeSegmentState(
         {
           sideId: sideAEngineId,
           players: sideAPlayers,
-          holeScores: sideAHoleScores
+          holeScores: sideAHoleScores,
         },
         {
           sideId: sideBEngineId,
           players: sideBPlayers,
-          holeScores: sideBHoleScores
+          holeScores: sideBHoleScores,
         },
         tee,
         segmentType,
@@ -415,12 +429,12 @@ function computeSegmentState(
         {
           sideId: sideAEngineId,
           players: sideAPlayers,
-          holeScores: sideAHoleScores
+          holeScores: sideAHoleScores,
         },
         {
           sideId: sideBEngineId,
           players: sideBPlayers,
-          holeScores: sideBHoleScores
+          holeScores: sideBHoleScores,
         },
         tee,
         segmentType,
@@ -440,12 +454,12 @@ function computeSegmentState(
         {
           sideId: sideAEngineId,
           player: sideAPlayers[0],
-          holeScores: sideAHoleScores
+          holeScores: sideAHoleScores,
         },
         {
           sideId: sideBEngineId,
           player: sideBPlayers[0],
-          holeScores: sideBHoleScores
+          holeScores: sideBHoleScores,
         },
         tee,
         segmentType,
@@ -548,12 +562,15 @@ export const POST: RequestHandler = async (event) => {
     }
   }
 
-  let concessionPlayerId: string | null = null;
+  let concessionPlayerId: string | null;
   let actorPlayerId: string | null = event.locals.playerId;
 
   if (event.locals.role === 'player') {
     if (requestBody.playerId !== undefined) {
-      return json({ message: 'playerId override is only allowed for commissioners.' }, { status: 403 });
+      return json(
+        { message: 'playerId override is only allowed for commissioners.' },
+        { status: 403 }
+      );
     }
 
     const actingPlayerId = event.locals.playerId;
@@ -571,11 +588,17 @@ export const POST: RequestHandler = async (event) => {
     if (requestBody.playerId !== undefined) {
       const overrideSide = playerToSideLabel.get(requestBody.playerId);
       if (!overrideSide) {
-        return json({ message: 'playerId override must reference a player in this match.' }, { status: 400 });
+        return json(
+          { message: 'playerId override must reference a player in this match.' },
+          { status: 400 }
+        );
       }
 
       if (overrideSide !== requestBody.side) {
-        return json({ message: 'playerId override must be on the conceded side.' }, { status: 400 });
+        return json(
+          { message: 'playerId override must be on the conceded side.' },
+          { status: 400 }
+        );
       }
 
       concessionPlayerId = requestBody.playerId;
@@ -614,7 +637,7 @@ export const POST: RequestHandler = async (event) => {
     is_conceded: 1,
     is_picked_up: 0,
     entered_by_player_id: event.locals.role === 'player' ? event.locals.playerId : null,
-    op_id: opId
+    op_id: opId,
   });
 
   await writeAuditEntry(db, {
@@ -629,20 +652,27 @@ export const POST: RequestHandler = async (event) => {
     new_value: JSON.stringify({
       holeNumber,
       side: requestBody.side,
-      matchId: match.id
-    })
+      matchId: match.id,
+    }),
   });
 
-  const [allHoleScores, segments, tournament, teesByCourse, holesByCourse, sideAPlayers, sideBPlayers] =
-    await Promise.all([
-      listHoleScoresByMatch(db, match.id),
-      listSegmentsByRound(db, round.id),
-      getTournamentById(db, round.tournament_id),
-      listTeesByCourse(db, round.course_id),
-      listHolesByCourse(db, round.course_id),
-      loadPlayersForSide(db, sidePlayersBySideId.get(sideA.id) ?? []),
-      loadPlayersForSide(db, sidePlayersBySideId.get(sideB.id) ?? [])
-    ]);
+  const [
+    allHoleScores,
+    segments,
+    tournament,
+    teesByCourse,
+    holesByCourse,
+    sideAPlayers,
+    sideBPlayers,
+  ] = await Promise.all([
+    listHoleScoresByMatch(db, match.id),
+    listSegmentsByRound(db, round.id),
+    getTournamentById(db, round.tournament_id),
+    listTeesByCourse(db, round.course_id),
+    listHolesByCourse(db, round.course_id),
+    loadPlayersForSide(db, sidePlayersBySideId.get(sideA.id) ?? []),
+    loadPlayersForSide(db, sidePlayersBySideId.get(sideB.id) ?? []),
+  ]);
 
   if (!tournament) {
     throw error(500, 'Round references a missing tournament.');
@@ -655,7 +685,7 @@ export const POST: RequestHandler = async (event) => {
 
   const segment = {
     ...segmentForHole,
-    format: match.format_override ?? segmentForHole.format
+    format: match.format_override ?? segmentForHole.format,
   };
 
   const tee = teesByCourse.find((candidateTee) => candidateTee.id === round.tee_id);
@@ -670,11 +700,11 @@ export const POST: RequestHandler = async (event) => {
 
   const sideIdMap = new Map<string, number>([
     [sideA.id, 1],
-    [sideB.id, 2]
+    [sideB.id, 2],
   ]);
   const sideLabelByEngineId = new Map<number, SideLabel>([
     [1, 'A'],
-    [2, 'B']
+    [2, 'B'],
   ]);
 
   const playerIdMap = new Map<string, number>();
@@ -710,7 +740,9 @@ export const POST: RequestHandler = async (event) => {
     engineScores.filter((row) => row.matchSideId === sideBEngineId)
   );
 
-  const computedHoleResult = segmentState.holeResults.find((holeResult) => holeResult.holeNumber === holeNumber);
+  const computedHoleResult = segmentState.holeResults.find(
+    (holeResult) => holeResult.holeNumber === holeNumber
+  );
   if (!computedHoleResult) {
     throw error(500, 'Hole result was not computed for the conceded hole.');
   }
@@ -721,12 +753,15 @@ export const POST: RequestHandler = async (event) => {
     hole_number: holeNumber,
     result: computedHoleResult.result,
     side_a_net: computedHoleResult.sideANet,
-    side_b_net: computedHoleResult.sideBNet
+    side_b_net: computedHoleResult.sideBNet,
   });
 
   const allHoleResults = await listHoleResultsByMatch(db, match.id);
   const totalHoles = Math.max(1, ...segments.map((roundSegment) => roundSegment.hole_end));
-  const totalPointsAvailable = segments.reduce((sum, roundSegment) => sum + roundSegment.points_available, 0);
+  const totalPointsAvailable = segments.reduce(
+    (sum, roundSegment) => sum + roundSegment.points_available,
+    0
+  );
   const overallState = computeMatchState(
     buildOverallHoleResults(allHoleResults, totalHoles),
     totalHoles,
@@ -744,7 +779,7 @@ export const POST: RequestHandler = async (event) => {
       halves: overallState.sideA.holesSplit,
       close_notation: overallState.closeNotation,
       side_a_points: overallState.sideA.pointsEarned,
-      side_b_points: overallState.sideB.pointsEarned
+      side_b_points: overallState.sideB.pointsEarned,
     });
   }
 
@@ -753,7 +788,7 @@ export const POST: RequestHandler = async (event) => {
     side: requestBody.side,
     matchState: formatMatchState(overallState, sideLabelByEngineId),
     matchClosed,
-    closeNotation: overallState.closeNotation
+    closeNotation: overallState.closeNotation,
   };
 
   await markOpProcessed(db, opId, JSON.stringify(responseBody), matchId);
