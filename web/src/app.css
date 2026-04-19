@@ -78,12 +78,12 @@
 
     /* Text */
     --color-text-primary: #f9fafb;
-    --color-text-secondary: #9ca3af;
-    --color-text-muted: #6b7280;
+    --color-text-secondary: #e5e7eb;
+    --color-text-muted: #d1d5db;
 
     /* Interactive */
-    --color-accent: #3b82f6;
-    --color-accent-hover: #2563eb;
+    --color-accent: #1d4ed8;
+    --color-accent-hover: #1e3a8a;
     --color-accent-text: #ffffff;
   }
 
@@ -97,12 +97,12 @@
 
       /* Text */
       --color-text-primary: #f9fafb;
-      --color-text-secondary: #9ca3af;
-      --color-text-muted: #6b7280;
+      --color-text-secondary: #e5e7eb;
+      --color-text-muted: #d1d5db;
 
       /* Interactive */
-      --color-accent: #3b82f6;
-      --color-accent-hover: #2563eb;
+      --color-accent: #1d4ed8;
+      --color-accent-hover: #1e3a8a;
       --color-accent-text: #ffffff;
     }
   }

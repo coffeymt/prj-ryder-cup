@@ -11,7 +11,7 @@
 
 <svelte:head>
   <title>{data.tournamentName} | Join Tournament</title>
-  <meta name="description" content="Select your player profile to join live Ryder Cup scoring." />
+  <meta name="description" content="Select your player profile to join live tournament scoring." />
 </svelte:head>
 
 {#if form?.joinError}

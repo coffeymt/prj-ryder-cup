@@ -5,16 +5,16 @@
 </script>
 
 <svelte:head>
-  <title>Ryder Cup</title>
-  <meta name="description" content="Live Ryder Cup scoring for your golf trip." />
+  <title>Kiawah Golf</title>
+  <meta name="description" content="Live tournament scoring for your golf trip." />
 </svelte:head>
 
 <main class="mx-auto flex min-h-screen w-full max-w-md flex-col justify-center px-6 py-10">
   <section class="space-y-10 rounded-3xl border border-border bg-surface p-card-padding shadow-sm">
     <div class="space-y-4 text-center">
-      <p class="text-xs font-semibold uppercase tracking-[0.32em] text-text-muted">Ryder Cup</p>
-      <h1 class="font-display text-4xl font-semibold tracking-tight text-text-primary">Ryder Cup</h1>
-      <p class="text-base leading-relaxed text-text-secondary">Live Ryder Cup scoring for your golf trip.</p>
+      <p class="text-xs font-semibold uppercase tracking-[0.32em] text-text-muted">Kiawah Golf</p>
+      <h1 class="font-display text-4xl font-semibold tracking-tight text-text-primary">Kiawah Golf</h1>
+      <p class="text-base leading-relaxed text-text-secondary">Live tournament scoring for your golf trip.</p>
     </div>
 
     <div class="space-y-4">

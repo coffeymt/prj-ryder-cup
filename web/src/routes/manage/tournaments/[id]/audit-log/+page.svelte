@@ -22,7 +22,7 @@
 </script>
 
 <svelte:head>
-  <title>{data.tournament.name} Audit Log | Ryder Cup Manager</title>
+  <title>{data.tournament.name} Audit Log | Golf Manager</title>
 </svelte:head>
 
 <section class="mx-auto w-full max-w-6xl space-y-6">

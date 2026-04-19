@@ -1,6 +1,6 @@
-# Ryder Cup App — Design System
+# Golf App — Design System
 
-This document outlines the design patterns, tokens, and component guidelines for the Ryder Cup App.
+This document outlines the design patterns, tokens, and component guidelines for the Golf App.
 
 ## 1. Tokens & Theming
 

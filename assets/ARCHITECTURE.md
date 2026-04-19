@@ -1,4 +1,4 @@
-# Ryder Cup App — Architecture Overview
+# Golf App — Architecture Overview
 
 ## Stack
 
@@ -112,5 +112,5 @@ See [`INFRASTRUCTURE.md`](./INFRASTRUCTURE.md) for full resource inventory and v
 | Environment | D1 database | Domain |
 |---|---|---|
 | local | SQLite file (`.wrangler/state/`) | `localhost:5173` |
-| preview | `rydercup-preview` | `<branch>.rydercup.pages.dev` |
-| production | `rydercup-prod` | `rydercup.sbcctears.com` (also `rydercup.pages.dev`) |
+| preview | `golf-preview` | `<branch>.golf.pages.dev` |
+| production | `golf-prod` | `golf.sbcctears.com` (also `golf.pages.dev`) |

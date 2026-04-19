@@ -118,7 +118,7 @@ const FIXTURE_SEGMENT: RoundSegment = {
 const FIXTURE_TOURNAMENT: Tournament = {
   id: 'tournament-1',
   code: 'ABC123',
-  name: 'Ryder Cup',
+  name: 'Golf',
   start_date: '2026-04-17',
   end_date: '2026-04-20',
   points_to_win: 15.5,

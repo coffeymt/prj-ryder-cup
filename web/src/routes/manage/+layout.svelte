@@ -124,7 +124,7 @@
             {/if}
           </button>
 
-          <a href="/manage" class="text-lg font-semibold tracking-tight text-text-primary">Ryder Cup</a>
+          <a href="/manage" class="text-lg font-semibold tracking-tight text-text-primary">Kiawah Golf</a>
         </div>
 
         <div class="hidden min-w-0 flex-1 justify-center sm:flex">

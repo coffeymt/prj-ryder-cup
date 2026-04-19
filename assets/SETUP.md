@@ -1,7 +1,7 @@
-# Ryder Cup App — One-Time Setup Guide
+# Golf App — One-Time Setup Guide
 
 ## Overview
-This runbook provisions every piece of infrastructure the Ryder Cup app requires on a fresh Cloudflare account. It is the operator-facing complement to [`INFRASTRUCTURE.md`](./INFRASTRUCTURE.md): the blueprint declares *what* must exist; this guide prescribes *how* to create it. Run it once before the first deploy and again only to rotate a rotated resource (new account, new secret, new sending domain).
+This runbook provisions every piece of infrastructure the Golf app requires on a fresh Cloudflare account. It is the operator-facing complement to [`INFRASTRUCTURE.md`](./INFRASTRUCTURE.md): the blueprint declares *what* must exist; this guide prescribes *how* to create it. Run it once before the first deploy and again only to rotate a rotated resource (new account, new secret, new sending domain).
 
 All commands target Windows PowerShell because the workspace OS is Windows. bash/zsh equivalents are shown inline where the command differs.
 
@@ -15,9 +15,11 @@ All commands target Windows PowerShell because the workspace OS is Windows. bash
 7. [Step 6 — Apply initial migration (preview)](#step-6--apply-initial-migration-preview)
 8. [Step 7 — First preview deploy](#step-7--first-preview-deploy)
 9. [Step 8 — Production cutover](#step-8--production-cutover)
-10. [Development Workflow](#development-workflow)
-11. [Rollback / Rotation](#rollback--rotation)
-12. [Troubleshooting](#troubleshooting)
+10. [Commissioner login (first-time)](#commissioner-login-first-time)
+11. [Demo tournament](#demo-tournament)
+12. [Development Workflow](#development-workflow)
+13. [Rollback / Rotation](#rollback--rotation)
+14. [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -31,7 +33,7 @@ All commands target Windows PowerShell because the workspace OS is Windows. bash
 | smtp2go account | Required for magic-link emails. Cloudflare Workers cannot open raw SMTP sockets, so the app posts to smtp2go's HTTP API. Sign up at [smtp2go.com](https://www.smtp2go.com). Needed in [Step 5](#step-5--add-smtp2go-sending-domain-and-dns-records). |
 | Terminal at workspace root | `c:\Users\MichaelCoffey\prj-kiawah`. All `npx wrangler` commands below must be run from `web/` unless stated otherwise. |
 
-> **Note:** Canonical identifiers for this project are `rydercup` (Pages), `rydercup-preview` and `rydercup-prod` (D1), and `rydercup.sbcctears.com` (custom domain). Swap them consistently if you fork the project.
+> **Note:** Canonical identifiers for this project are `golf` (Pages), `golf-preview` and `golf-prod` (D1), and `golf.sbcctears.com` (custom domain). Swap them consistently if you fork the project.
 
 > **Warning:** Never commit secret values or pass them as CLI arguments (PowerShell history and Windows Event Log capture arguments). Always paste values into the `wrangler secret put` interactive prompt.
 
@@ -83,17 +85,17 @@ Two databases: one for preview deploys, one for production. Environment separati
 ### Preview database
 
 ```powershell
-npx wrangler d1 create rydercup-preview
+npx wrangler d1 create golf-preview
 ```
 
 **What to expect:** Wrangler prints a `database_id` UUID and a JSONC snippet for `wrangler.jsonc`:
 
 ```
-✅ Successfully created DB 'rydercup-preview'
+✅ Successfully created DB 'golf-preview'
 
 {
   "binding": "DB",
-  "database_name": "rydercup-preview",
+  "database_name": "golf-preview",
   "database_id": "<generated-by-wrangler>"
 }
 ```
@@ -101,7 +103,7 @@ npx wrangler d1 create rydercup-preview
 ### Production database
 
 ```powershell
-npx wrangler d1 create rydercup-prod
+npx wrangler d1 create golf-prod
 ```
 
 Same output shape with a different `database_id`.
@@ -113,22 +115,22 @@ The repo uses `web/wrangler.jsonc` (JSON-with-comments). The canonical shape alr
 ```jsonc
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "rydercup",
+  "name": "golf",
   "compatibility_date": "2026-04-17",
   "compatibility_flags": ["nodejs_als"],
   "pages_build_output_dir": ".svelte-kit/cloudflare",
   "d1_databases": [
-    { "binding": "DB", "database_name": "rydercup-prod", "database_id": "<prod-uuid>" }
+    { "binding": "DB", "database_name": "golf-prod", "database_id": "<prod-uuid>" }
   ],
   "env": {
     "preview": {
       "d1_databases": [
-        { "binding": "DB", "database_name": "rydercup-preview", "database_id": "<preview-uuid>" }
+        { "binding": "DB", "database_name": "golf-preview", "database_id": "<preview-uuid>" }
       ]
     },
     "production": {
       "d1_databases": [
-        { "binding": "DB", "database_name": "rydercup-prod", "database_id": "<prod-uuid>" }
+        { "binding": "DB", "database_name": "golf-prod", "database_id": "<prod-uuid>" }
       ]
     }
   }
@@ -151,8 +153,8 @@ Expected output:
 ┌────────────────────┬──────────────────────────────────────┬─────────┬───────────┐
 │ name               │ uuid                                 │ version │ ...       │
 ├────────────────────┼──────────────────────────────────────┼─────────┼───────────┤
-│ rydercup-preview   │ <preview-uuid>                       │ ...     │ ...       │
-│ rydercup-prod      │ <prod-uuid>                          │ ...     │ ...       │
+│ golf-preview       │ <preview-uuid>                       │ ...     │ ...       │
+│ golf-prod          │ <prod-uuid>                          │ ...     │ ...       │
 └────────────────────┴──────────────────────────────────────┴─────────┴───────────┘
 ```
 
@@ -163,17 +165,17 @@ Expected output:
 Creates the hosting project that both preview branches and `main` deploy into. Project metadata lives in [`INFRASTRUCTURE.md`](./INFRASTRUCTURE.md#cloudflare-pages-project).
 
 ```powershell
-npx wrangler pages project create rydercup --production-branch main
+npx wrangler pages project create golf --production-branch main
 ```
 
 **What to expect:**
 
 ```
-✨ Successfully created the 'rydercup' project.
+✨ Successfully created the 'golf' project.
 To deploy a folder of assets, run 'wrangler pages deploy <directory>'.
 ```
 
-Visit `https://dash.cloudflare.com/<your-account-id>/workers-and-pages/view/rydercup` to confirm the project exists in the dashboard.
+Visit `https://dash.cloudflare.com/<your-account-id>/workers-and-pages/view/golf` to confirm the project exists in the dashboard.
 
 ### Verify
 
@@ -181,7 +183,7 @@ Visit `https://dash.cloudflare.com/<your-account-id>/workers-and-pages/view/ryde
 npx wrangler pages project list
 ```
 
-Expected: `rydercup` appears in the list with `Production branch: main`.
+Expected: `golf` appears in the list with `Production branch: main`.
 
 ---
 
@@ -216,7 +218,7 @@ Copy the output to your clipboard. Each of `COOKIE_SIGNING_KEY`, `SPECTATOR_COOK
 Pages Functions secrets are managed via the `pages secret` subcommand (not `secret`):
 
 ```powershell
-npx wrangler pages secret put COOKIE_SIGNING_KEY --project-name rydercup
+npx wrangler pages secret put COOKIE_SIGNING_KEY --project-name golf
 ```
 
 **What to expect:** Wrangler prompts to select the environment (Preview or Production), then:
@@ -248,13 +250,13 @@ For `EMAIL_API_KEY` you can share the same key across preview and production, or
 Registration command pattern (re-run for each secret; pick the env at the prompt):
 
 ```powershell
-npx wrangler pages secret put <NAME> --project-name rydercup
+npx wrangler pages secret put <NAME> --project-name golf
 ```
 
 ### Verify
 
 ```powershell
-npx wrangler pages secret list --project-name rydercup
+npx wrangler pages secret list --project-name golf
 ```
 
 Expected output includes all five secret names (`COOKIE_SIGNING_KEY`, `SPECTATOR_COOKIE_KEY`, `MAGIC_LINK_KEY`, `EMAIL_API_KEY`, `FROM_EMAIL`) in both preview and production environments before production deploy.
@@ -323,7 +325,7 @@ Expected: non-empty results matching the values smtp2go showed you.
 4. Register it as the `EMAIL_API_KEY` Pages secret using the pattern from [Step 4](#step-4--generate-and-register-workers-secrets):
 
 ```powershell
-npx wrangler pages secret put EMAIL_API_KEY --project-name rydercup
+npx wrangler pages secret put EMAIL_API_KEY --project-name golf
 ```
 
 Paste the key into the prompt. Select the environment when prompted; repeat for the other environment with either the same key or a separately-created per-env key (recommended).
@@ -331,7 +333,7 @@ Paste the key into the prompt. Select the environment when prompted; repeat for 
 5. Register the sender identity:
 
 ```powershell
-npx wrangler pages secret put FROM_EMAIL --project-name rydercup
+npx wrangler pages secret put FROM_EMAIL --project-name golf
 ```
 
 When prompted, paste `SBCC Tears <michael@sbcctears.com>` (or your substitute).
@@ -367,9 +369,10 @@ Migrations to be applied:
 │ 0001_init.sql                                │
 │ 0002_seed_kiawah.sql                         │
 │ 0003_add_match_id_to_processed_ops.sql       │
+│ 0004_seed_demo_tournament.sql                │
 └──────────────────────────────────────────────┘
 ✔ Ok to apply? … yes
-🌀 Executing on remote database rydercup-preview:
+🌀 Executing on remote database golf-preview:
 🚣  Executed X queries in Y ms
 ```
 
@@ -400,7 +403,7 @@ Use GitHub, Cloudflare Pages' own Git-integration, or any git host that Pages su
 
 ### 7b — Connect the repo in Cloudflare Pages
 
-1. Cloudflare dashboard → **Workers & Pages** → `rydercup` → **Settings** → **Builds & deployments** → **Git**.
+1. Cloudflare dashboard → **Workers & Pages** → `golf` → **Settings** → **Builds & deployments** → **Git**.
 2. Click **Connect to Git** and authorize Cloudflare to read the repo.
 3. Build configuration:
    - **Framework preset:** SvelteKit
@@ -412,7 +415,7 @@ Use GitHub, Cloudflare Pages' own Git-integration, or any git host that Pages su
 ### 7c — Push the feature branch
 
 ```powershell
-git push -u origin feature/ryder-cup-app
+git push -u origin feature/golf-rebrand
 ```
 
 **What to expect:** Pages CI detects the push and starts a preview build. Watch progress at the project's **Deployments** tab.
@@ -420,7 +423,7 @@ git push -u origin feature/ryder-cup-app
 Build logs stream in the dashboard. On success, the preview URL is:
 
 ```
-https://feature-ryder-cup-app.rydercup.pages.dev
+https://feature-golf-rebrand.golf.pages.dev
 ```
 
 (Branch name is slugified; underscores and slashes become dashes.)
@@ -430,13 +433,13 @@ https://feature-ryder-cup-app.rydercup.pages.dev
 PowerShell:
 
 ```powershell
-Invoke-WebRequest -Method Head https://feature-ryder-cup-app.rydercup.pages.dev
+Invoke-WebRequest -Method Head https://feature-golf-rebrand.golf.pages.dev
 ```
 
 bash / zsh:
 
 ```bash
-curl -I https://feature-ryder-cup-app.rydercup.pages.dev
+curl -I https://feature-golf-rebrand.golf.pages.dev
 ```
 
 Expected: HTTP `200`, `cf-ray` header present, `content-type: text/html`. The response body serves the SvelteKit welcome page (or whatever the current root route renders).
@@ -467,15 +470,15 @@ Same expected table list as [Step 6](#step-6--apply-initial-migration-preview).
 The production registrations from [Step 4](#step-4--generate-and-register-workers-secrets) should already be in place:
 
 ```powershell
-npx wrangler pages secret list --project-name rydercup
+npx wrangler pages secret list --project-name golf
 ```
 
 All five names (`COOKIE_SIGNING_KEY`, `SPECTATOR_COOKIE_KEY`, `MAGIC_LINK_KEY`, `EMAIL_API_KEY`, `FROM_EMAIL`) must be present for the production environment.
 
 ### 8c — Bind custom domain
 
-1. Cloudflare dashboard → **Workers & Pages** → `rydercup` → **Custom domains** → **Set up a custom domain**.
-2. Enter `rydercup.sbcctears.com`.
+1. Cloudflare dashboard → **Workers & Pages** → `golf` → **Custom domains** → **Set up a custom domain**.
+2. Enter `golf.sbcctears.com`.
 3. Cloudflare detects the zone and auto-creates the CNAME in `sbcctears.com`. TLS provisions automatically (Google Trust Services).
 4. Wait 1–5 minutes for SSL status to flip to **Active**.
 
@@ -483,7 +486,7 @@ All five names (`COOKIE_SIGNING_KEY`, `SPECTATOR_COOKIE_KEY`, `MAGIC_LINK_KEY`, 
 
 ```powershell
 git checkout main
-git merge feature/ryder-cup-app --ff-only
+git merge feature/golf-rebrand --ff-only
 git push origin main
 ```
 
@@ -494,13 +497,13 @@ Pages CI rebuilds and deploys to the custom domain.
 PowerShell:
 
 ```powershell
-Invoke-WebRequest -Method Head https://rydercup.sbcctears.com
+Invoke-WebRequest -Method Head https://golf.sbcctears.com
 ```
 
 bash / zsh:
 
 ```bash
-curl -I https://rydercup.sbcctears.com
+curl -I https://golf.sbcctears.com
 ```
 
 Expected:
@@ -513,6 +516,53 @@ server: cloudflare
 ```
 
 Certificate: issued by Google Trust Services, valid, not expired.
+
+---
+
+## Commissioner login (first-time)
+
+Authenticates an operator against the production app. The endpoint auto-provisions a commissioner row for any valid email on first use — there is currently no allowlist.
+
+1. Navigate to `https://golf.sbcctears.com/manage/login`.
+2. Enter the commissioner email `coffey.mikey@gmail.com`.
+3. Submit the form. A magic-link email arrives within seconds, sent from `FROM_EMAIL` via smtp2go.
+4. Click the link. You are redirected to `/manage` as an authenticated commissioner.
+
+### Dev-mode fallback
+
+When running `npm run dev` with `EMAIL_API_KEY` or `FROM_EMAIL` unset, `/api/auth/magic-link/request` skips the smtp2go send and prints the link to the server console:
+
+```
+[dev] MAGIC LINK for <email>: <url>  (expires <iso>)
+```
+
+Copy the URL from the terminal and open it directly in the browser. `MAGIC_LINK_KEY` and `COOKIE_SIGNING_KEY` remain required; missing either returns 500 regardless of environment.
+
+### Troubleshooting
+
+Tail production logs to surface send errors from `emailClient.ts`:
+
+```powershell
+npx wrangler pages deployment tail --project-name golf
+```
+
+## Demo tournament
+
+Migration `web/migrations/0004_seed_demo_tournament.sql` provisions a public demo tournament for smoke-testing the app end-to-end. Every insert uses `INSERT OR IGNORE`, so the migration is idempotent and safe to re-apply.
+
+| Field | Value |
+|---|---|
+| Code | `DEMO26` |
+| Name | `Demo Cup 2026` |
+| Commissioner | `coffey.mikey@gmail.com` |
+| Teams | `USA`, `Europe` (4 players each) |
+| Round | One round on Cougar Point (Kiawah) |
+| Matches | Four — singles, four-ball, pinehurst, scramble |
+
+Public URLs:
+
+- Tournament view: `https://golf.sbcctears.com/t/DEMO26`
+- Join flow: `https://golf.sbcctears.com/join/DEMO26`
 
 ---
 
@@ -570,6 +620,7 @@ Current migrations:
 | `0001_init.sql` | Full schema — all entity tables and indexes |
 | `0002_seed_kiawah.sql` | 5 Kiawah courses with tees, holes, SI, CR/Slope |
 | `0003_add_match_id_to_processed_ops.sql` | Adds `match_id` column + unique index to `processed_ops` for match-scoped idempotency |
+| `0004_seed_demo_tournament.sql` | Seeds public demo tournament (code `DEMO26`) for testing |
 
 ---
 
@@ -580,18 +631,18 @@ Current migrations:
 `wrangler pages secret put` overwrites atomically — register the new value with the same name. The next request served by a Pages Function binding picks up the rotated value; no redeploy required.
 
 ```powershell
-npx wrangler pages secret put COOKIE_SIGNING_KEY --project-name rydercup
+npx wrangler pages secret put COOKIE_SIGNING_KEY --project-name golf
 ```
 
 > **Warning:** Rotating `COOKIE_SIGNING_KEY`, `SPECTATOR_COOKIE_KEY`, or `MAGIC_LINK_KEY` invalidates every existing cookie / token signed with the old key. All commissioners will be logged out; all in-flight magic links will fail. Do this only with intent.
 
 ### Roll back a production deploy
 
-1. Cloudflare dashboard → `rydercup` → **Deployments**.
+1. Cloudflare dashboard → `golf` → **Deployments**.
 2. Find a prior known-good deployment.
 3. Click the deployment → **Retry deployment** → **Promote**.
 
-The promoted deployment serves `rydercup.sbcctears.com` within seconds. The rolled-back state is the Pages bundle only; D1 migrations are **not** reverted by this action.
+The promoted deployment serves `golf.sbcctears.com` within seconds. The rolled-back state is the Pages bundle only; D1 migrations are **not** reverted by this action.
 
 ### Revoke an smtp2go API key
 
@@ -632,7 +683,7 @@ npx wrangler d1 execute DB --remote --env preview --command ".schema"
 
 The Pages deployment likely failed silently. Check:
 
-1. Dashboard → `rydercup` → **Deployments** → latest deployment → **View build log**.
+1. Dashboard → `golf` → **Deployments** → latest deployment → **View build log**.
 2. Common causes: missing Node version pin, missing `web/` root directory in build config, lint/test failure in CI.
 
 ### smtp2go says "Domain not verified" despite records being added
@@ -651,7 +702,7 @@ Three possibilities:
 
 ### Magic-link email never arrives
 
-1. Tail logs: `npx wrangler pages deployment tail --project-name rydercup`. Look for an error thrown from `emailClient.ts` (shape: `smtp2go email send failed with status <code>: <body>`).
+1. Tail logs: `npx wrangler pages deployment tail --project-name golf`. Look for an error thrown from `emailClient.ts` (shape: `smtp2go email send failed with status <code>: <body>`).
 2. If status `401` / `403`: `EMAIL_API_KEY` is wrong or lacks send scope. Re-issue from smtp2go and re-register the secret.
 3. If status `400` with `sender` complaint: `FROM_EMAIL` uses an address on a domain not yet verified in smtp2go. Complete [Step 5c](#5c--verify-the-domain-in-smtp2go) first.
 
@@ -663,5 +714,5 @@ You're authenticated to a different Cloudflare account than the one that owns th
 
 Pages issues TLS via DNS-01 challenges. If stuck for more than 10 minutes:
 
-1. Dashboard → `sbcctears.com` zone → **DNS** → confirm the `rydercup` CNAME exists and is proxied (orange cloud).
-2. Dashboard → `rydercup` → **Custom domains** → remove and re-add the domain.
+1. Dashboard → `sbcctears.com` zone → **DNS** → confirm the `golf` CNAME exists and is proxied (orange cloud).
+2. Dashboard → `golf` → **Custom domains** → remove and re-add the domain.

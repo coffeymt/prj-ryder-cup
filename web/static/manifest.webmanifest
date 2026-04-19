@@ -1,7 +1,7 @@
 {
-  "name": "Ryder Cup",
-  "short_name": "Ryder Cup",
-  "description": "Live Ryder Cup scoring for your golf trip.",
+  "name": "Kiawah Golf",
+  "short_name": "Kiawah Golf",
+  "description": "Live golf tournament scoring for your trip.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#111827",

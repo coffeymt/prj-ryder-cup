@@ -12,7 +12,7 @@ type EmailRequestPayload = {
 
 const testParams = {
   to: 'captain@example.com',
-  magicLinkUrl: 'https://rydercup.sbcctears.com/manage/consume?token=test-token',
+  magicLinkUrl: 'https://golf.sbcctears.com/manage/consume?token=test-token',
   expiresAt: new Date('2026-04-17T12:15:00.000Z'),
   emailApiKey: 'test-key',
   fromEmail: 'SBCC Tears <michael@sbcctears.com>',
@@ -60,7 +60,7 @@ describe('sendMagicLink', () => {
     expect(payload.api_key).toBe('test-key');
     expect(payload.sender).toBe('SBCC Tears <michael@sbcctears.com>');
     expect(payload.to).toEqual(['captain@example.com']);
-    expect(payload.subject).toBe('Your Ryder Cup sign-in link');
+    expect(payload.subject).toBe('Your Kiawah Golf sign-in link');
     expect(payload.html_body).toContain(testParams.magicLinkUrl);
   });
 

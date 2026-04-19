@@ -1,5 +1,5 @@
 const SMTP2GO_EMAILS_ENDPOINT = 'https://api.smtp2go.com/v3/email/send';
-const MAGIC_LINK_SUBJECT = 'Your Ryder Cup sign-in link';
+const MAGIC_LINK_SUBJECT = 'Your Kiawah Golf sign-in link';
 const ONE_MINUTE_MS = 60 * 1000;
 
 type SendMagicLinkParams = {
@@ -34,12 +34,12 @@ function buildEmailContent(params: { magicLinkUrl: string; expiresAt: Date }): {
 
   return {
     html: [
-      '<p>Your Ryder Cup sign-in link is ready.</p>',
+      '<p>Your Kiawah Golf sign-in link is ready.</p>',
       `<p><a href="${escapedMagicLinkUrl}">Click here to sign in</a> - link expires in ${expiryLabel}.</p>`,
       `<p>Plaintext fallback: ${escapedMagicLinkUrl}</p>`,
     ].join(''),
     text: [
-      'Your Ryder Cup sign-in link is ready.',
+      'Your Kiawah Golf sign-in link is ready.',
       '',
       `Open this link to sign in (expires in ${expiryLabel}):`,
       params.magicLinkUrl,

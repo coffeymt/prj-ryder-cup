@@ -6,7 +6,7 @@ import {
   type MagicLinkRecord,
 } from './magicLink';
 
-type MagicLinkInsertValues = [string, string, string, string];
+type MagicLinkInsertValues = [string, string, string];
 type MagicLinkUpdateValues = [string, number];
 
 function cloneRecord(record: MagicLinkRecord): MagicLinkRecord {
@@ -53,11 +53,10 @@ class MockD1Statement {
 
   async run<T = Record<string, unknown>>(): Promise<D1Result<T>> {
     if (this.normalizedQuery.startsWith('insert into magic_link_tokens')) {
-      const [commissionerId, tokenHash, email, expiresAt] = this.values as MagicLinkInsertValues;
+      const [commissionerEmail, tokenHash, expiresAt] = this.values as MagicLinkInsertValues;
       this.db.insert({
-        commissioner_id: commissionerId,
+        commissioner_email: commissionerEmail,
         token_hash: tokenHash,
-        email,
         expires_at: expiresAt,
         consumed_at: null,
       });
@@ -145,14 +144,12 @@ describe('magic-link token lifecycle', () => {
     const { token } = await issueMagicLink(
       toD1Database(db),
       'commissioner@example.com',
-      'commissioner-001',
       magicLinkKey
     );
     const consumed = await consumeMagicLink(toD1Database(db), token, magicLinkKey);
     const [storedRecord] = db.getRows();
 
     expect(consumed).toEqual({
-      commissionerId: 'commissioner-001',
       email: 'commissioner@example.com',
     });
     expect(storedRecord.consumed_at).not.toBeNull();
@@ -163,13 +160,11 @@ describe('magic-link token lifecycle', () => {
     const { token } = await issueMagicLink(
       toD1Database(db),
       'commissioner@example.com',
-      'commissioner-001',
       magicLinkKey
     );
     const firstConsume = await consumeMagicLink(toD1Database(db), token, magicLinkKey);
 
     expect(firstConsume).toEqual({
-      commissionerId: 'commissioner-001',
       email: 'commissioner@example.com',
     });
 
@@ -185,7 +180,6 @@ describe('magic-link token lifecycle', () => {
     const { token } = await issueMagicLink(
       toD1Database(db),
       'commissioner@example.com',
-      'commissioner-001',
       magicLinkKey
     );
 
@@ -202,7 +196,6 @@ describe('magic-link token lifecycle', () => {
     const { token } = await issueMagicLink(
       toD1Database(issuingDb),
       'commissioner@example.com',
-      'commissioner-001',
       magicLinkKey
     );
     const consumed = await consumeMagicLink(toD1Database(consumingDb), token, magicLinkKey);
@@ -215,7 +208,6 @@ describe('magic-link token lifecycle', () => {
     const { token } = await issueMagicLink(
       toD1Database(db),
       'commissioner@example.com',
-      'commissioner-001',
       magicLinkKey
     );
     const firstConsume = await consumeMagicLink(toD1Database(db), token, magicLinkKey);
@@ -225,7 +217,6 @@ describe('magic-link token lifecycle', () => {
     const replayConsume = await consumeMagicLink(toD1Database(db), token, magicLinkKey);
 
     expect(firstConsume).toEqual({
-      commissionerId: 'commissioner-001',
       email: 'commissioner@example.com',
     });
     expect(replayConsume).toEqual(firstConsume);

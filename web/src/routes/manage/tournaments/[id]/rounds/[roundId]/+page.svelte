@@ -146,7 +146,7 @@
 </script>
 
 <svelte:head>
-  <title>{data.round.name ?? `Round ${data.round.roundNumber}`} | Ryder Cup Manager</title>
+  <title>{data.round.name ?? `Round ${data.round.roundNumber}`} | Golf Manager</title>
 </svelte:head>
 
 <section class="space-y-5">

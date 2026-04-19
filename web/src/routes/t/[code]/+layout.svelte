@@ -42,7 +42,7 @@
 </script>
 
 <svelte:head>
-  <title>{data.tournament.name} | Ryder Cup</title>
+  <title>{data.tournament.name} | Golf</title>
   <meta name="description" content="Live player dashboard and scoring for your tournament." />
 </svelte:head>
 

@@ -256,7 +256,7 @@
 </script>
 
 <svelte:head>
-  <title>New Round | Ryder Cup Manager</title>
+  <title>New Round | Golf Manager</title>
 </svelte:head>
 
 <section class="space-y-5">

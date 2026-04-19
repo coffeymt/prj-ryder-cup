@@ -157,7 +157,7 @@
 </script>
 
 <svelte:head>
-  <title>{data.tournament.name} Players | Ryder Cup Manager</title>
+  <title>{data.tournament.name} Players | Golf Manager</title>
 </svelte:head>
 
 <section class="space-y-6">

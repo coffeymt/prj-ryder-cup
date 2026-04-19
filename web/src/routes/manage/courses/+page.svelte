@@ -9,7 +9,7 @@
 </script>
 
 <svelte:head>
-  <title>Course Library | Ryder Cup Manager</title>
+  <title>Course Library | Golf Manager</title>
 </svelte:head>
 
 <section class="mx-auto w-full max-w-6xl space-y-6">

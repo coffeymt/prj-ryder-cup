@@ -15,8 +15,8 @@
 </script>
 
 <svelte:head>
-  <title>Join Tournament | Ryder Cup</title>
-  <meta name="description" content="Enter your 6-character event code to join your Ryder Cup tournament." />
+  <title>Join Tournament | Golf</title>
+  <meta name="description" content="Enter your 6-character event code to join your tournament." />
 </svelte:head>
 
 <main class="mx-auto flex min-h-screen w-full max-w-md flex-col justify-center px-6 py-10">

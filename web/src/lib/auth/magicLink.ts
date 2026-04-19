@@ -7,9 +7,8 @@ const UTF8_ENCODER = new TextEncoder();
 
 export type MagicLinkRecord = {
   id: number;
-  commissioner_id: string;
   token_hash: string;
-  email: string;
+  commissioner_email: string;
   expires_at: string;
   consumed_at: string | null;
   created_at: string;
@@ -146,10 +145,9 @@ function parseTimestamp(timestamp: string): number | null {
   return parsed;
 }
 
-function toIdentity(record: MagicLinkRecord): { commissionerId: string; email: string } {
+function toIdentity(record: MagicLinkRecord): { email: string } {
   return {
-    commissionerId: record.commissioner_id,
-    email: record.email,
+    email: record.commissioner_email,
   };
 }
 
@@ -174,7 +172,6 @@ export async function generateMagicLinkToken(): Promise<{ token: string; tokenHa
 export async function issueMagicLink(
   db: D1Database,
   email: string,
-  commissionerId: string,
   magicLinkKey: string
 ): Promise<{ token: string; expiresAt: Date }> {
   const signingKey = assertMagicLinkKey(magicLinkKey);
@@ -185,11 +182,11 @@ export async function issueMagicLink(
   await db
     .prepare(
       `
-        INSERT INTO magic_link_tokens (commissioner_id, token_hash, email, expires_at)
-        VALUES (?1, ?2, ?3, ?4)
+        INSERT INTO magic_link_tokens (commissioner_email, token_hash, expires_at)
+        VALUES (?1, ?2, ?3)
       `
     )
-    .bind(commissionerId, tokenHash, email, expiresAt.toISOString())
+    .bind(email, tokenHash, expiresAt.toISOString())
     .run();
 
   return { token: signedToken, expiresAt };
@@ -199,7 +196,7 @@ export async function consumeMagicLink(
   db: D1Database,
   token: string,
   magicLinkKey: string
-): Promise<{ commissionerId: string; email: string } | null> {
+): Promise<{ email: string } | null> {
   if (!token || !magicLinkKey) {
     return null;
   }
@@ -215,7 +212,7 @@ export async function consumeMagicLink(
   const tokenRecord = await db
     .prepare(
       `
-        SELECT id, commissioner_id, token_hash, email, expires_at, consumed_at, created_at
+        SELECT id, token_hash, commissioner_email, expires_at, consumed_at, created_at
         FROM magic_link_tokens
         WHERE token_hash = ?1
         LIMIT 1
@@ -258,7 +255,7 @@ export async function consumeMagicLink(
   const refreshedRecord = await db
     .prepare(
       `
-        SELECT id, commissioner_id, token_hash, email, expires_at, consumed_at, created_at
+        SELECT id, token_hash, commissioner_email, expires_at, consumed_at, created_at
         FROM magic_link_tokens
         WHERE token_hash = ?1
         LIMIT 1

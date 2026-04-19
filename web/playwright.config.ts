@@ -1,6 +1,10 @@
 import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
-  webServer: { command: 'npm run build && npm run preview', port: 4173 },
-  testMatch: '**/*.e2e.{ts,js}',
+  timeout: 30_000,
+  testMatch: ['**/*.e2e.{ts,js}', 'e2e/**/*.spec.ts', 'tests/**/*.spec.ts'],
+  use: {
+    baseURL: 'https://golf.sbcctears.com',
+  },
+  projects: [{ name: 'chromium', use: { browserName: 'chromium' } }],
 });
