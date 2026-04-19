@@ -54,7 +54,8 @@
 </script>
 
 <article
-  style={`${match.sideA.teamColor ? `--color-team-a: ${match.sideA.teamColor};` : ''} ${match.sideB.teamColor ? `--color-team-b: ${match.sideB.teamColor};` : ''}`.trim() || undefined}
+  style={`${match.sideA.teamColor ? `--color-team-a: ${match.sideA.teamColor};` : ''} ${match.sideB.teamColor ? `--color-team-b: ${match.sideB.teamColor};` : ''}`.trim() ||
+    undefined}
   class={`border-border bg-surface p-card-padding duration-base ease-standard space-y-3 rounded-2xl border transition-all min-[1920px]:space-y-6 min-[1920px]:rounded-3xl min-[1920px]:p-8 sm:space-y-4 sm:p-5 ${
     match.status === 'notStarted'
       ? 'opacity-80 shadow-sm'

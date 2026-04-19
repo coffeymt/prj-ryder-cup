@@ -4,9 +4,7 @@
   <div
     class="border-border bg-surface p-card-padding w-full rounded-2xl border text-center shadow-sm sm:p-10"
   >
-    <h1 class="text-text-primary text-3xl font-semibold tracking-tight">
-      Tournament Manager
-    </h1>
+    <h1 class="text-text-primary text-3xl font-semibold tracking-tight">Tournament Manager</h1>
     <p class="text-text-secondary mt-3 text-base">Create your first tournament to get started.</p>
     <a
       href="/manage/tournaments/new"

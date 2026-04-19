@@ -7,7 +7,10 @@ type CookieIdentityAttempt = {
   signingKey: string | undefined;
 };
 
-type ResolvedIdentity = Pick<App.Locals, 'role' | 'tournamentId' | 'playerId' | 'playerTournamentId' | 'userId'>;
+type ResolvedIdentity = Pick<
+  App.Locals,
+  'role' | 'tournamentId' | 'playerId' | 'playerTournamentId' | 'userId'
+>;
 
 const ANONYMOUS_IDENTITY: ResolvedIdentity = {
   role: 'anonymous',

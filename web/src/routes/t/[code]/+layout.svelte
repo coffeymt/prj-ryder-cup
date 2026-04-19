@@ -65,7 +65,7 @@
       <div class="flex min-w-0 items-center gap-3">
         <a
           href="/"
-          class="border-border bg-surface-raised text-text-primary hover:bg-surface focus-visible:outline-accent inline-flex min-h-touch items-center gap-1.5 rounded-lg border px-3 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+          class="border-border bg-surface-raised text-text-primary hover:bg-surface focus-visible:outline-accent min-h-touch inline-flex items-center gap-1.5 rounded-lg border px-3 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
           aria-label="Home"
           title="Back to home"
         >
@@ -85,7 +85,9 @@
           Exit
         </a>
         <div class="min-w-0 space-y-1">
-          <p class="text-text-muted text-xs font-semibold tracking-[0.22em] uppercase">Tournament</p>
+          <p class="text-text-muted text-xs font-semibold tracking-[0.22em] uppercase">
+            Tournament
+          </p>
           <h1 class="font-display text-text-primary truncate text-lg font-semibold tracking-tight">
             {data.tournament.name}
           </h1>

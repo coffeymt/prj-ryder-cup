@@ -109,7 +109,7 @@
         style={teamColorStyle(teamA.color, '--color-team-a')}
       >
         <div
-          class={`mb-2 h-4 w-4 rounded-full bg-[var(--team-color)] shadow-sm ${data.team?.name === teamA.name ? 'ring-2 ring-[var(--team-color)] ring-offset-2 ring-offset-surface-raised' : ''}`}
+          class={`mb-2 h-4 w-4 rounded-full bg-[var(--team-color)] shadow-sm ${data.team?.name === teamA.name ? 'ring-offset-surface-raised ring-2 ring-[var(--team-color)] ring-offset-2' : ''}`}
           aria-hidden="true"
         ></div>
         <h3
@@ -120,8 +120,7 @@
             <span class="block text-xs font-normal opacity-75">(Your Team)</span>
           {/if}
         </h3>
-        <span
-          class="font-display text-team-a mt-1 text-3xl font-bold tracking-tight tabular-nums"
+        <span class="font-display text-team-a mt-1 text-3xl font-bold tracking-tight tabular-nums"
           >{formatPoints(teamA.points)}</span
         >
       </div>
@@ -135,7 +134,7 @@
         style={teamColorStyle(teamB.color, '--color-team-b')}
       >
         <div
-          class={`mb-2 h-4 w-4 rounded-full bg-[var(--team-color)] shadow-sm ${data.team?.name === teamB.name ? 'ring-2 ring-[var(--team-color)] ring-offset-2 ring-offset-surface-raised' : ''}`}
+          class={`mb-2 h-4 w-4 rounded-full bg-[var(--team-color)] shadow-sm ${data.team?.name === teamB.name ? 'ring-offset-surface-raised ring-2 ring-[var(--team-color)] ring-offset-2' : ''}`}
           aria-hidden="true"
         ></div>
         <h3
@@ -146,17 +145,14 @@
             <span class="block text-xs font-normal opacity-75">(Your Team)</span>
           {/if}
         </h3>
-        <span
-          class="font-display text-team-b mt-1 text-3xl font-bold tracking-tight tabular-nums"
+        <span class="font-display text-team-b mt-1 text-3xl font-bold tracking-tight tabular-nums"
           >{formatPoints(teamB.points)}</span
         >
       </div>
     </div>
 
     <div class="mt-8 flex justify-center">
-      <span
-        class={`rounded-full px-4 py-1.5 text-xs font-semibold ${leadingTeamClasses()}`}
-      >
+      <span class={`rounded-full px-4 py-1.5 text-xs font-semibold ${leadingTeamClasses()}`}>
         {#if teamsAreTied}
           All Square
         {:else}
@@ -168,8 +164,10 @@
 
   <!-- Today's Rounds Section -->
   <section class="space-y-6">
-    <div class="border-b border-border flex items-center justify-between pb-3">
-      <h2 class="text-text-primary text-sm font-bold tracking-[0.15em] uppercase">Today's Rounds</h2>
+    <div class="border-border flex items-center justify-between border-b pb-3">
+      <h2 class="text-text-primary text-sm font-bold tracking-[0.15em] uppercase">
+        Today's Rounds
+      </h2>
       {#if data.player}
         <span class="text-text-secondary text-xs font-semibold">{data.player.name}</span>
       {/if}
@@ -281,7 +279,7 @@
 
   <!-- All Rounds Section -->
   <section class="space-y-6">
-    <div class="border-b border-border flex items-center justify-between pb-3">
+    <div class="border-border flex items-center justify-between border-b pb-3">
       <h2 class="text-text-primary text-sm font-bold tracking-[0.15em] uppercase">All Rounds</h2>
       <span
         class="border-border bg-surface-raised text-text-secondary rounded-full border px-2.5 py-0.5 text-xs font-semibold"

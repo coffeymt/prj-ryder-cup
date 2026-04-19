@@ -21,7 +21,9 @@
           <span class="bg-accent h-1.5 w-1.5 rounded-full"></span>
           <span class="bg-accent/60 h-px w-10"></span>
         </div>
-        <p class="text-text-muted text-xs font-semibold tracking-[0.32em] uppercase">Golf Scoring</p>
+        <p class="text-text-muted text-xs font-semibold tracking-[0.32em] uppercase">
+          Golf Scoring
+        </p>
         <h1 class="font-display text-text-primary text-5xl font-bold tracking-tight">
           Tears Tourneys ⛳
         </h1>
