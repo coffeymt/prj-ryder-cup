@@ -1,7 +1,12 @@
-import type { Commissioner } from './types';
+import type { Commissioner, CommissionerRole } from './types';
 
-type CreateCommissionerInput = Omit<Commissioner, 'created_at'> &
-  Partial<Pick<Commissioner, 'created_at'>>;
+type CreateCommissionerInput = {
+  id?: string;
+  tournament_id?: string | null;
+  email: string;
+  role: CommissionerRole;
+  created_at?: string;
+};
 
 const COMMISSIONER_COLUMNS = `
   id,
@@ -23,7 +28,7 @@ function normalizeCommissioner(row: Commissioner | null): Commissioner | null {
   return {
     ...row,
     id: String(row.id),
-    tournament_id: String(row.tournament_id)
+    tournament_id: row.tournament_id === null ? null : String(row.tournament_id)
   };
 }
 
@@ -33,20 +38,21 @@ export async function createCommissioner(
 ): Promise<Commissioner> {
   const createdAt = data.created_at ?? nowIso();
 
-  await db
+  const result = await db
     .prepare(
       `
-        INSERT INTO commissioners (id, tournament_id, email, role, created_at)
-        VALUES (?1, ?2, ?3, ?4, ?5)
+        INSERT INTO commissioners (tournament_id, email, role, created_at)
+        VALUES (?1, ?2, ?3, ?4)
       `
     )
-    .bind(data.id, data.tournament_id, data.email, data.role, createdAt)
+    .bind(data.tournament_id ?? null, data.email, data.role, createdAt)
     .run();
 
-  const created = await getCommissionerById(db, data.id);
+  const newId = String(result.meta.last_row_id);
+  const created = await getCommissionerById(db, newId);
 
   if (!created) {
-    throw new Error(`Failed to create commissioner ${data.id}.`);
+    throw new Error(`Failed to create commissioner with last_row_id ${newId}.`);
   }
 
   return created;

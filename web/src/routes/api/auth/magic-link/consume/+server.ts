@@ -1,8 +1,7 @@
 import { dev } from '$app/environment';
-import { env } from '$env/dynamic/private';
 import { createCommissionerCookie } from '$lib/auth/cookies';
 import { consumeMagicLink } from '$lib/auth/magicLink';
-import { getCommissionerById } from '$lib/db/commissioners';
+import { getCommissionerByEmail } from '$lib/db/commissioners';
 import { error, redirect } from '@sveltejs/kit';
 import type { RequestEvent, RequestHandler } from '@sveltejs/kit';
 
@@ -20,14 +19,17 @@ function getDb(event: RequestEvent): D1Database {
   return db;
 }
 
-function getAuthConfig(): { magicLinkKey: string; cookieSigningKey: string } {
+function getAuthConfig(platformEnv: App.Platform['env']): {
+  magicLinkKey: string;
+  cookieSigningKey: string;
+} {
   const missingKeys: string[] = [];
 
-  if (!env.MAGIC_LINK_KEY) {
+  if (!platformEnv.MAGIC_LINK_KEY) {
     missingKeys.push('MAGIC_LINK_KEY');
   }
 
-  if (!env.COOKIE_SIGNING_KEY) {
+  if (!platformEnv.COOKIE_SIGNING_KEY) {
     missingKeys.push('COOKIE_SIGNING_KEY');
   }
 
@@ -36,8 +38,8 @@ function getAuthConfig(): { magicLinkKey: string; cookieSigningKey: string } {
   }
 
   return {
-    magicLinkKey: env.MAGIC_LINK_KEY,
-    cookieSigningKey: env.COOKIE_SIGNING_KEY,
+    magicLinkKey: platformEnv.MAGIC_LINK_KEY,
+    cookieSigningKey: platformEnv.COOKIE_SIGNING_KEY,
   };
 }
 
@@ -49,7 +51,13 @@ export const GET: RequestHandler = async (event) => {
   }
 
   const db = getDb(event);
-  const { magicLinkKey, cookieSigningKey } = getAuthConfig();
+  const platformEnv = event.platform?.env;
+
+  if (!platformEnv) {
+    throw error(500, 'Platform environment is not configured.');
+  }
+
+  const { magicLinkKey, cookieSigningKey } = getAuthConfig(platformEnv);
 
   const consumedIdentity = await consumeMagicLink(db, token, magicLinkKey);
 
@@ -57,7 +65,7 @@ export const GET: RequestHandler = async (event) => {
     throw redirect(302, INVALID_LINK_REDIRECT);
   }
 
-  const commissioner = await getCommissionerById(db, consumedIdentity.commissionerId);
+  const commissioner = await getCommissionerByEmail(db, consumedIdentity.email);
 
   if (!commissioner) {
     throw redirect(302, INVALID_LINK_REDIRECT);
@@ -65,7 +73,7 @@ export const GET: RequestHandler = async (event) => {
 
   const cookieValue = await createCommissionerCookie(
     {
-      tournamentId: commissioner.tournament_id,
+      tournamentId: commissioner.tournament_id ?? '',
       userId: commissioner.id,
     },
     cookieSigningKey

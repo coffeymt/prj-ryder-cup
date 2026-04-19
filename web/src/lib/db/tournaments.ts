@@ -158,6 +158,18 @@ export async function listTournamentsByCommissioner(
         SELECT ${TOURNAMENT_COLUMNS}
         FROM tournaments
         WHERE commissioner_email = ?1
+          OR commissioner_email = (
+            SELECT email
+            FROM commissioners
+            WHERE CAST(id AS TEXT) = ?1
+            LIMIT 1
+          )
+          OR id IN (
+            SELECT tournament_id
+            FROM commissioners
+            WHERE CAST(id AS TEXT) = ?1
+              AND tournament_id IS NOT NULL
+          )
         ORDER BY created_at DESC
       `
     )

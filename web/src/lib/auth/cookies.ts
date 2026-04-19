@@ -1,5 +1,3 @@
-import { env } from '$env/dynamic/private';
-
 const TOKEN_SEPARATOR = '.';
 const SECONDS_PER_DAY = 24 * 60 * 60;
 const UTF8_ENCODER = new TextEncoder();
@@ -208,7 +206,7 @@ export async function verifyCookie(token: string, key: string): Promise<object |
 
 export async function createPlayerCookie(
   payload: CookiePayloadInput,
-  key: string = env.COOKIE_SIGNING_KEY,
+  key: string,
   expiryDays = 30
 ): Promise<string> {
   const cookiePayload = withExpiry({ ...payload, role: 'player' }, expiryDays);
@@ -218,7 +216,7 @@ export async function createPlayerCookie(
 
 export async function createCommissionerCookie(
   payload: CookiePayloadInput,
-  key: string = env.COOKIE_SIGNING_KEY,
+  key: string,
   expiryDays = 7
 ): Promise<string> {
   const cookiePayload = withExpiry({ ...payload, role: 'commissioner' }, expiryDays);
@@ -228,7 +226,7 @@ export async function createCommissionerCookie(
 
 export async function createSpectatorCookie(
   payload: CookiePayloadInput,
-  key: string = env.SPECTATOR_COOKIE_KEY,
+  key: string,
   expiryDays = 7
 ): Promise<string> {
   const cookiePayload = withExpiry({ ...payload, role: 'spectator' }, expiryDays);

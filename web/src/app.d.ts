@@ -3,7 +3,13 @@
 declare global {
   namespace App {
     interface Platform {
-      env: Env;
+      env: Env & {
+        COOKIE_SIGNING_KEY: string;
+        SPECTATOR_COOKIE_KEY: string;
+        MAGIC_LINK_KEY: string;
+        EMAIL_API_KEY: string;
+        FROM_EMAIL: string;
+      };
       ctx: ExecutionContext;
       caches: CacheStorage;
       cf?: IncomingRequestCfProperties;

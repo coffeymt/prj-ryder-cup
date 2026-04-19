@@ -1,4 +1,3 @@
-import { env } from '$env/dynamic/private';
 import { createPlayerCookie } from '$lib/auth/cookies';
 import { getTournamentByCode } from '$lib/db/tournaments';
 import { getPlayerById } from '$lib/db/players';
@@ -73,9 +72,15 @@ export const POST: RequestHandler = async (event) => {
     return json({ error: 'Player not found' }, { status: 404 });
   }
 
+  const cookieSigningKey = event.platform?.env?.COOKIE_SIGNING_KEY;
+
+  if (!cookieSigningKey) {
+    throw error(500, 'Cookie signing key is not configured.');
+  }
+
   const cookieToken = await createPlayerCookie(
     { tournamentId: tournament.id, playerId: player.id },
-    env.COOKIE_SIGNING_KEY,
+    cookieSigningKey,
     30
   );
 

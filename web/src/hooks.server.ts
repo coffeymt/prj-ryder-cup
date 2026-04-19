@@ -1,4 +1,3 @@
-import { env } from '$env/dynamic/private';
 import type { Handle } from '@sveltejs/kit';
 import { verifyCookie, type CookiePayload } from '$lib/auth/cookies';
 
@@ -16,24 +15,6 @@ const ANONYMOUS_IDENTITY: ResolvedIdentity = {
   playerId: null,
   userId: null,
 };
-
-const COOKIE_IDENTITY_ATTEMPTS: CookieIdentityAttempt[] = [
-  {
-    cookieName: 'rc_commissioner',
-    expectedRole: 'commissioner',
-    signingKey: env.COOKIE_SIGNING_KEY,
-  },
-  {
-    cookieName: 'rc_player',
-    expectedRole: 'player',
-    signingKey: env.COOKIE_SIGNING_KEY,
-  },
-  {
-    cookieName: 'rc_spectator',
-    expectedRole: 'spectator',
-    signingKey: env.SPECTATOR_COOKIE_KEY,
-  },
-];
 
 function isCookiePayload(value: object): value is CookiePayload {
   const payload = value as Partial<CookiePayload>;
@@ -95,7 +76,29 @@ async function resolveIdentity(
 export const handle: Handle = async ({ event, resolve }) => {
   Object.assign(event.locals, ANONYMOUS_IDENTITY);
 
-  for (const attempt of COOKIE_IDENTITY_ATTEMPTS) {
+  const platformEnv = event.platform?.env;
+  const cookieSigningKey = platformEnv?.COOKIE_SIGNING_KEY;
+  const spectatorCookieKey = platformEnv?.SPECTATOR_COOKIE_KEY;
+
+  const attempts: CookieIdentityAttempt[] = [
+    {
+      cookieName: 'rc_commissioner',
+      expectedRole: 'commissioner',
+      signingKey: cookieSigningKey,
+    },
+    {
+      cookieName: 'rc_player',
+      expectedRole: 'player',
+      signingKey: cookieSigningKey,
+    },
+    {
+      cookieName: 'rc_spectator',
+      expectedRole: 'spectator',
+      signingKey: spectatorCookieKey,
+    },
+  ];
+
+  for (const attempt of attempts) {
     const cookieValue = event.cookies.get(attempt.cookieName);
     const identity = await resolveIdentity(cookieValue, attempt.signingKey, attempt.expectedRole);
 

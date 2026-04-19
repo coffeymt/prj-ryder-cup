@@ -196,7 +196,7 @@ export type ProcessedOp = {
 
 export type Commissioner = {
   id: string;
-  tournament_id: string;
+  tournament_id: string | null;
   email: string;
   role: CommissionerRole;
   created_at: string;
