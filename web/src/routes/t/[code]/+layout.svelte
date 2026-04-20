@@ -114,7 +114,7 @@
             class={`min-h-touch duration-base focus-visible:outline-accent inline-flex shrink-0 items-center justify-center rounded-full px-4 py-2 text-sm font-semibold transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
               isOnDashboard
                 ? 'bg-accent text-accent-text hover:bg-accent-hover shadow-md'
-                : 'bg-surface-raised text-text-primary hover:bg-surface border border-border hover:shadow-md'
+                : 'bg-surface-raised text-text-primary hover:bg-surface border-border border hover:shadow-md'
             }`}
             aria-current={isOnDashboard ? 'page' : undefined}
           >
@@ -127,7 +127,7 @@
           class={`min-h-touch duration-base focus-visible:outline-accent inline-flex shrink-0 items-center justify-center rounded-full px-4 py-2 text-sm font-semibold transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
             isOnLive
               ? 'bg-accent text-accent-text hover:bg-accent-hover shadow-md'
-              : 'bg-surface-raised text-text-primary hover:bg-surface border border-border hover:shadow-md'
+              : 'bg-surface-raised text-text-primary hover:bg-surface border-border border hover:shadow-md'
           }`}
           aria-current={isOnLive ? 'page' : undefined}
         >
@@ -139,7 +139,7 @@
           class={`min-h-touch duration-base focus-visible:outline-accent inline-flex shrink-0 items-center justify-center rounded-full px-4 py-2 text-sm font-semibold transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
             isOnLeaderboard
               ? 'bg-accent text-accent-text hover:bg-accent-hover shadow-md'
-              : 'bg-surface-raised text-text-primary hover:bg-surface border border-border hover:shadow-md'
+              : 'bg-surface-raised text-text-primary hover:bg-surface border-border border hover:shadow-md'
           }`}
           aria-current={isOnLeaderboard ? 'page' : undefined}
         >
