@@ -3,7 +3,7 @@
   import type { SubmitFunction } from '@sveltejs/kit';
   import type { ActionData } from './$types';
 
-  export let form: ActionData | undefined;
+  const { form }: { form: ActionData | undefined } = $props();
 
   const MAX_TEES = 5;
   const HOLE_COUNT = 18;
@@ -31,17 +31,17 @@
     strokeIndex: number;
   };
 
-  let isSubmitting = false;
-  let localError: string | null = null;
-  let tees: TeeDraft[] = [createDefaultTee()];
-  let holes: HoleDraft[] = createDefaultHoles();
+  let isSubmitting = $state(false);
+  let localError = $state<string | null>(null);
+  let tees = $state<TeeDraft[]>([createDefaultTee()]);
+  let holes = $state<HoleDraft[]>(createDefaultHoles());
 
-  $: serverError = typeof form?.error === 'string' ? form.error : null;
-  $: displayedError = localError ?? serverError;
-  $: strokeIndexErrors = buildStrokeIndexErrors(holes);
-  $: hasStrokeIndexErrors = strokeIndexErrors.some((entry) => entry !== null);
-  $: teesJson = JSON.stringify(tees);
-  $: holesJson = JSON.stringify(holes);
+  const serverError = $derived(typeof form?.error === 'string' ? form.error : null);
+  const displayedError = $derived(localError ?? serverError);
+  const strokeIndexErrors = $derived(buildStrokeIndexErrors(holes));
+  const hasStrokeIndexErrors = $derived(strokeIndexErrors.some((entry) => entry !== null));
+  const teesJson = $derived(JSON.stringify(tees));
+  const holesJson = $derived(JSON.stringify(holes));
 
   function createDefaultTee(): TeeDraft {
     return {
@@ -266,7 +266,7 @@
         </div>
         <button
           type="button"
-          on:click={addTee}
+          onclick={addTee}
           disabled={tees.length >= MAX_TEES}
           class="min-h-touch border-border text-text-primary hover:bg-surface-raised disabled:text-text-secondary inline-flex items-center justify-center rounded-lg border bg-transparent px-4 text-sm font-semibold transition disabled:cursor-not-allowed"
         >
@@ -284,7 +284,7 @@
               {#if tees.length > 1}
                 <button
                   type="button"
-                  on:click={() => removeTee(teeIndex)}
+                  onclick={() => removeTee(teeIndex)}
                   class="min-h-touch text-status-down hover:bg-status-down/10 inline-flex items-center rounded-lg px-3 text-sm font-medium transition"
                 >
                   Remove
@@ -440,14 +440,14 @@
         <div class="flex flex-wrap gap-2">
           <button
             type="button"
-            on:click={setAllParToFour}
+            onclick={setAllParToFour}
             class="min-h-touch border-border text-text-primary hover:bg-surface-raised inline-flex items-center justify-center rounded-lg border bg-transparent px-3 text-sm font-semibold transition"
           >
             Set all par to 4
           </button>
           <button
             type="button"
-            on:click={resetStrokeIndexes}
+            onclick={resetStrokeIndexes}
             class="min-h-touch border-border text-text-primary hover:bg-surface-raised inline-flex items-center justify-center rounded-lg border bg-transparent px-3 text-sm font-semibold transition"
           >
             Reset SI to 1–18

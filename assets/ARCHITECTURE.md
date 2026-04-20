@@ -28,10 +28,12 @@ web/
 │   │   │   └── formats/ # Per-format engines (scramble, pinehurst, shamble, fourBall, singles)
 │   │   ├── outbox/      # Dexie-backed offline queue + sync
 │   │   ├── pwa/         # Service worker registration
-│   │   └── ui/          # Shared Svelte components
+│   │   ├── ui/          # Shared Svelte components
+│   │   └── courseImport.ts  # CSV parser for bulk course/tee/hole import
 │   └── routes/
 │       ├── api/         # Pages Functions (REST endpoints)
 │       ├── manage/      # Commissioner portal (/manage/...)
+│       │   └── courses/ # Course management — list, create, CSV import
 │       ├── t/[code]/    # Player + spectator views (/t/:code/...)
 │       └── join/        # Player join flow
 └── static/

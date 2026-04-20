@@ -233,3 +233,34 @@ export const PATCH: RequestHandler = async ({ locals, platform, params, request 
 
   return json({ tee: updatedTee });
 };
+
+export const DELETE: RequestHandler = async ({ locals, platform, params }) => {
+  requireRole(locals, 'commissioner');
+  const db = getDb(platform);
+  const course = await getCourseById(db, params.id);
+
+  if (!course) {
+    throw error(404, 'Course not found.');
+  }
+
+  const existingTee = await getTeeByCourseAndId(db, params.id, params.teeId);
+
+  if (!existingTee) {
+    throw error(404, 'Tee not found for this course.');
+  }
+
+  try {
+    await db
+      .prepare(`DELETE FROM tees WHERE id = ?1 AND course_id = ?2`)
+      .bind(params.teeId, params.id)
+      .run();
+  } catch (cause) {
+    if (cause instanceof Error && cause.message.includes('FOREIGN KEY constraint failed')) {
+      throw error(409, 'Tee cannot be deleted because it is referenced by other records.');
+    }
+
+    throw error(500, 'Failed to delete tee.');
+  }
+
+  return json({ deleted: true });
+};

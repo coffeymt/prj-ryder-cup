@@ -28,11 +28,12 @@ Each entity has one file in `src/lib/db/`:
 |---|---|---|
 | `tournaments.ts` | Tournaments | CRUD, lookup by code |
 | `matches.ts` | Matches | CRUD, lookup by round/tournament |
-| `players.ts` | Players | CRUD, lookup by tournament |
+| `players.ts` | Players + player_tournaments | Standalone player CRUD; tournament membership via `player_tournaments` join; `getPlayerWithTournament()` for scope validation |
 | `teams.ts` | Teams | CRUD, team assignment |
 | `rounds.ts` | Rounds | CRUD, round ordering |
 | `holeScores.ts` | Hole scores | Score entry, bulk read per match |
-| `courses.ts` | Courses | Course/hole data |
+| `courses.ts` | Courses | Course/tee/hole CRUD, search, batch tee/hole insert |
+| `courseImport.ts` *(lib root)* | Course import | CSV → `CourseImportData`; used by `/manage/courses/import` action |
 | `processedOps.ts` | Idempotency keys | Dedup check for offline sync |
 | `magicLinks.ts` | Magic link tokens | Create, consume, expire |
 | `commissioners.ts` | Commissioner accounts | Lookup, create |

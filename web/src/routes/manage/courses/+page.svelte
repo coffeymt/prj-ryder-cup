@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { PageData } from './$types';
 
-  export let data: PageData;
+  const { data }: { data: PageData } = $props();
 
   function teeCountLabel(teeCount: number): string {
     return `${teeCount} ${teeCount === 1 ? 'tee' : 'tees'}`;
@@ -20,12 +20,20 @@
         Manage seeded courses and custom course setups.
       </p>
     </div>
-    <a
-      href="/manage/courses/new"
-      class="min-h-touch bg-accent text-accent-text hover:bg-accent-hover inline-flex items-center justify-center rounded-lg px-4 text-sm font-semibold transition"
-    >
-      Add Course
-    </a>
+    <div class="flex gap-2">
+      <a
+        href="/manage/courses/import"
+        class="min-h-touch border-border text-text-primary hover:bg-surface-raised inline-flex items-center justify-center rounded-lg border bg-transparent px-4 text-sm font-semibold transition"
+      >
+        Import CSV
+      </a>
+      <a
+        href="/manage/courses/new"
+        class="min-h-touch bg-accent text-accent-text hover:bg-accent-hover inline-flex items-center justify-center rounded-lg px-4 text-sm font-semibold transition"
+      >
+        Add Course
+      </a>
+    </div>
   </header>
 
   <form method="GET" class="flex gap-2">
@@ -75,7 +83,7 @@
       {#each data.courses as course (course.id)}
         <a
           href={`/manage/courses/${course.id}`}
-          class="group border-border bg-surface hover:border-border flex min-h-44 flex-col justify-between rounded-2xl border p-4 shadow-sm transition hover:shadow md:p-5"
+          class="group border-border bg-surface hover:border-border flex min-h-44 flex-col justify-between rounded-2xl border p-4 shadow-sm transition hover:shadow-md md:p-5"
         >
           <div class="space-y-3">
             <div class="flex items-start justify-between gap-3">

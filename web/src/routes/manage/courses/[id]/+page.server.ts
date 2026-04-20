@@ -462,4 +462,33 @@ export const actions: Actions = {
       });
     }
   },
+
+  deleteTee: async (event) => {
+    requireRole(event.locals, 'commissioner');
+
+    try {
+      const formData = await event.request.formData();
+      const teeId = readRequiredString(formData.get('teeId'), 'Tee ID');
+      const response = await event.fetch(
+        `/api/courses/${encodeURIComponent(event.params.id)}/tees/${encodeURIComponent(teeId)}`,
+        {
+          method: 'DELETE',
+        }
+      );
+
+      if (!response.ok) {
+        return fail(response.status >= 500 ? 500 : 400, {
+          error: await readApiErrorMessage(response, 'Could not delete tee.'),
+        });
+      }
+
+      return {
+        success: 'Tee deleted.',
+      };
+    } catch (cause) {
+      return fail(400, {
+        error: cause instanceof Error ? cause.message : 'Could not delete tee.',
+      });
+    }
+  },
 };

@@ -1,8 +1,7 @@
 <script lang="ts">
   import type { ActionData, PageData } from './$types';
 
-  export let data: PageData;
-  export let form: ActionData | undefined;
+  const { data, form }: { data: PageData; form: ActionData | undefined } = $props();
 
   type HoleDraft = {
     holeNumber: number;
@@ -13,21 +12,21 @@
   const HOLE_COUNT = 18;
   const ALLOWED_PARS = [3, 4, 5] as const;
 
-  let localError: string | null = null;
-  let holes: HoleDraft[] = [];
+  let localError = $state<string | null>(null);
+  let holes = $state<HoleDraft[]>(
+    data.holes.map((hole) => ({
+      holeNumber: hole.holeNumber,
+      par: hole.par,
+      strokeIndex: hole.strokeIndex,
+    }))
+  );
 
-  $: serverError = typeof form?.error === 'string' ? form.error : null;
-  $: serverSuccess = typeof form?.success === 'string' ? form.success : null;
-  $: displayedError = localError ?? serverError;
-  $: holeStrokeIndexErrors = buildStrokeIndexErrors(holes);
-  $: hasHoleStrokeIndexErrors = holeStrokeIndexErrors.some((entry) => entry !== null);
-  $: holesJson = JSON.stringify(holes);
-
-  $: holes = data.holes.map((hole) => ({
-    holeNumber: hole.holeNumber,
-    par: hole.par,
-    strokeIndex: hole.strokeIndex,
-  }));
+  const serverError = $derived(typeof form?.error === 'string' ? form.error : null);
+  const serverSuccess = $derived(typeof form?.success === 'string' ? form.success : null);
+  const displayedError = $derived(localError ?? serverError);
+  const holeStrokeIndexErrors = $derived(buildStrokeIndexErrors(holes));
+  const hasHoleStrokeIndexErrors = $derived(holeStrokeIndexErrors.some((entry) => entry !== null));
+  const holesJson = $derived(JSON.stringify(holes));
 
   function buildStrokeIndexErrors(holeRows: HoleDraft[]): Array<string | null> {
     const counts = new Map<number, number>();
@@ -332,6 +331,25 @@
                 Save Tee
               </button>
             </form>
+
+            <form
+              method="POST"
+              action="?/deleteTee"
+              class="border-border mt-3 border-t pt-3"
+              onsubmit={(e) => {
+                if (!confirm(`Delete tee "${tee.name}"? This cannot be undone.`)) {
+                  e.preventDefault();
+                }
+              }}
+            >
+              <input type="hidden" name="teeId" value={tee.id} />
+              <button
+                type="submit"
+                class="min-h-touch bg-status-down/10 text-status-down hover:bg-status-down/20 inline-flex items-center justify-center rounded-lg px-4 text-sm font-semibold transition"
+              >
+                Delete Tee
+              </button>
+            </form>
           </article>
         {/each}
       </div>
@@ -487,14 +505,14 @@
       <div class="flex flex-wrap gap-2">
         <button
           type="button"
-          on:click={setAllParToFour}
+          onclick={setAllParToFour}
           class="min-h-touch border-border text-text-primary hover:bg-surface-raised inline-flex items-center justify-center rounded-lg border bg-transparent px-3 text-sm font-semibold transition"
         >
           Set all par to 4
         </button>
         <button
           type="button"
-          on:click={resetStrokeIndexes}
+          onclick={resetStrokeIndexes}
           class="min-h-touch border-border text-text-primary hover:bg-surface-raised inline-flex items-center justify-center rounded-lg border bg-transparent px-3 text-sm font-semibold transition"
         >
           Reset SI to 1–18
@@ -502,7 +520,7 @@
       </div>
     </div>
 
-    <form method="POST" action="?/updateHoles" class="mt-4 space-y-4" on:submit={handleHoleSubmit}>
+    <form method="POST" action="?/updateHoles" class="mt-4 space-y-4" onsubmit={handleHoleSubmit}>
       <input type="hidden" name="holesJson" value={holesJson} />
       <div class="overflow-x-auto">
         <table class="w-full min-w-[520px] border-collapse">

@@ -29,13 +29,6 @@ function getDatabase(event: Parameters<RequestHandler>[0]): D1Database {
   return db;
 }
 
-function getNumericStringId(): string {
-  const timestamp = Date.now();
-  const randomPart = Math.floor(Math.random() * 1_000_000);
-
-  return String(timestamp * 1_000_000 + randomPart);
-}
-
 function isNonEmptyString(value: unknown): value is string {
   return typeof value === 'string' && value.trim().length > 0;
 }
@@ -190,7 +183,7 @@ export const POST: RequestHandler = async (event) => {
   }
 
   const player = await createPlayer(db, {
-    id: getNumericStringId(),
+    id: crypto.randomUUID(),
     name: body.displayName.trim(),
     handicap_index: body.handicapIndex,
     email: isNonEmptyString(body.email) ? (body.email as string).trim() : null,
