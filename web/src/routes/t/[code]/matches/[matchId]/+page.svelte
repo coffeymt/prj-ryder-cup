@@ -33,7 +33,7 @@
 <div class="animate-fade-in space-y-4">
   <a
     href={`/t/${encodeURIComponent(data.tournament.code)}`}
-    class="min-h-touch bg-surface-raised text-text-primary hover:bg-surface duration-base inline-flex items-center rounded-xl px-4 py-2 text-sm font-semibold shadow-sm transition-all hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+    class="min-h-touch bg-surface-raised text-text-primary hover:bg-surface duration-base focus-visible:outline-accent inline-flex items-center rounded-xl px-4 py-2 text-sm font-semibold shadow-sm transition-all hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
   >
     &larr; Back to Dashboard
   </a>
