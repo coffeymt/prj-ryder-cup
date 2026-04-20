@@ -587,15 +587,8 @@ export const POST: RequestHandler = async (event) => {
     const actingPlayerId = event.locals.playerId;
     const actorSideId = actingPlayerId ? playerToSideId.get(actingPlayerId) : undefined;
 
-    if (!actorSideId || !subjectPlayerSideId) {
+    if (!actorSideId) {
       return json({ message: 'Player not in match.' }, { status: 403 });
-    }
-
-    if (actorSideId !== subjectPlayerSideId) {
-      return json(
-        { message: 'Players can only submit scores for their own side.' },
-        { status: 403 }
-      );
     }
   }
 

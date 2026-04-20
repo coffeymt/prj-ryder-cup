@@ -33,7 +33,7 @@
 <div class="animate-fade-in space-y-4">
   <a
     href={`/t/${encodeURIComponent(data.tournament.code)}`}
-    class="min-h-touch border-border text-text-primary hover:bg-surface-raised duration-base inline-flex items-center rounded-lg border bg-transparent px-4 text-sm font-semibold transition-all"
+    class="min-h-touch bg-surface-raised text-text-primary hover:bg-surface duration-base inline-flex items-center rounded-xl px-4 py-2 text-sm font-semibold shadow-sm transition-all hover:shadow-md"
   >
     &larr; Back to Dashboard
   </a>
@@ -80,7 +80,8 @@
 
     <a
       href={`/t/${encodeURIComponent(data.tournament.code)}/matches/${encodeURIComponent(data.match.id)}/hole/${data.currentHole}`}
-      class="min-h-touch bg-accent text-accent-text hover:bg-accent-hover duration-base inline-flex w-full items-center justify-center rounded-xl px-4 py-3 text-base font-semibold shadow-md transition-all hover:shadow-lg"
+      class="min-h-touch bg-accent text-accent-text hover:bg-accent-hover focus-visible:outline-accent duration-base inline-flex w-full items-center justify-center rounded-xl px-4 py-3 text-base font-bold no-underline shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+      role="button"
     >
       Enter Hole {data.currentHole}
     </a>

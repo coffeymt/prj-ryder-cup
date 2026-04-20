@@ -276,7 +276,8 @@
                       <div class="pt-2">
                         <a
                           href={`/t/${encodeURIComponent(data.tournament.code)}/matches/${encodeURIComponent(match.id)}`}
-                          class="bg-accent text-accent-text hover:bg-accent-hover focus-visible:outline-accent min-h-touch duration-base inline-flex w-full items-center justify-center rounded-xl px-4 text-sm font-semibold shadow-md transition-all hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                          class="bg-accent text-accent-text hover:bg-accent-hover focus-visible:outline-accent min-h-touch duration-base inline-flex w-full items-center justify-center rounded-xl px-4 py-3 text-sm font-bold no-underline shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                          role="button"
                         >
                           Enter Scores
                         </a>

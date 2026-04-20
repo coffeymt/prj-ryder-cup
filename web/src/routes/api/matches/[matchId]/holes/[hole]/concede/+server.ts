@@ -579,11 +579,9 @@ export const POST: RequestHandler = async (event) => {
       return json({ message: 'Player not in match.' }, { status: 403 });
     }
 
-    if (playerToSideLabel.get(actingPlayerId) !== requestBody.side) {
-      return json({ message: 'Players can only concede for their own side.' }, { status: 403 });
-    }
-
-    concessionPlayerId = actingPlayerId;
+    // Any player in the match can concede for either side
+    const concedingSidePlayers = sidePlayersBySideId.get(concedingSide.id) ?? [];
+    concessionPlayerId = concedingSidePlayers[0]?.player_id ?? actingPlayerId;
     actorPlayerId = actingPlayerId;
   } else {
     if (requestBody.playerId !== undefined) {

@@ -214,7 +214,7 @@
   <div class="grid grid-cols-2 gap-2">
     <a
       href={backHref}
-      class="min-h-touch border-border text-text-primary hover:bg-surface-raised duration-base inline-flex items-center justify-center rounded-xl border bg-transparent px-4 text-sm font-semibold transition-all"
+      class="min-h-touch bg-surface-raised text-text-primary hover:bg-surface duration-base inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold shadow-sm transition-all hover:shadow-md"
     >
       &larr; Back
     </a>
