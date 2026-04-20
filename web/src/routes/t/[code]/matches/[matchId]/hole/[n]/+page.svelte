@@ -139,7 +139,7 @@
           row.player.teamColor === data.match.teamBColor ? 'border-l-team-b' : 'border-l-team-a'
         }`}
       >
-        <div class="flex items-start gap-3">
+        <div class="flex items-stretch gap-3">
           <div class="flex w-2/5 min-w-0 flex-col gap-2">
             <div class="min-w-0">
               <p
@@ -177,12 +177,12 @@
               onChange={(nextValue) => updateGross(row.id, nextValue)}
             />
 
-            <div class="grid grid-cols-2 gap-2">
+            <div class="grid flex-1 grid-cols-2 gap-2">
               <button
                 type="button"
-                class={`min-h-touch duration-fast rounded-lg border px-4 text-base font-semibold transition-all active:scale-95 ${
+                class={`min-h-touch duration-fast h-full rounded-lg border px-4 text-base font-semibold transition-all active:scale-95 ${
                   row.conceded
-                    ? 'border-status-down bg-surface-raised text-status-down'
+                    ? 'border-status-down bg-status-down/10 text-status-down'
                     : 'border-border bg-surface-raised text-text-primary hover:bg-surface'
                 }`}
                 aria-pressed={row.conceded}
@@ -192,9 +192,9 @@
               </button>
               <button
                 type="button"
-                class={`min-h-touch duration-fast rounded-lg border px-4 text-base font-semibold transition-all active:scale-95 ${
+                class={`min-h-touch duration-fast h-full rounded-lg border px-4 text-base font-semibold transition-all active:scale-95 ${
                   row.pickedUp
-                    ? 'border-status-halved bg-surface-raised text-status-halved'
+                    ? 'border-status-halved bg-status-halved/10 text-status-halved'
                     : 'border-border bg-surface-raised text-text-primary hover:bg-surface'
                 }`}
                 aria-pressed={row.pickedUp}
@@ -229,7 +229,7 @@
 
 {#if errorMessage}
   <div
-    class="border-status-down bg-surface-raised text-status-down animate-slide-up-fade fixed inset-x-3 bottom-3 z-40 rounded-xl border px-4 py-3 text-sm font-medium shadow-xl"
+    class="border-status-down bg-status-down/10 text-status-down animate-slide-up-fade fixed inset-x-3 bottom-3 z-40 rounded-xl border px-4 py-3 text-sm font-medium shadow-xl"
     role="alert"
   >
     {errorMessage}

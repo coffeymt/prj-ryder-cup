@@ -38,7 +38,7 @@ import type {
   TeeData,
   TournamentAllowances,
 } from '$lib/engine/types';
-import { error, json, type RequestEvent, type RequestHandler } from '@sveltejs/kit';
+import { error, isHttpError, json, type RequestEvent, type RequestHandler } from '@sveltejs/kit';
 
 type HoleScoreRequestBody = {
   playerId: string;
@@ -697,17 +697,27 @@ export const POST: RequestHandler = async (event) => {
   );
   const teeData = asTeeData(1, tee, teeHoles);
 
-  const segmentState = computeSegmentState(
-    segment,
-    allowance,
-    teeData,
-    sideAEngineId,
-    sideBEngineId,
-    sideAHandicapInputs,
-    sideBHandicapInputs,
-    engineScores.filter((row) => row.matchSideId === sideAEngineId),
-    engineScores.filter((row) => row.matchSideId === sideBEngineId)
-  );
+  let segmentState: MatchState;
+  try {
+    segmentState = computeSegmentState(
+      segment,
+      allowance,
+      teeData,
+      sideAEngineId,
+      sideBEngineId,
+      sideAHandicapInputs,
+      sideBHandicapInputs,
+      engineScores.filter((row) => row.matchSideId === sideAEngineId),
+      engineScores.filter((row) => row.matchSideId === sideBEngineId)
+    );
+  } catch (engineError) {
+    if (isHttpError(engineError)) {
+      throw engineError;
+    }
+    const detail =
+      engineError instanceof Error ? engineError.message : 'Unknown scoring engine error';
+    throw error(500, `Scoring engine failed: ${detail}`);
+  }
 
   const computedHoleResult = segmentState.holeResults.find(
     (holeResult) => holeResult.holeNumber === requestBody.holeNumber
@@ -739,13 +749,23 @@ export const POST: RequestHandler = async (event) => {
     (sum, roundSegment) => sum + roundSegment.points_available,
     0
   );
-  const overallState = computeMatchState(
-    buildOverallHoleResults(allHoleResults, totalHoles),
-    totalHoles,
-    totalPointsAvailable,
-    sideAEngineId,
-    sideBEngineId
-  );
+  let overallState: MatchState;
+  try {
+    overallState = computeMatchState(
+      buildOverallHoleResults(allHoleResults, totalHoles),
+      totalHoles,
+      totalPointsAvailable,
+      sideAEngineId,
+      sideBEngineId
+    );
+  } catch (engineError) {
+    if (isHttpError(engineError)) {
+      throw engineError;
+    }
+    const detail =
+      engineError instanceof Error ? engineError.message : 'Unknown scoring engine error';
+    throw error(500, `Scoring engine failed: ${detail}`);
+  }
 
   const matchClosed = overallState.status === 'CLOSED' || overallState.status === 'FINAL';
   if (matchClosed) {

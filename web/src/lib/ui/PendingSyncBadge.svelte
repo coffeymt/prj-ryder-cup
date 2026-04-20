@@ -6,7 +6,7 @@
 
 {#if pendingCount > 0}
   <span
-    class="min-h-touch border-status-down bg-surface-raised text-status-down inline-flex items-center gap-1.5 rounded-full border px-1 text-xs font-semibold sm:px-2.5"
+    class="min-h-touch bg-status-down/10 text-status-down inline-flex items-center gap-1.5 rounded-full px-1 text-xs font-semibold sm:px-2.5"
     aria-label={`${pendingCount} score submissions pending sync`}
   >
     <span

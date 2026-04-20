@@ -11,18 +11,18 @@
     const normalized = label.toUpperCase();
 
     if (normalized.includes(' DN')) {
-      return 'border border-status-down bg-surface-raised text-status-down';
+      return 'bg-status-down/10 text-status-down';
     }
 
     if (normalized.includes(' UP')) {
-      return 'border border-status-up bg-surface-raised text-status-up';
+      return 'bg-status-up/10 text-status-up';
     }
 
     if (normalized.includes('AS') || normalized.includes('HALVED') || normalized.startsWith('T')) {
-      return 'border border-status-halved bg-surface-raised text-status-halved';
+      return 'bg-status-halved/10 text-status-halved';
     }
 
-    return 'border border-status-closed bg-surface-raised text-status-closed';
+    return 'bg-status-closed/10 text-status-closed';
   }
 </script>
 
