@@ -1,4 +1,9 @@
-import { createPlayer, listPlayersByTournament } from '$lib/db/players';
+import {
+  createPlayer,
+  createPlayerTournament,
+  getPlayerWithTournament,
+  listPlayersByTournament,
+} from '$lib/db/players';
 import { getTeamById, updateTeam } from '$lib/db/teams';
 import { getTournamentById } from '$lib/db/tournaments';
 import { getCommissionerById } from '$lib/db/commissioners';
@@ -186,15 +191,22 @@ export const POST: RequestHandler = async (event) => {
 
   const player = await createPlayer(db, {
     id: getNumericStringId(),
-    tournament_id: tournamentId,
-    team_id: teamId,
     name: body.displayName.trim(),
     handicap_index: body.handicapIndex,
+    email: isNonEmptyString(body.email) ? (body.email as string).trim() : null,
+  });
+
+  await createPlayerTournament(db, {
+    player_id: player.id,
+    tournament_id: tournamentId,
+    team_id: teamId,
   });
 
   if (body.isCaptain === true && teamId) {
     await updateTeam(db, teamId, { captain_player_id: player.id });
   }
 
-  return json({ player }, { status: 201 });
+  const playerWithTournament = await getPlayerWithTournament(db, player.id, tournamentId);
+
+  return json({ player: playerWithTournament }, { status: 201 });
 };

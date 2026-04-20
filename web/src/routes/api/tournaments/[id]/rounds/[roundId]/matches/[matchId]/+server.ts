@@ -7,7 +7,7 @@ import {
   listSidesByMatch,
   updateMatchStatus,
 } from '$lib/db/matches';
-import { getPlayerById } from '$lib/db/players';
+import { getPlayerWithTournament } from '$lib/db/players';
 import { getRoundById, listSegmentsByRound } from '$lib/db/rounds';
 import { getTournamentById } from '$lib/db/tournaments';
 import type {
@@ -210,7 +210,8 @@ async function listMatchResults(db: D1Database, matchId: string): Promise<MatchR
 
 async function getMatchSidePayload(
   db: D1Database,
-  side: MatchSide
+  side: MatchSide,
+  tournamentId: string
 ): Promise<{
   id: string;
   teamId: string;
@@ -220,7 +221,7 @@ async function getMatchSidePayload(
   const sidePlayers = await listPlayersBySide(db, side.id);
   const players = await Promise.all(
     sidePlayers.map(async (sidePlayer) => {
-      const player = await getPlayerById(db, sidePlayer.player_id);
+      const player = await getPlayerWithTournament(db, sidePlayer.player_id, tournamentId);
 
       if (!player) {
         throw error(404, `Player ${sidePlayer.player_id} not found.`);
@@ -230,7 +231,7 @@ async function getMatchSidePayload(
         id: player.id,
         name: player.name,
         teamId: player.team_id,
-        handicapIndex: player.handicap_index,
+        handicapIndex: player.effective_handicap,
       };
     })
   );
@@ -251,7 +252,8 @@ async function buildMatchDetailPayload(
     match_number: number;
     format_override: MatchFormat | null;
   },
-  segmentById: Map<string, RoundSegment>
+  segmentById: Map<string, RoundSegment>,
+  tournamentId: string
 ): Promise<{
   id: string;
   roundId: string;
@@ -288,7 +290,9 @@ async function buildMatchDetailPayload(
   }>;
 }> {
   const sides = await listSidesByMatch(db, match.id);
-  const sidePayloads = await Promise.all(sides.map((side) => getMatchSidePayload(db, side)));
+  const sidePayloads = await Promise.all(
+    sides.map((side) => getMatchSidePayload(db, side, tournamentId))
+  );
   const matchResults = await listMatchResults(db, match.id);
   const latestResult = matchResults[0] ?? null;
   const holeResults = await listHoleResultsByMatch(db, match.id);
@@ -339,7 +343,7 @@ export const GET: RequestHandler = async ({ params, locals, platform }) => {
   const { byId } = buildSegmentMaps(segments);
   const match = await requireMatchInRound(db, params.roundId, params.matchId);
 
-  return json(await buildMatchDetailPayload(db, match, byId));
+  return json(await buildMatchDetailPayload(db, match, byId, params.id));
 };
 
 export const PATCH: RequestHandler = async ({ params, request, locals, platform }) => {
@@ -382,5 +386,5 @@ export const PATCH: RequestHandler = async ({ params, request, locals, platform 
 
   await updateMatchStatus(db, match.id, status, { segment_id: segmentId });
 
-  return json(await buildMatchDetailPayload(db, match, byId));
+  return json(await buildMatchDetailPayload(db, match, byId, params.id));
 };

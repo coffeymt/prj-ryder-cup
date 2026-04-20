@@ -217,7 +217,17 @@
               <div class="flex flex-wrap items-start justify-between gap-3">
                 <div class="space-y-1">
                   <p class="text-text-primary text-base font-semibold">{player.name}</p>
-                  <p class="text-text-secondary text-sm">Handicap Index: {player.handicap_index}</p>
+                  <p class="text-text-secondary text-sm">
+                    Handicap: {player.effective_handicap}{#if player.handicap_index_override !== null}&nbsp;<span
+                        class="text-text-muted text-xs">(override)</span
+                      >{/if}
+                  </p>
+                  {#if player.email}
+                    <p class="text-text-secondary text-xs">{player.email}</p>
+                  {/if}
+                  {#if player.ghin_number}
+                    <p class="text-text-secondary text-xs">GHIN: {player.ghin_number}</p>
+                  {/if}
                 </div>
 
                 {#if isCaptain(player)}

@@ -18,7 +18,7 @@
 </script>
 
 <div
-  class="border-border bg-surface flex w-full items-stretch gap-1 rounded-xl border p-1 shadow-sm"
+  class="border-border bg-surface flex h-full w-full items-stretch gap-1 rounded-xl border p-1 shadow-sm"
 >
   <button
     type="button"

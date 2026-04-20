@@ -37,11 +37,30 @@ export type Team = {
 
 export type Player = {
   id: string;
-  tournament_id: string;
-  team_id: string | null;
   name: string;
+  email: string | null;
+  ghin_number: string | null;
   handicap_index: number;
   created_at: string;
+  updated_at: string;
+};
+
+export type PlayerTournament = {
+  id: string;
+  player_id: string;
+  tournament_id: string;
+  team_id: string | null;
+  handicap_index_override: number | null;
+  created_at: string;
+};
+
+export type PlayerWithTournament = Player & {
+  player_tournament_id: string;
+  tournament_id: string;
+  team_id: string | null;
+  handicap_index_override: number | null;
+  /** Resolved handicap: override if set, otherwise base index */
+  effective_handicap: number;
 };
 
 export type Course = {
@@ -178,6 +197,30 @@ export type AuditLog = {
   old_value: string | null;
   new_value: string | null;
   created_at: string;
+};
+
+export type CourseImportData = {
+  name: string;
+  location?: string;
+  tees: Array<{
+    name: string;
+    color_hex?: string;
+    cr18: number;
+    slope18: number;
+    par18: number;
+    cr9f?: number;
+    slope9f?: number;
+    par9f?: number;
+    cr9b?: number;
+    slope9b?: number;
+    par9b?: number;
+    holes: Array<{
+      hole_number: number;
+      par: number;
+      yardage?: number;
+      stroke_index: number;
+    }>;
+  }>;
 };
 
 export type MagicLinkToken = {

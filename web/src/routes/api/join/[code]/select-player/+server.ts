@@ -1,6 +1,6 @@
 import { createPlayerCookie } from '$lib/auth/cookies';
 import { getTournamentByCode } from '$lib/db/tournaments';
-import { getPlayerById } from '$lib/db/players';
+import { getPlayerById, getPlayerTournament } from '$lib/db/players';
 import { error, json, type RequestHandler } from '@sveltejs/kit';
 
 const PLAYER_COOKIE_MAX_AGE_SECONDS = 30 * 24 * 60 * 60;
@@ -68,7 +68,13 @@ export const POST: RequestHandler = async (event) => {
 
   const player = await getPlayerById(db, payload.playerId);
 
-  if (!player || player.tournament_id !== tournament.id) {
+  if (!player) {
+    return json({ error: 'Player not found' }, { status: 404 });
+  }
+
+  const playerTournament = await getPlayerTournament(db, player.id, tournament.id);
+
+  if (!playerTournament) {
     return json({ error: 'Player not found' }, { status: 404 });
   }
 

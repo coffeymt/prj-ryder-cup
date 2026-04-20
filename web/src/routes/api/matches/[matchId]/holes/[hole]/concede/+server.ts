@@ -10,7 +10,7 @@ import {
   updateMatchStatus,
   upsertMatchHoleResult,
 } from '$lib/db/matches';
-import { getPlayerById } from '$lib/db/players';
+import { getPlayerWithTournament } from '$lib/db/players';
 import { claimOp, getProcessedOp, markOpProcessed } from '$lib/db/processedOps';
 import { getRoundById, listSegmentsByRound } from '$lib/db/rounds';
 import { getTournamentById } from '$lib/db/tournaments';
@@ -19,7 +19,7 @@ import type {
   MatchHoleResult,
   MatchSide,
   MatchSidePlayer,
-  Player,
+  PlayerWithTournament,
   RoundSegment,
   SideLabel,
   Tournament,
@@ -305,12 +305,13 @@ function buildOverallHoleResults(rows: MatchHoleResult[], totalHoles: number): E
 
 async function loadPlayersForSide(
   db: D1Database,
-  sidePlayers: MatchSidePlayer[]
-): Promise<Player[]> {
+  sidePlayers: MatchSidePlayer[],
+  tournamentId: string
+): Promise<PlayerWithTournament[]> {
   const loaded = await Promise.all(
-    sidePlayers.map((sidePlayer) => getPlayerById(db, sidePlayer.player_id))
+    sidePlayers.map((sidePlayer) => getPlayerWithTournament(db, sidePlayer.player_id, tournamentId))
   );
-  const players: Player[] = [];
+  const players: PlayerWithTournament[] = [];
 
   for (const player of loaded) {
     if (!player) {
@@ -324,7 +325,7 @@ async function loadPlayersForSide(
 }
 
 function toPlayerHandicapInput(
-  players: Player[],
+  players: PlayerWithTournament[],
   engineSideId: number,
   playerIdMap: Map<string, number>
 ): PlayerHandicapInput[] {
@@ -338,7 +339,7 @@ function toPlayerHandicapInput(
     return {
       playerId: enginePlayerId,
       sideId: engineSideId,
-      handicapIndex: player.handicap_index as PlayerHandicapInput['handicapIndex'],
+      handicapIndex: player.effective_handicap as PlayerHandicapInput['handicapIndex'],
     };
   });
 }
@@ -670,8 +671,8 @@ export const POST: RequestHandler = async (event) => {
     getTournamentById(db, round.tournament_id),
     listTeesByCourse(db, round.course_id),
     listHolesByCourse(db, round.course_id),
-    loadPlayersForSide(db, sidePlayersBySideId.get(sideA.id) ?? []),
-    loadPlayersForSide(db, sidePlayersBySideId.get(sideB.id) ?? []),
+    loadPlayersForSide(db, sidePlayersBySideId.get(sideA.id) ?? [], round.tournament_id),
+    loadPlayersForSide(db, sidePlayersBySideId.get(sideB.id) ?? [], round.tournament_id),
   ]);
 
   if (!tournament) {

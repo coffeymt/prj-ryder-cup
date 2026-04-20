@@ -6,6 +6,7 @@ import { error, json, type RequestHandler } from '@sveltejs/kit';
 type RosterPlayer = {
   id: string;
   displayName: string;
+  effectiveHandicap: number;
   teamId: string | null;
   teamName: string | null;
   teamColor: string | null;
@@ -43,6 +44,7 @@ export const GET: RequestHandler = async ({ params, platform }) => {
     return {
       id: player.id,
       displayName: player.name,
+      effectiveHandicap: player.effective_handicap,
       teamId: team?.id ?? null,
       teamName: team?.name ?? null,
       teamColor: team?.color ?? null,

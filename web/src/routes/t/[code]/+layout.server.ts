@@ -1,9 +1,9 @@
 import { redirect, error } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
 import { getTournamentByCode } from '$lib/db/tournaments';
-import { getPlayerById } from '$lib/db/players';
+import { getPlayerWithTournament } from '$lib/db/players';
 import { getTeamById, listTeamsByTournament } from '$lib/db/teams';
-import type { Player, Team, Tournament } from '$lib/db/types';
+import type { PlayerWithTournament, Team, Tournament } from '$lib/db/types';
 
 function getDatabaseBinding(platform: App.Platform | undefined): D1Database {
   const db = platform?.env.DB;
@@ -36,15 +36,15 @@ async function loadCurrentPlayer(
   db: D1Database,
   locals: App.Locals,
   tournament: Tournament
-): Promise<Player | null> {
+): Promise<PlayerWithTournament | null> {
   if (locals.role === 'player') {
     if (!locals.playerId || locals.tournamentId !== tournament.id) {
       redirectToJoinRoot();
     }
 
-    const player = await getPlayerById(db, locals.playerId);
+    const player = await getPlayerWithTournament(db, locals.playerId, tournament.id);
 
-    if (!player || player.tournament_id !== tournament.id) {
+    if (!player) {
       redirectToJoinWithCode(tournament.code);
     }
 
@@ -56,19 +56,16 @@ async function loadCurrentPlayer(
       return null;
     }
 
-    const player = await getPlayerById(db, locals.playerId);
-
-    if (!player || player.tournament_id !== tournament.id) {
-      return null;
-    }
-
-    return player;
+    return getPlayerWithTournament(db, locals.playerId, tournament.id);
   }
 
   return null;
 }
 
-async function loadCurrentTeam(db: D1Database, player: Player | null): Promise<Team | null> {
+async function loadCurrentTeam(
+  db: D1Database,
+  player: PlayerWithTournament | null
+): Promise<Team | null> {
   if (!player?.team_id) {
     return null;
   }

@@ -6,7 +6,7 @@ import {
   listPlayersBySide,
   listSidesByMatch,
 } from '$lib/db/matches';
-import { getPlayerById } from '$lib/db/players';
+import { getPlayerWithTournament } from '$lib/db/players';
 import { getRoundById, listSegmentsByRound } from '$lib/db/rounds';
 import type { MatchFormat, MatchHoleResult, RoundSegment, Team } from '$lib/db/types';
 import { computeMatchState } from '$lib/engine/matchState';
@@ -192,7 +192,8 @@ function computeCurrentHole(
 async function loadSidePlayers(
   db: D1Database,
   allTeams: Team[],
-  side: Awaited<ReturnType<typeof listSidesByMatch>>[number]
+  side: Awaited<ReturnType<typeof listSidesByMatch>>[number],
+  tournamentId: string
 ): Promise<LoadedSide> {
   const team = allTeams.find((candidate) => candidate.id === side.team_id);
   if (!team) {
@@ -201,7 +202,7 @@ async function loadSidePlayers(
 
   const sidePlayers = await listPlayersBySide(db, side.id);
   const players = await Promise.all(
-    sidePlayers.map((sidePlayer) => getPlayerById(db, sidePlayer.player_id))
+    sidePlayers.map((sidePlayer) => getPlayerWithTournament(db, sidePlayer.player_id, tournamentId))
   );
 
   if (players.some((player) => player === null)) {
@@ -217,7 +218,7 @@ async function loadSidePlayers(
     players: players.map((player) => ({
       id: player!.id,
       name: player!.name,
-      handicapIndex: player!.handicap_index,
+      handicapIndex: player!.effective_handicap,
     })),
   };
 }
@@ -257,7 +258,7 @@ export const load: PageServerLoad = async (event) => {
   }
 
   const loadedSides = await Promise.all(
-    sides.map((side) => loadSidePlayers(db, parentData.allTeams, side))
+    sides.map((side) => loadSidePlayers(db, parentData.allTeams, side, round.tournament_id))
   );
   const sideA = loadedSides.find((side) => side.sideLabel === 'A');
   const sideB = loadedSides.find((side) => side.sideLabel === 'B');

@@ -1,5 +1,5 @@
 import { requireRole } from '$lib/auth/guards';
-import { listCourses } from '$lib/db/courses';
+import { listCourses, searchCourses } from '$lib/db/courses';
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
@@ -18,10 +18,11 @@ function getDb(platform: App.Platform | undefined): D1Database {
   return db;
 }
 
-export const load: PageServerLoad = async ({ locals, platform }) => {
+export const load: PageServerLoad = async ({ locals, platform, url }) => {
   requireRole(locals, 'commissioner');
   const db = getDb(platform);
-  const courses = await listCourses(db);
+  const q = url.searchParams.get('q')?.trim() ?? '';
+  const courses = q ? await searchCourses(db, q) : await listCourses(db);
   const teeCountResult = await db
     .prepare(
       `
@@ -39,6 +40,7 @@ export const load: PageServerLoad = async ({ locals, platform }) => {
   );
 
   return {
+    q,
     courses: courses.map((course) => ({
       ...course,
       teeCount: teeCountByCourseId.get(course.id) ?? 0,

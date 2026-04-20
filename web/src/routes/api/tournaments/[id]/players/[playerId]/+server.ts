@@ -1,9 +1,14 @@
-import { deletePlayer, getPlayerById, updatePlayer } from '$lib/db/players';
+import {
+  getPlayerWithTournament,
+  updatePlayer,
+  updatePlayerTournament,
+  deletePlayerTournament,
+} from '$lib/db/players';
 import { getTeamById, updateTeam } from '$lib/db/teams';
 import { getCommissionerById } from '$lib/db/commissioners';
 import { requireRole, requireSameTournament } from '$lib/auth/guards';
 import { error, json } from '@sveltejs/kit';
-import type { Player } from '$lib/db/types';
+import type { Player, PlayerTournament, PlayerWithTournament } from '$lib/db/types';
 import type { RequestHandler } from './$types';
 
 type PlayerPatchBody = {
@@ -108,10 +113,10 @@ async function getScopedPlayerOrThrow(
   db: D1Database,
   tournamentId: string,
   playerId: string
-): Promise<Player> {
-  const player = await getPlayerById(db, playerId);
+): Promise<PlayerWithTournament> {
+  const player = await getPlayerWithTournament(db, playerId, tournamentId);
 
-  if (!player || player.tournament_id !== tournamentId) {
+  if (!player) {
     throw error(404, 'Player not found.');
   }
 
@@ -127,14 +132,15 @@ export const PATCH: RequestHandler = async (event) => {
 
   const currentPlayer = await getScopedPlayerOrThrow(db, tournamentId, playerId);
   const body = await parseBody(event.request);
-  const updates: Partial<Player> = {};
+  const playerUpdates: Partial<Player> = {};
+  const ptUpdates: Partial<PlayerTournament> = {};
 
   if (body.displayName !== undefined) {
     if (!isNonEmptyString(body.displayName)) {
       throw error(400, '`displayName` must be a non-empty string.');
     }
 
-    updates.name = body.displayName.trim();
+    playerUpdates.name = body.displayName.trim();
   }
 
   if (body.handicapIndex !== undefined) {
@@ -142,7 +148,7 @@ export const PATCH: RequestHandler = async (event) => {
       throw error(400, '`handicapIndex` must be a finite number.');
     }
 
-    updates.handicap_index = body.handicapIndex;
+    playerUpdates.handicap_index = body.handicapIndex;
   }
 
   if (body.email !== undefined) {
@@ -167,7 +173,7 @@ export const PATCH: RequestHandler = async (event) => {
     }
 
     nextTeamId = body.teamId;
-    updates.team_id = body.teamId;
+    ptUpdates.team_id = body.teamId;
   }
 
   if (body.isCaptain !== undefined && typeof body.isCaptain !== 'boolean') {
@@ -195,11 +201,8 @@ export const PATCH: RequestHandler = async (event) => {
       .run();
   }
 
-  const updated = await updatePlayer(db, playerId, updates);
-
-  if (!updated || updated.tournament_id !== tournamentId) {
-    throw error(404, 'Player not found.');
-  }
+  await updatePlayer(db, playerId, playerUpdates);
+  await updatePlayerTournament(db, currentPlayer.player_tournament_id, ptUpdates);
 
   if (body.isCaptain === true && nextTeamId) {
     await db
@@ -226,9 +229,9 @@ export const PATCH: RequestHandler = async (event) => {
       .run();
   }
 
-  const refreshed = await getPlayerById(db, playerId);
+  const refreshed = await getPlayerWithTournament(db, playerId, tournamentId);
 
-  if (!refreshed || refreshed.tournament_id !== tournamentId) {
+  if (!refreshed) {
     throw error(404, 'Player not found.');
   }
 
@@ -241,7 +244,7 @@ export const DELETE: RequestHandler = async (event) => {
   const playerId = event.params.playerId;
 
   await assertCommissionerTournamentOwnership(event, db, tournamentId);
-  await getScopedPlayerOrThrow(db, tournamentId, playerId);
+  const player = await getScopedPlayerOrThrow(db, tournamentId, playerId);
 
   await db
     .prepare(
@@ -253,7 +256,7 @@ export const DELETE: RequestHandler = async (event) => {
     )
     .bind(tournamentId, playerId)
     .run();
-  await deletePlayer(db, playerId);
+  await deletePlayerTournament(db, player.player_tournament_id);
 
   return new Response(null, { status: 204 });
 };

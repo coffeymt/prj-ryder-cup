@@ -176,9 +176,12 @@ export async function upsertHoleScore(
 
   const enteredAt = data.entered_at ?? existing?.entered_at ?? nowIso();
   const updatedAt = data.updated_at ?? nowIso();
-  const holeScoreId = data.id ?? (existing ? String(existing.id) : crypto.randomUUID());
+
+  let holeScoreId: string;
 
   if (existing) {
+    holeScoreId = String(existing.id);
+
     await db
       .prepare(
         `
@@ -208,11 +211,10 @@ export async function upsertHoleScore(
       )
       .run();
   } else {
-    await db
+    const insertResult = await db
       .prepare(
         `
           INSERT INTO hole_scores (
-            id,
             match_id,
             hole_number,
             player_id,
@@ -225,11 +227,10 @@ export async function upsertHoleScore(
             op_id,
             updated_at
           )
-          VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12)
+          VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)
         `
       )
       .bind(
-        holeScoreId,
         data.match_id,
         data.hole_number,
         data.player_id,
@@ -243,6 +244,8 @@ export async function upsertHoleScore(
         updatedAt
       )
       .run();
+
+    holeScoreId = String(insertResult.meta.last_row_id);
   }
 
   const row = await db

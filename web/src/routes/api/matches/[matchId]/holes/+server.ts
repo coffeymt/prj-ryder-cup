@@ -1,6 +1,6 @@
 import { requireRole, requireSameTournament } from '$lib/auth/guards';
 import { listHolesByCourse, listTeesByCourse } from '$lib/db/courses';
-import { getPlayerById } from '$lib/db/players';
+import { getPlayerWithTournament } from '$lib/db/players';
 import { claimOp, getProcessedOp, markOpProcessed } from '$lib/db/processedOps';
 import { getRoundById, listSegmentsByRound } from '$lib/db/rounds';
 import { getTournamentById } from '$lib/db/tournaments';
@@ -18,7 +18,7 @@ import type {
   MatchHoleResult,
   MatchSide,
   MatchSidePlayer,
-  Player,
+  PlayerWithTournament,
   RoundSegment,
   SideLabel,
   Tournament,
@@ -327,13 +327,14 @@ function buildOverallHoleResults(rows: MatchHoleResult[], totalHoles: number): E
 
 async function loadPlayersForSide(
   db: D1Database,
-  sidePlayers: MatchSidePlayer[]
-): Promise<Player[]> {
+  sidePlayers: MatchSidePlayer[],
+  tournamentId: string
+): Promise<PlayerWithTournament[]> {
   const loaded = await Promise.all(
-    sidePlayers.map((sidePlayer) => getPlayerById(db, sidePlayer.player_id))
+    sidePlayers.map((sidePlayer) => getPlayerWithTournament(db, sidePlayer.player_id, tournamentId))
   );
 
-  const players: Player[] = [];
+  const players: PlayerWithTournament[] = [];
 
   for (const player of loaded) {
     if (!player) {
@@ -347,7 +348,7 @@ async function loadPlayersForSide(
 }
 
 function toPlayerHandicapInput(
-  players: Player[],
+  players: PlayerWithTournament[],
   engineSideId: number,
   playerIdMap: Map<string, number>
 ): PlayerHandicapInput[] {
@@ -361,7 +362,7 @@ function toPlayerHandicapInput(
     return {
       playerId: enginePlayerId,
       sideId: engineSideId,
-      handicapIndex: player.handicap_index as PlayerHandicapInput['handicapIndex'],
+      handicapIndex: player.effective_handicap as PlayerHandicapInput['handicapIndex'],
     };
   });
 }
@@ -598,108 +599,107 @@ export const POST: RequestHandler = async (event) => {
     }
   }
 
-  const opClaimed = await claimOp(db, opId, matchId);
-  if (!opClaimed) {
-    const processed = await getProcessedOp(db, opId, matchId);
+  try {
+    const opClaimed = await claimOp(db, opId, matchId);
+    if (!opClaimed) {
+      const processed = await getProcessedOp(db, opId, matchId);
 
-    if (processed?.endpoint) {
-      try {
-        return json(JSON.parse(processed.endpoint));
-      } catch {
-        throw error(500, 'Stored idempotent response is invalid JSON.');
+      if (processed?.endpoint) {
+        try {
+          return json(JSON.parse(processed.endpoint));
+        } catch {
+          throw error(500, 'Stored idempotent response is invalid JSON.');
+        }
       }
+
+      return json({ message: 'Op in flight, retry shortly' }, { status: 409 });
     }
 
-    return json({ message: 'Op in flight, retry shortly' }, { status: 409 });
-  }
+    const holeScore = await upsertHoleScore(db, {
+      match_id: match.id,
+      hole_number: requestBody.holeNumber,
+      player_id: requestBody.playerId,
+      match_side_id: subjectPlayerSideId,
+      gross_strokes: requestBody.grossStrokes,
+      is_conceded: requestBody.conceded ? 1 : 0,
+      is_picked_up: requestBody.pickedUp ? 1 : 0,
+      entered_by_player_id: event.locals.role === 'player' ? event.locals.playerId : null,
+      op_id: opId,
+    });
 
-  const holeScore = await upsertHoleScore(db, {
-    match_id: match.id,
-    hole_number: requestBody.holeNumber,
-    player_id: requestBody.playerId,
-    match_side_id: subjectPlayerSideId,
-    gross_strokes: requestBody.grossStrokes,
-    is_conceded: requestBody.conceded ? 1 : 0,
-    is_picked_up: requestBody.pickedUp ? 1 : 0,
-    entered_by_player_id: event.locals.role === 'player' ? event.locals.playerId : null,
-    op_id: opId,
-  });
+    const [
+      allHoleScores,
+      segments,
+      tournament,
+      teesByCourse,
+      holesByCourse,
+      sideAPlayers,
+      sideBPlayers,
+    ] = await Promise.all([
+      listHoleScoresByMatch(db, match.id),
+      listSegmentsByRound(db, round.id),
+      getTournamentById(db, round.tournament_id),
+      listTeesByCourse(db, round.course_id),
+      listHolesByCourse(db, round.course_id),
+      loadPlayersForSide(db, sidePlayersBySideId.get(sideA.id) ?? [], round.tournament_id),
+      loadPlayersForSide(db, sidePlayersBySideId.get(sideB.id) ?? [], round.tournament_id),
+    ]);
 
-  const [
-    allHoleScores,
-    segments,
-    tournament,
-    teesByCourse,
-    holesByCourse,
-    sideAPlayers,
-    sideBPlayers,
-  ] = await Promise.all([
-    listHoleScoresByMatch(db, match.id),
-    listSegmentsByRound(db, round.id),
-    getTournamentById(db, round.tournament_id),
-    listTeesByCourse(db, round.course_id),
-    listHolesByCourse(db, round.course_id),
-    loadPlayersForSide(db, sidePlayersBySideId.get(sideA.id) ?? []),
-    loadPlayersForSide(db, sidePlayersBySideId.get(sideB.id) ?? []),
-  ]);
+    if (!tournament) {
+      throw error(500, 'Round references a missing tournament.');
+    }
 
-  if (!tournament) {
-    throw error(500, 'Round references a missing tournament.');
-  }
+    const segmentForHole = resolveSegmentForHole(segments, requestBody.holeNumber);
+    if (!segmentForHole) {
+      return json({ message: 'No round segment is configured for this hole.' }, { status: 400 });
+    }
 
-  const segmentForHole = resolveSegmentForHole(segments, requestBody.holeNumber);
-  if (!segmentForHole) {
-    return json({ message: 'No round segment is configured for this hole.' }, { status: 400 });
-  }
+    const segment = {
+      ...segmentForHole,
+      format: match.format_override ?? segmentForHole.format,
+    };
 
-  const segment = {
-    ...segmentForHole,
-    format: match.format_override ?? segmentForHole.format,
-  };
+    const tee = teesByCourse.find((candidateTee) => candidateTee.id === round.tee_id);
+    if (!tee) {
+      throw error(500, 'Round references a missing tee.');
+    }
 
-  const tee = teesByCourse.find((candidateTee) => candidateTee.id === round.tee_id);
-  if (!tee) {
-    throw error(500, 'Round references a missing tee.');
-  }
+    const teeHoles = holesByCourse.filter((hole) => hole.tee_id === round.tee_id);
+    if (teeHoles.length === 0) {
+      throw error(500, 'No hole metadata exists for the configured tee.');
+    }
 
-  const teeHoles = holesByCourse.filter((hole) => hole.tee_id === round.tee_id);
-  if (teeHoles.length === 0) {
-    throw error(500, 'No hole metadata exists for the configured tee.');
-  }
+    const sideIdMap = new Map<string, number>([
+      [sideA.id, 1],
+      [sideB.id, 2],
+    ]);
+    const sideLabelByEngineId = new Map<number, SideLabel>([
+      [1, 'A'],
+      [2, 'B'],
+    ]);
 
-  const sideIdMap = new Map<string, number>([
-    [sideA.id, 1],
-    [sideB.id, 2],
-  ]);
-  const sideLabelByEngineId = new Map<number, SideLabel>([
-    [1, 'A'],
-    [2, 'B'],
-  ]);
+    const playerIdMap = new Map<string, number>();
+    const playersInOrder = [...sideAPlayers, ...sideBPlayers];
+    for (let index = 0; index < playersInOrder.length; index += 1) {
+      playerIdMap.set(playersInOrder[index].id, index + 1);
+    }
 
-  const playerIdMap = new Map<string, number>();
-  const playersInOrder = [...sideAPlayers, ...sideBPlayers];
-  for (let index = 0; index < playersInOrder.length; index += 1) {
-    playerIdMap.set(playersInOrder[index].id, index + 1);
-  }
+    const engineScores = allHoleScores
+      .map((row) => toEngineHoleScore(row, sideIdMap, playerIdMap))
+      .filter((row): row is HoleScoreInput => row !== null);
 
-  const engineScores = allHoleScores
-    .map((row) => toEngineHoleScore(row, sideIdMap, playerIdMap))
-    .filter((row): row is HoleScoreInput => row !== null);
+    const sideAEngineId = sideIdMap.get(sideA.id)!;
+    const sideBEngineId = sideIdMap.get(sideB.id)!;
+    const sideAHandicapInputs = toPlayerHandicapInput(sideAPlayers, sideAEngineId, playerIdMap);
+    const sideBHandicapInputs = toPlayerHandicapInput(sideBPlayers, sideBEngineId, playerIdMap);
+    const allowance = resolveAllowance(
+      segment.format,
+      normalizeTournamentAllowances(tournament),
+      segment.allowance_override
+    );
+    const teeData = asTeeData(1, tee, teeHoles);
 
-  const sideAEngineId = sideIdMap.get(sideA.id)!;
-  const sideBEngineId = sideIdMap.get(sideB.id)!;
-  const sideAHandicapInputs = toPlayerHandicapInput(sideAPlayers, sideAEngineId, playerIdMap);
-  const sideBHandicapInputs = toPlayerHandicapInput(sideBPlayers, sideBEngineId, playerIdMap);
-  const allowance = resolveAllowance(
-    segment.format,
-    normalizeTournamentAllowances(tournament),
-    segment.allowance_override
-  );
-  const teeData = asTeeData(1, tee, teeHoles);
-
-  let segmentState: MatchState;
-  try {
-    segmentState = computeSegmentState(
+    const segmentState = computeSegmentState(
       segment,
       allowance,
       teeData,
@@ -710,85 +710,76 @@ export const POST: RequestHandler = async (event) => {
       engineScores.filter((row) => row.matchSideId === sideAEngineId),
       engineScores.filter((row) => row.matchSideId === sideBEngineId)
     );
-  } catch (engineError) {
-    if (isHttpError(engineError)) {
-      throw engineError;
+
+    const computedHoleResult = segmentState.holeResults.find(
+      (holeResult) => holeResult.holeNumber === requestBody.holeNumber
+    );
+    if (!computedHoleResult) {
+      throw error(500, 'Hole result was not computed for the submitted hole.');
     }
-    const detail =
-      engineError instanceof Error ? engineError.message : 'Unknown scoring engine error';
-    throw error(500, `Scoring engine failed: ${detail}`);
-  }
 
-  const computedHoleResult = segmentState.holeResults.find(
-    (holeResult) => holeResult.holeNumber === requestBody.holeNumber
-  );
-  if (!computedHoleResult) {
-    throw error(500, 'Hole result was not computed for the submitted hole.');
-  }
+    await upsertMatchHoleResult(db, {
+      match_id: match.id,
+      segment_id: segment.id,
+      hole_number: requestBody.holeNumber,
+      result: computedHoleResult.result,
+      side_a_net: computedHoleResult.sideANet,
+      side_b_net: computedHoleResult.sideBNet,
+    });
 
-  await upsertMatchHoleResult(db, {
-    match_id: match.id,
-    segment_id: segment.id,
-    hole_number: requestBody.holeNumber,
-    result: computedHoleResult.result,
-    side_a_net: computedHoleResult.sideANet,
-    side_b_net: computedHoleResult.sideBNet,
-  });
+    const allHoleResults = await listHoleResultsByMatch(db, match.id);
+    const persistedHoleResult = allHoleResults.find(
+      (candidateResult) => candidateResult.hole_number === requestBody.holeNumber
+    );
 
-  const allHoleResults = await listHoleResultsByMatch(db, match.id);
-  const persistedHoleResult = allHoleResults.find(
-    (candidateResult) => candidateResult.hole_number === requestBody.holeNumber
-  );
+    if (!persistedHoleResult) {
+      throw error(500, 'Updated hole result could not be loaded.');
+    }
 
-  if (!persistedHoleResult) {
-    throw error(500, 'Updated hole result could not be loaded.');
-  }
-
-  const totalHoles = Math.max(1, ...segments.map((roundSegment) => roundSegment.hole_end));
-  const totalPointsAvailable = segments.reduce(
-    (sum, roundSegment) => sum + roundSegment.points_available,
-    0
-  );
-  let overallState: MatchState;
-  try {
-    overallState = computeMatchState(
+    const totalHoles = Math.max(1, ...segments.map((roundSegment) => roundSegment.hole_end));
+    const totalPointsAvailable = segments.reduce(
+      (sum, roundSegment) => sum + roundSegment.points_available,
+      0
+    );
+    const overallState = computeMatchState(
       buildOverallHoleResults(allHoleResults, totalHoles),
       totalHoles,
       totalPointsAvailable,
       sideAEngineId,
       sideBEngineId
     );
-  } catch (engineError) {
-    if (isHttpError(engineError)) {
-      throw engineError;
+
+    const matchClosed = overallState.status === 'CLOSED' || overallState.status === 'FINAL';
+    if (matchClosed) {
+      await updateMatchStatus(db, match.id, 'FINAL', {
+        segment_id: segment.id,
+        side_a_holes_won: overallState.sideA.holesWon,
+        side_b_holes_won: overallState.sideB.holesWon,
+        halves: overallState.sideA.holesSplit,
+        close_notation: overallState.closeNotation,
+        side_a_points: overallState.sideA.pointsEarned,
+        side_b_points: overallState.sideB.pointsEarned,
+      });
     }
-    const detail =
-      engineError instanceof Error ? engineError.message : 'Unknown scoring engine error';
-    throw error(500, `Scoring engine failed: ${detail}`);
+
+    const responseBody: HoleScoreResponseBody = {
+      holeScore,
+      holeResult: persistedHoleResult,
+      matchState: formatMatchState(overallState, sideLabelByEngineId),
+      matchClosed,
+      closeNotation: overallState.closeNotation,
+    };
+
+    await markOpProcessed(db, opId, JSON.stringify(responseBody), matchId);
+
+    return json(responseBody);
+  } catch (handlerError) {
+    if (isHttpError(handlerError)) {
+      throw handlerError;
+    }
+    return json(
+      { message: 'An error occurred while processing the score submission.' },
+      { status: 500 }
+    );
   }
-
-  const matchClosed = overallState.status === 'CLOSED' || overallState.status === 'FINAL';
-  if (matchClosed) {
-    await updateMatchStatus(db, match.id, 'FINAL', {
-      segment_id: segment.id,
-      side_a_holes_won: overallState.sideA.holesWon,
-      side_b_holes_won: overallState.sideB.holesWon,
-      halves: overallState.sideA.holesSplit,
-      close_notation: overallState.closeNotation,
-      side_a_points: overallState.sideA.pointsEarned,
-      side_b_points: overallState.sideB.pointsEarned,
-    });
-  }
-
-  const responseBody: HoleScoreResponseBody = {
-    holeScore,
-    holeResult: persistedHoleResult,
-    matchState: formatMatchState(overallState, sideLabelByEngineId),
-    matchClosed,
-    closeNotation: overallState.closeNotation,
-  };
-
-  await markOpProcessed(db, opId, JSON.stringify(responseBody), matchId);
-
-  return json(responseBody);
 };

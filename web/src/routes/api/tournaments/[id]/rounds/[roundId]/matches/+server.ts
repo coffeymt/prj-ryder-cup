@@ -9,7 +9,7 @@ import {
   listSidesByMatch,
   updateMatchStatus,
 } from '$lib/db/matches';
-import { getPlayerById } from '$lib/db/players';
+import { getPlayerWithTournament } from '$lib/db/players';
 import { getRoundById, listSegmentsByRound } from '$lib/db/rounds';
 import { getTeamById } from '$lib/db/teams';
 import { getTournamentById } from '$lib/db/tournaments';
@@ -211,9 +211,9 @@ async function validateTeamAndPlayers(
   }
 
   for (const playerId of side.playerIds) {
-    const player = await getPlayerById(db, playerId);
+    const player = await getPlayerWithTournament(db, playerId, tournamentId);
 
-    if (!player || player.tournament_id !== tournamentId) {
+    if (!player) {
       throw error(400, `${fieldName}.playerIds contains an invalid player.`);
     }
 
@@ -244,6 +244,7 @@ async function getMatchResponse(
   db: D1Database,
   match: Match,
   segmentById: Map<string, RoundSegment>,
+  tournamentId: string,
   explicitPointsAtStake?: number
 ): Promise<{
   id: string;
@@ -267,7 +268,7 @@ async function getMatchResponse(
       const sidePlayers = await listPlayersBySide(db, side.id);
       const players = await Promise.all(
         sidePlayers.map(async (sidePlayer) => {
-          const player = await getPlayerById(db, sidePlayer.player_id);
+          const player = await getPlayerWithTournament(db, sidePlayer.player_id, tournamentId);
 
           if (!player) {
             throw error(404, `Player ${sidePlayer.player_id} not found.`);
@@ -277,7 +278,7 @@ async function getMatchResponse(
             id: player.id,
             name: player.name,
             teamId: player.team_id,
-            handicapIndex: player.handicap_index,
+            handicapIndex: player.effective_handicap,
           };
         })
       );
@@ -386,7 +387,9 @@ export const POST: RequestHandler = async ({ params, request, locals, platform }
   }
 
   const payload = await Promise.all(
-    createdMatches.map((match) => getMatchResponse(db, match, byId, requestedPoints.get(match.id)))
+    createdMatches.map((match) =>
+      getMatchResponse(db, match, byId, params.id, requestedPoints.get(match.id))
+    )
   );
 
   return json({ matches: payload }, { status: 201 });
@@ -403,7 +406,9 @@ export const GET: RequestHandler = async ({ params, locals, platform }) => {
   const segments = await listSegmentsByRound(db, params.roundId);
   const { byId } = buildSegmentMaps(segments);
   const matches = await listMatchesByRound(db, params.roundId);
-  const payload = await Promise.all(matches.map((match) => getMatchResponse(db, match, byId)));
+  const payload = await Promise.all(
+    matches.map((match) => getMatchResponse(db, match, byId, params.id))
+  );
 
   return json({ matches: payload });
 };

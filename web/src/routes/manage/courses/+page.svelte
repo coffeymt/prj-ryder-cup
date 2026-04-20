@@ -28,18 +28,47 @@
     </a>
   </header>
 
+  <form method="GET" class="flex gap-2">
+    <input
+      name="q"
+      type="search"
+      value={data.q}
+      placeholder="Search courses…"
+      class="min-h-touch border-border bg-bg text-text-primary focus:border-accent focus:ring-accent flex-1 rounded-lg border px-4 text-sm transition outline-none focus:ring-1"
+    />
+    <button
+      type="submit"
+      class="min-h-touch border-border text-text-primary hover:bg-surface-raised inline-flex items-center justify-center rounded-lg border bg-transparent px-4 text-sm font-semibold transition"
+    >
+      Search
+    </button>
+    {#if data.q}
+      <a
+        href="/manage/courses"
+        class="min-h-touch border-border text-text-secondary hover:bg-surface-raised inline-flex items-center justify-center rounded-lg border bg-transparent px-4 text-sm font-semibold transition"
+      >
+        Clear
+      </a>
+    {/if}
+  </form>
+
   {#if data.courses.length === 0}
     <div class="border-border bg-surface rounded-2xl border border-dashed p-8 text-center">
-      <p class="text-text-primary text-base font-semibold">No courses yet.</p>
-      <p class="text-text-secondary mt-2 text-sm">
-        Create your first course to unlock round building.
-      </p>
-      <a
-        href="/manage/courses/new"
-        class="min-h-touch bg-accent text-accent-text hover:bg-accent-hover mt-5 inline-flex items-center justify-center rounded-lg px-4 text-sm font-semibold transition"
-      >
-        Add Course
-      </a>
+      {#if data.q}
+        <p class="text-text-primary text-base font-semibold">No courses match "{data.q}".</p>
+        <p class="text-text-secondary mt-2 text-sm">Try a different search term.</p>
+      {:else}
+        <p class="text-text-primary text-base font-semibold">No courses yet.</p>
+        <p class="text-text-secondary mt-2 text-sm">
+          Create your first course to unlock round building.
+        </p>
+        <a
+          href="/manage/courses/new"
+          class="min-h-touch bg-accent text-accent-text hover:bg-accent-hover mt-5 inline-flex items-center justify-center rounded-lg px-4 text-sm font-semibold transition"
+        >
+          Add Course
+        </a>
+      {/if}
     </div>
   {:else}
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">

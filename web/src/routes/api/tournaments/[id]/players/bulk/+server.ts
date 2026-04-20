@@ -1,4 +1,4 @@
-import { bulkCreatePlayers } from '$lib/db/players';
+import { bulkCreatePlayers, bulkCreatePlayerTournaments } from '$lib/db/players';
 import { listTeamsByTournament } from '$lib/db/teams';
 import { getCommissionerById } from '$lib/db/commissioners';
 import { requireRole, requireSameTournament } from '$lib/auth/guards';
@@ -17,10 +17,9 @@ type BulkBody = {
 };
 
 type ValidatedBulkRow = {
-  tournament_id: string;
-  team_id: string | null;
   name: string;
   handicap_index: number;
+  team_id: string | null;
 };
 
 type RowValidationError = {
@@ -121,7 +120,6 @@ async function parseBody(request: Request): Promise<BulkBody> {
 function validateRow(
   row: BulkRowInput,
   rowNumber: number,
-  tournamentId: string,
   teamIds: Set<string>
 ): { validated: ValidatedBulkRow | null; error: RowValidationError | null } {
   const issues: string[] = [];
@@ -164,10 +162,9 @@ function validateRow(
 
   return {
     validated: {
-      tournament_id: tournamentId,
-      team_id: teamId,
       name: row.displayName.trim(),
       handicap_index: row.handicapIndex,
+      team_id: teamId,
     },
     error: null,
   };
@@ -209,7 +206,6 @@ export const POST: RequestHandler = async (event) => {
     const { validated, error: validationError } = validateRow(
       rawRow as BulkRowInput,
       rowNumber,
-      tournamentId,
       teamIds
     );
 
@@ -234,6 +230,15 @@ export const POST: RequestHandler = async (event) => {
   }
 
   const players = await bulkCreatePlayers(db, validatedRows);
+
+  await bulkCreatePlayerTournaments(
+    db,
+    players.map((player, index) => ({
+      player_id: player.id,
+      tournament_id: tournamentId,
+      team_id: validatedRows[index].team_id,
+    }))
+  );
 
   return json({ players }, { status: 201 });
 };

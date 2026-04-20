@@ -6,7 +6,7 @@ import type {
   MatchHoleResult,
   MatchSide,
   MatchSidePlayer,
-  Player,
+  PlayerWithTournament,
   Round,
   RoundSegment,
   Tee,
@@ -34,7 +34,7 @@ vi.mock('$lib/db/matches', () => ({
 }));
 
 vi.mock('$lib/db/players', () => ({
-  getPlayerById: vi.fn(),
+  getPlayerWithTournament: vi.fn(),
 }));
 
 vi.mock('$lib/db/processedOps', () => ({
@@ -76,7 +76,7 @@ import {
   updateMatchStatus,
   upsertMatchHoleResult,
 } from '$lib/db/matches';
-import { getPlayerById } from '$lib/db/players';
+import { getPlayerWithTournament } from '$lib/db/players';
 import { claimOp, getProcessedOp, markOpProcessed } from '$lib/db/processedOps';
 import { getRoundById, listSegmentsByRound } from '$lib/db/rounds';
 import { getTournamentById } from '$lib/db/tournaments';
@@ -187,22 +187,34 @@ const FIXTURE_SIDE_B_PLAYERS: MatchSidePlayer[] = [
   },
 ];
 
-const FIXTURE_PLAYERS_BY_ID: Record<string, Player> = {
+const FIXTURE_PLAYERS_BY_ID: Record<string, PlayerWithTournament> = {
   'player-a': {
     id: 'player-a',
+    player_tournament_id: 'pt-a',
     tournament_id: 'tournament-1',
     team_id: 'team-a',
     name: 'Player A',
+    email: null,
+    ghin_number: null,
     handicap_index: 8.1,
+    handicap_index_override: null,
+    effective_handicap: 8.1,
     created_at: '2026-04-17T00:00:00.000Z',
+    updated_at: '2026-04-17T00:00:00.000Z',
   },
   'player-b': {
     id: 'player-b',
+    player_tournament_id: 'pt-b',
     tournament_id: 'tournament-1',
     team_id: 'team-b',
     name: 'Player B',
+    email: null,
+    ghin_number: null,
     handicap_index: 12.3,
+    handicap_index_override: null,
+    effective_handicap: 12.3,
     created_at: '2026-04-17T00:00:00.000Z',
+    updated_at: '2026-04-17T00:00:00.000Z',
   },
 };
 
@@ -317,7 +329,7 @@ const mockedListTeesByCourse = vi.mocked(listTeesByCourse);
 const mockedListHolesByCourse = vi.mocked(listHolesByCourse);
 const mockedListSidesByMatch = vi.mocked(listSidesByMatch);
 const mockedListPlayersBySide = vi.mocked(listPlayersBySide);
-const mockedGetPlayerById = vi.mocked(getPlayerById);
+const mockedGetPlayerWithTournament = vi.mocked(getPlayerWithTournament);
 const mockedListHoleScoresByMatch = vi.mocked(listHoleScoresByMatch);
 const mockedUpsertHoleScore = vi.mocked(upsertHoleScore);
 const mockedComputeSinglesResults = vi.mocked(computeSinglesResults);
@@ -346,7 +358,7 @@ beforeEach(() => {
   mockedListPlayersBySide.mockImplementation(async (_db, sideId) =>
     sideId === 'side-a' ? FIXTURE_SIDE_A_PLAYERS : FIXTURE_SIDE_B_PLAYERS
   );
-  mockedGetPlayerById.mockImplementation(
+  mockedGetPlayerWithTournament.mockImplementation(
     async (_db, playerId) => FIXTURE_PLAYERS_BY_ID[playerId] ?? null
   );
   mockedUpsertHoleScore.mockResolvedValue(FIXTURE_HOLE_SCORE);
