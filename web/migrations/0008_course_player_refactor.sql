@@ -5,9 +5,12 @@
 -- avoid rename/drop cycles that break D1 remote FK constraint enforcement.
 
 -- Step 1: Add new columns to existing players table
+-- Note: ALTER TABLE ADD COLUMN requires constant defaults in SQLite,
+-- so updated_at uses a literal constant then is backfilled from created_at.
 ALTER TABLE players ADD COLUMN email TEXT;
 ALTER TABLE players ADD COLUMN ghin_number TEXT;
-ALTER TABLE players ADD COLUMN updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'));
+ALTER TABLE players ADD COLUMN updated_at TEXT NOT NULL DEFAULT '1970-01-01T00:00:00.000Z';
+UPDATE players SET updated_at = created_at;
 
 -- Step 2: Create player_tournaments junction table
 CREATE TABLE player_tournaments (
