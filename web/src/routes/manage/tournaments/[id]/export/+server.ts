@@ -1,5 +1,5 @@
 import { requireRole } from '$lib/auth/guards';
-import { escapeCSV, toCSVRow } from '$lib/csv';
+import { toCSVRow } from '$lib/csv';
 import { getTournamentById } from '$lib/db/tournaments';
 import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';

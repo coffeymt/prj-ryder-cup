@@ -129,37 +129,43 @@ export const load: PageServerLoad = async (event) => {
 
   const db = getDb(event.platform);
 
-  const [roundResult, segmentResult, matchResult, sidePlayerResult, teamPointsResult, roundPointsResult] =
-    await Promise.all([
-      db
-        .prepare(
-          `
+  const [
+    roundResult,
+    segmentResult,
+    matchResult,
+    sidePlayerResult,
+    teamPointsResult,
+    roundPointsResult,
+  ] = await Promise.all([
+    db
+      .prepare(
+        `
           SELECT r.id, r.round_number, r.scheduled_at, c.name AS course_name
           FROM rounds r
           LEFT JOIN courses c ON c.id = r.course_id
           WHERE r.tournament_id = ?1
           ORDER BY r.round_number ASC
         `
-        )
-        .bind(tournament.id)
-        .all<RoundRow>(),
+      )
+      .bind(tournament.id)
+      .all<RoundRow>(),
 
-      db
-        .prepare(
-          `
+    db
+      .prepare(
+        `
           SELECT rs.round_id, rs.segment_type, rs.format
           FROM round_segments rs
           INNER JOIN rounds r ON r.id = rs.round_id
           WHERE r.tournament_id = ?1
           ORDER BY r.round_number ASC, rs.hole_start ASC, rs.id ASC
         `
-        )
-        .bind(tournament.id)
-        .all<SegmentRow>(),
+      )
+      .bind(tournament.id)
+      .all<SegmentRow>(),
 
-      db
-        .prepare(
-          `
+    db
+      .prepare(
+        `
           WITH ranked_results AS (
             SELECT
               mr.match_id,
@@ -197,13 +203,13 @@ export const load: PageServerLoad = async (event) => {
           WHERE r.tournament_id = ?1
           ORDER BY r.round_number ASC, m.match_number ASC
         `
-        )
-        .bind(tournament.id)
-        .all<MatchRow>(),
+      )
+      .bind(tournament.id)
+      .all<MatchRow>(),
 
-      db
-        .prepare(
-          `
+    db
+      .prepare(
+        `
           SELECT
             ms.match_id,
             ms.side_label,
@@ -220,13 +226,13 @@ export const load: PageServerLoad = async (event) => {
           WHERE r.tournament_id = ?1
           ORDER BY r.round_number ASC, m.match_number ASC, ms.side_label ASC, msp.created_at ASC, p.name ASC
         `
-        )
-        .bind(tournament.id)
-        .all<SidePlayerRow>(),
+      )
+      .bind(tournament.id)
+      .all<SidePlayerRow>(),
 
-      db
-        .prepare(
-          `
+    db
+      .prepare(
+        `
           SELECT
             ms.team_id,
             SUM(
@@ -239,13 +245,13 @@ export const load: PageServerLoad = async (event) => {
           WHERE r.tournament_id = ?1 AND mr.status = 'FINAL'
           GROUP BY ms.team_id
         `
-        )
-        .bind(tournament.id)
-        .all<TeamPointsRow>(),
+      )
+      .bind(tournament.id)
+      .all<TeamPointsRow>(),
 
-      db
-        .prepare(
-          `
+    db
+      .prepare(
+        `
           SELECT
             r.id AS round_id,
             ms.team_id,
@@ -259,10 +265,10 @@ export const load: PageServerLoad = async (event) => {
           WHERE r.tournament_id = ?1 AND mr.status = 'FINAL'
           GROUP BY r.id, ms.team_id
         `
-        )
-        .bind(tournament.id)
-        .all<RoundPointsRow>(),
-    ]);
+      )
+      .bind(tournament.id)
+      .all<RoundPointsRow>(),
+  ]);
 
   // Build first segment per round for fallback format/segment lookup
   const firstSegmentByRound = new Map<string, SegmentRow>();

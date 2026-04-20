@@ -11,8 +11,12 @@
     )
   );
 
-  const teamA = $derived(data.teams[0] ?? { id: '', name: 'Team A', color: '#059669', totalPoints: 0 });
-  const teamB = $derived(data.teams[1] ?? { id: '', name: 'Team B', color: '#0ea5e9', totalPoints: 0 });
+  const teamA = $derived(
+    data.teams[0] ?? { id: '', name: 'Team A', color: '#059669', totalPoints: 0 }
+  );
+  const teamB = $derived(
+    data.teams[1] ?? { id: '', name: 'Team B', color: '#0ea5e9', totalPoints: 0 }
+  );
 
   function toggleRound(id: string): void {
     if (expandedRoundIds.has(id)) {
@@ -100,7 +104,10 @@
 
 <svelte:head>
   <title>Leaderboard | Tears Tourneys</title>
-  <meta name="description" content="Full tournament leaderboard with team standings and match results." />
+  <meta
+    name="description"
+    content="Full tournament leaderboard with team standings and match results."
+  />
 </svelte:head>
 
 <div
@@ -113,9 +120,7 @@
     aria-label="Team standings"
   >
     <div class="flex flex-wrap items-center justify-between gap-3">
-      <h2
-        class="text-text-secondary text-xs font-semibold tracking-[0.18em] uppercase sm:text-sm"
-      >
+      <h2 class="text-text-secondary text-xs font-semibold tracking-[0.18em] uppercase sm:text-sm">
         Overall Standings
       </h2>
       <span class={`rounded-full px-3 py-1 text-xs font-semibold sm:text-sm ${standingClasses}`}>
@@ -124,7 +129,9 @@
     </div>
 
     <!-- Score hero -->
-    <div class="flex flex-col items-center gap-1 sm:flex-row sm:items-end sm:justify-center sm:gap-4">
+    <div
+      class="flex flex-col items-center gap-1 sm:flex-row sm:items-end sm:justify-center sm:gap-4"
+    >
       <div class="flex min-w-0 flex-1 flex-col items-center gap-1 sm:items-end">
         <span class="text-team-a truncate text-lg font-bold tracking-tight sm:text-2xl">
           {teamA.name}
@@ -206,30 +213,30 @@
         Round Breakdown
       </h2>
 
-      <div class="overflow-x-auto -mx-4 px-4 sm:-mx-6 sm:px-6">
+      <div class="-mx-4 overflow-x-auto px-4 sm:-mx-6 sm:px-6">
         <table class="w-full min-w-[360px] text-sm">
           <thead>
             <tr class="border-border border-b">
               <th
-                class="text-text-muted pb-2.5 pr-4 text-left text-xs font-semibold tracking-[0.12em] uppercase"
+                class="text-text-muted pr-4 pb-2.5 text-left text-xs font-semibold tracking-[0.12em] uppercase"
                 scope="col"
               >
                 Round
               </th>
               <th
-                class="text-text-muted hidden pb-2.5 pr-4 text-left text-xs font-semibold tracking-[0.12em] uppercase sm:table-cell"
+                class="text-text-muted hidden pr-4 pb-2.5 text-left text-xs font-semibold tracking-[0.12em] uppercase sm:table-cell"
                 scope="col"
               >
                 Date
               </th>
               <th
-                class="text-team-a pb-2.5 pr-4 text-center text-xs font-semibold tracking-[0.12em] uppercase"
+                class="text-team-a pr-4 pb-2.5 text-center text-xs font-semibold tracking-[0.12em] uppercase"
                 scope="col"
               >
                 {teamA.name}
               </th>
               <th
-                class="text-team-b pb-2.5 pr-4 text-center text-xs font-semibold tracking-[0.12em] uppercase"
+                class="text-team-b pr-4 pb-2.5 text-center text-xs font-semibold tracking-[0.12em] uppercase"
                 scope="col"
               >
                 {teamB.name}

@@ -23,7 +23,12 @@ export function escapeCSV(value: string | number | null | undefined): string {
   const safeStr = /^[=+\-@]/.test(str) ? `'${str}` : str;
 
   // Wrap in double-quotes if the value contains commas, quotes, or line breaks
-  if (safeStr.includes(',') || safeStr.includes('"') || safeStr.includes('\n') || safeStr.includes('\r')) {
+  if (
+    safeStr.includes(',') ||
+    safeStr.includes('"') ||
+    safeStr.includes('\n') ||
+    safeStr.includes('\r')
+  ) {
     return `"${safeStr.replace(/"/g, '""')}"`;
   }
 

@@ -98,7 +98,14 @@ export async function createMatch(db: D1Database, data: CreateMatchInput): Promi
         VALUES (?1, ?2, ?3, ?4, ?5, ?6)
       `
     )
-    .bind(data.id, data.round_id, data.match_number, data.format_override, data.tee_time ?? null, createdAt)
+    .bind(
+      data.id,
+      data.round_id,
+      data.match_number,
+      data.format_override,
+      data.tee_time ?? null,
+      createdAt
+    )
     .run();
 
   const created = await getMatchById(db, data.id);

@@ -314,16 +314,22 @@
               <p class="text-text-primary mb-2 text-sm font-semibold">
                 Tee Time
                 {#if match.teeTime}
-                  <span class="text-text-secondary ml-1 font-normal">({formatTeeTime(match.teeTime)})</span>
+                  <span class="text-text-secondary ml-1 font-normal"
+                    >({formatTeeTime(match.teeTime)})</span
+                  >
                 {/if}
               </p>
               {#if formState?.action === 'setTeeTime' && formState.matchId === match.id && formState.error}
-                <p class="border-status-down/30 bg-status-down/10 text-status-down mb-2 rounded border px-2 py-1 text-xs">
+                <p
+                  class="border-status-down/30 bg-status-down/10 text-status-down mb-2 rounded border px-2 py-1 text-xs"
+                >
                   {formState.error}
                 </p>
               {/if}
               {#if formState?.action === 'setTeeTime' && formState.matchId === match.id && formState.success}
-                <p class="border-status-up/30 bg-status-up/10 text-status-up mb-2 rounded border px-2 py-1 text-xs">
+                <p
+                  class="border-status-up/30 bg-status-up/10 text-status-up mb-2 rounded border px-2 py-1 text-xs"
+                >
                   {formState.success}
                 </p>
               {/if}
