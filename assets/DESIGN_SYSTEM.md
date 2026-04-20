@@ -139,10 +139,10 @@ Cards use a shadow-based depth hierarchy. See [Shadow Hierarchy](#6-shadow-hiera
 
 Used in the player layout header for contextual section navigation. Shape uses `rounded-full` to distinguish from action buttons (`rounded-xl`).
 
-- **Active:** `bg-accent text-accent-text hover:bg-accent-hover hover:shadow-md rounded-full`
+- **Active:** `bg-accent text-accent-text hover:bg-accent-hover shadow-md rounded-full`
 - **Inactive:** `border border-border bg-surface-raised text-text-primary hover:bg-surface hover:shadow-md rounded-full`
 - **Accessibility:** Apply `aria-current="page"` to the active item.
-- **Conditional visibility:** The "My Matches" link renders only when the player is on a `/live` or `/matches` sub-path. The "Live Scores" link is always visible.
+- **Conditional visibility:** The "My Matches" link renders only when the player is on a `/live`, `/matches`, or `/leaderboard` sub-path. The "Live Scores" and "Leaderboard" links are always visible.
 
 ### Progress Bars
 

@@ -15,7 +15,8 @@
     pickedUp: boolean;
   };
 
-  let rows: RowDraft[] = data.players.map((playerRow) => ({
+  let rows: RowDraft[];
+  $: rows = data.players.map((playerRow) => ({
     ...playerRow,
     grossStrokes: playerRow.currentScore?.grossStrokes ?? null,
     conceded: playerRow.currentScore?.conceded ?? false,

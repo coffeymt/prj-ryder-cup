@@ -99,14 +99,17 @@
     {:else}
       <ul class="mt-3 space-y-2">
         {#each data.completedHoles as hole (hole.holeNumber)}
-          <li
-            class="border-border bg-surface-raised hover:bg-surface duration-fast rounded-xl border px-3 py-2.5 transition-colors"
-          >
-            <p class="text-text-primary text-sm font-semibold">Hole {hole.holeNumber}</p>
-            <p class="text-text-secondary text-sm">{hole.resultLabel}</p>
-            {#if hole.sideANet !== null && hole.sideBNet !== null}
-              <p class="text-text-muted text-xs">Net {hole.sideANet} vs {hole.sideBNet}</p>
-            {/if}
+          <li>
+            <a
+              href={`/t/${encodeURIComponent(data.tournament.code)}/matches/${encodeURIComponent(data.match.id)}/hole/${hole.holeNumber}`}
+              class="border-border bg-surface-raised hover:bg-surface duration-fast block cursor-pointer rounded-xl border px-3 py-2.5 no-underline transition-all hover:-translate-y-0.5 hover:shadow-md"
+            >
+              <p class="text-text-primary text-sm font-semibold">Hole {hole.holeNumber}</p>
+              <p class="text-text-secondary text-sm">{hole.resultLabel}</p>
+              {#if hole.sideANet !== null && hole.sideBNet !== null}
+                <p class="text-text-muted text-xs">Net {hole.sideANet} vs {hole.sideBNet}</p>
+              {/if}
+            </a>
           </li>
         {/each}
       </ul>
