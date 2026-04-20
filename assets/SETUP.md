@@ -548,21 +548,21 @@ npx wrangler pages deployment tail --project-name golf
 
 ## Demo tournament
 
-Migration `web/migrations/0004_seed_demo_tournament.sql` provisions a public demo tournament for smoke-testing the app end-to-end. Every insert uses `INSERT OR IGNORE`, so the migration is idempotent and safe to re-apply.
+Migration `web/migrations/0006_reset_demo_tournament.sql` resets demo data and seeds the current demo tournament. Commissioner row (`coffey.mikey@gmail.com`) is preserved across the reset.
 
 | Field | Value |
 |---|---|
-| Code | `DEMO26` |
-| Name | `Demo Cup 2026` |
+| Code | `KIAWAH` |
+| Name | `Kiawah Cup 2026` |
 | Commissioner | `coffey.mikey@gmail.com` |
-| Teams | `USA`, `Europe` (4 players each) |
+| Teams | `USA` (red `#dc2626`), `Europe` (blue `#1d4ed8`) — 2 players each |
 | Round | One round on Cougar Point (Kiawah) |
-| Matches | Four — singles, four-ball, pinehurst, scramble |
+| Matches | Two FOURBALL matches — F9 (holes 1–9) and B9 (holes 10–18) |
 
 Public URLs:
 
-- Tournament view: `https://golf.sbcctears.com/t/DEMO26`
-- Join flow: `https://golf.sbcctears.com/join/DEMO26`
+- Tournament view: `https://golf.sbcctears.com/t/KIAWAH`
+- Join flow: `https://golf.sbcctears.com/join/KIAWAH`
 
 ---
 

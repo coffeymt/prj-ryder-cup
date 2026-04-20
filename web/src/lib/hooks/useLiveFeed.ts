@@ -41,6 +41,7 @@ export type LiveData = {
       status: LiveMatchStatus;
       closeNotation: string | null;
       matchState: string;
+      teeTime: string | null;
     }>;
   }>;
   lastUpdated: string;

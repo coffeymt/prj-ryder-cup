@@ -29,6 +29,7 @@ const MATCH_COLUMNS = `
   round_id,
   match_number,
   format_override,
+  tee_time,
   created_at
 `;
 
@@ -93,11 +94,11 @@ export async function createMatch(db: D1Database, data: CreateMatchInput): Promi
   await db
     .prepare(
       `
-        INSERT INTO matches (id, round_id, match_number, format_override, created_at)
-        VALUES (?1, ?2, ?3, ?4, ?5)
+        INSERT INTO matches (id, round_id, match_number, format_override, tee_time, created_at)
+        VALUES (?1, ?2, ?3, ?4, ?5, ?6)
       `
     )
-    .bind(data.id, data.round_id, data.match_number, data.format_override, createdAt)
+    .bind(data.id, data.round_id, data.match_number, data.format_override, data.tee_time ?? null, createdAt)
     .run();
 
   const created = await getMatchById(db, data.id);
@@ -152,7 +153,7 @@ export async function listMatchesByTournament(
   const result = await db
     .prepare(
       `
-        SELECT m.id, m.round_id, m.match_number, m.format_override, m.created_at
+        SELECT m.id, m.round_id, m.match_number, m.format_override, m.tee_time, m.created_at
         FROM matches m
         INNER JOIN rounds r ON r.id = m.round_id
         WHERE r.tournament_id = ?1
@@ -400,4 +401,21 @@ export async function listHoleResultsByMatch(
     match_id: String(row.match_id),
     segment_id: String(row.segment_id),
   }));
+}
+
+export async function updateMatchTeeTime(
+  db: D1Database,
+  matchId: string,
+  teeTime: string | null
+): Promise<void> {
+  await db
+    .prepare(
+      `
+        UPDATE matches
+        SET tee_time = ?1
+        WHERE id = ?2
+      `
+    )
+    .bind(teeTime, matchId)
+    .run();
 }

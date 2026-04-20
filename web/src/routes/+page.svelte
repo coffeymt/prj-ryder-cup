@@ -2,6 +2,21 @@
   import type { PageData } from './$types';
 
   export let data: PageData;
+
+  let logoutError = '';
+
+  async function logout() {
+    try {
+      const response = await fetch('/api/auth/logout', { method: 'POST' });
+      if (response.ok) {
+        window.location.reload();
+      } else {
+        logoutError = 'Logout failed. Please try again.';
+      }
+    } catch {
+      logoutError = 'Logout failed. Please try again.';
+    }
+  }
 </script>
 
 <svelte:head>
@@ -91,6 +106,19 @@
           >
             Commissioner Login
           </a>
+        {/if}
+
+        {#if data.primaryAction.type !== 'join'}
+          <button
+            type="button"
+            on:click={logout}
+            class="min-h-touch text-text-secondary hover:text-text-primary focus-visible:outline-accent inline-flex w-full cursor-pointer items-center justify-center text-sm font-medium underline underline-offset-4 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+          >
+            Log Out
+          </button>
+          {#if logoutError}
+            <p class="text-status-down text-center text-sm">{logoutError}</p>
+          {/if}
         {/if}
       </div>
     </section>

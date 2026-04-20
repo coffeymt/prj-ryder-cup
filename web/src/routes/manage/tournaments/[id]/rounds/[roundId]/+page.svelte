@@ -2,7 +2,7 @@
   import type { ActionData, PageData } from './$types';
 
   type FormState = {
-    action?: 'updateRound' | 'closeMatch';
+    action?: 'updateRound' | 'closeMatch' | 'setTeeTime';
     error?: string;
     success?: string;
     matchId?: string;
@@ -142,6 +142,16 @@
 
     const half = pointsAtStake / 2;
     return Number.isInteger(half) ? String(half) : half.toFixed(1);
+  }
+
+  function formatTeeTime(time: string): string {
+    const parts = /^(\d{1,2}):(\d{2})$/.exec(time);
+    if (!parts) return time;
+    const hours = parseInt(parts[1], 10);
+    const minutes = parts[2];
+    const period = hours >= 12 ? 'PM' : 'AM';
+    const displayHour = hours % 12 || 12;
+    return `${displayHour}:${minutes} ${period}`;
   }
 </script>
 
@@ -299,6 +309,43 @@
             <p class="text-text-secondary text-sm">
               Points at stake: {formatPoints(match.pointsAtStake)}
             </p>
+
+            <div class="border-border bg-surface rounded-lg border p-3">
+              <p class="text-text-primary mb-2 text-sm font-semibold">
+                Tee Time
+                {#if match.teeTime}
+                  <span class="text-text-secondary ml-1 font-normal">({formatTeeTime(match.teeTime)})</span>
+                {/if}
+              </p>
+              {#if formState?.action === 'setTeeTime' && formState.matchId === match.id && formState.error}
+                <p class="border-status-down/30 bg-status-down/10 text-status-down mb-2 rounded border px-2 py-1 text-xs">
+                  {formState.error}
+                </p>
+              {/if}
+              {#if formState?.action === 'setTeeTime' && formState.matchId === match.id && formState.success}
+                <p class="border-status-up/30 bg-status-up/10 text-status-up mb-2 rounded border px-2 py-1 text-xs">
+                  {formState.success}
+                </p>
+              {/if}
+              <form method="POST" action="?/setTeeTime" class="flex items-end gap-2">
+                <input type="hidden" name="matchId" value={match.id} />
+                <label class="text-text-primary flex-1 space-y-1 text-sm">
+                  <span class="sr-only">Tee Time</span>
+                  <input
+                    name="teeTime"
+                    type="time"
+                    value={match.teeTime ?? ''}
+                    class="min-h-touch border-border bg-bg focus:border-accent focus:ring-accent w-full rounded-lg border px-3 text-base transition outline-none focus:ring-1"
+                  />
+                </label>
+                <button
+                  type="submit"
+                  class="min-h-touch border-border bg-surface hover:bg-surface-raised inline-flex items-center rounded-lg border px-3 text-sm font-medium transition"
+                >
+                  Save
+                </button>
+              </form>
+            </div>
 
             {#if formState?.action === 'closeMatch' && formState.matchId === match.id && formState.error}
               <p

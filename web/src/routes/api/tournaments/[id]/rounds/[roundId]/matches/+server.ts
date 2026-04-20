@@ -253,6 +253,7 @@ async function getMatchResponse(
   format: ApiFormat | null;
   status: MatchResultStatus;
   pointsAtStake: number | null;
+  teeTime: string | null;
   sides: Array<{
     id: string;
     teamId: string;
@@ -301,6 +302,7 @@ async function getMatchResponse(
     format: match.format_override ? DB_FORMAT_TO_API[match.format_override] : null,
     status: resultRow?.status ?? 'PENDING',
     pointsAtStake: explicitPointsAtStake ?? mappedSegment?.points_available ?? null,
+    teeTime: match.tee_time ?? null,
     sides: sidePayloads,
   };
 }

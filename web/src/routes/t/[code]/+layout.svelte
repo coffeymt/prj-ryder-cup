@@ -15,6 +15,7 @@
   $: isOnDashboard = currentPath === basePath;
   $: isOnLive = currentPath === `${basePath}/live`;
   $: isOnMatch = currentPath.startsWith(`${basePath}/matches`);
+  $: isOnLeaderboard = currentPath === `${basePath}/leaderboard`;
 
   onMount(() => {
     void outbox.refreshCount();
@@ -82,7 +83,7 @@
               clip-rule="evenodd"
             />
           </svg>
-          Exit
+          Home
         </a>
         <div class="min-w-0 space-y-1">
           <p class="text-text-muted text-xs font-semibold tracking-[0.22em] uppercase">
@@ -116,7 +117,7 @@
         <PendingSyncBadge count={$pendingCount} />
 
         <nav class="flex items-center gap-1.5" aria-label="Tournament sections">
-          {#if isOnLive || isOnMatch}
+          {#if isOnLive || isOnMatch || isOnLeaderboard}
             <a
               href={basePath}
               class={`min-h-touch duration-base focus-visible:outline-accent inline-flex items-center justify-center rounded-full px-4 text-sm font-semibold shadow-sm transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
@@ -140,6 +141,18 @@
             aria-current={isOnLive ? 'page' : undefined}
           >
             Live Scores
+          </a>
+
+          <a
+            href={`${basePath}/leaderboard`}
+            class={`min-h-touch duration-base focus-visible:outline-accent inline-flex items-center justify-center rounded-full px-4 text-sm font-semibold shadow-sm transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
+              isOnLeaderboard
+                ? 'bg-accent text-accent-text hover:bg-accent-hover hover:shadow-md'
+                : 'border-border bg-surface-raised text-text-primary hover:bg-surface border hover:shadow-md'
+            }`}
+            aria-current={isOnLeaderboard ? 'page' : undefined}
+          >
+            Leaderboard
           </a>
         </nav>
       </div>

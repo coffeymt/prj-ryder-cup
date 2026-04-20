@@ -20,6 +20,7 @@ type MatchRow = {
   round_id: string | number;
   match_number: number;
   format_override: MatchFormat | null;
+  tee_time: string | null;
   result_status: MatchResultStatus | null;
   close_notation: string | null;
   side_a_holes_won: number | null;
@@ -65,6 +66,7 @@ type MutableMatch = {
   formatCode: MatchFormat;
   resultStatus: MatchResultStatus;
   closeNotation: string | null;
+  teeTime: string | null;
   sideAHolesWon: number;
   sideBHolesWon: number;
   holesEntered: number;
@@ -304,6 +306,7 @@ export const load: PageServerLoad = async (event) => {
             m.round_id,
             m.match_number,
             m.format_override,
+            m.tee_time,
             rr.status AS result_status,
             rr.close_notation,
             rr.side_a_holes_won,
@@ -424,6 +427,7 @@ export const load: PageServerLoad = async (event) => {
       formatCode,
       resultStatus,
       closeNotation: match.close_notation ?? null,
+      teeTime: match.tee_time ?? null,
       sideAHolesWon: Number(match.side_a_holes_won ?? 0),
       sideBHolesWon: Number(match.side_b_holes_won ?? 0),
       holesEntered,
@@ -511,6 +515,7 @@ export const load: PageServerLoad = async (event) => {
           status: match.resultStatus,
           statusLabel: formatMatchStateLabel(match),
           enteredHoles: match.holesEntered,
+          teeTime: match.teeTime,
           sides: [match.sides.A, match.sides.B],
         }))
     : [];

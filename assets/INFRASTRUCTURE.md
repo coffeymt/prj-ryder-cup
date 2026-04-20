@@ -140,6 +140,7 @@ Migrations live in `web/migrations/` and are applied in filename order to each D
 | `0002_seed_kiawah.sql` | 5 Kiawah courses with tees, 18 holes each, CR/Slope per tee. |
 | `0003_add_match_id_to_processed_ops.sql` | Adds `match_id` column + `UNIQUE(op_id, match_id)` index on `processed_ops` for match-scoped idempotency. |
 | `0004_seed_demo_tournament.sql` | Seeds public demo tournament (code `DEMO26`) for testing. |
+| `0006_reset_demo_tournament.sql` | Deletes `DEMO26` data; seeds `KIAWAH` (Kiawah Cup 2026) — USA (red `#dc2626`), Europe (blue `#1d4ed8`), 4 players, 2 FOURBALL 9-hole matches. Commissioner row preserved. |
 
 ## Verification Commands Summary
 Flat reference for the post-deploy Auditor. One command per resource. These are read-only.

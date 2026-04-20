@@ -156,6 +156,23 @@
           </p>
         </div>
       </a>
+
+      <a
+        href={`/manage/tournaments/${data.tournament.id}/export`}
+        class="group bg-surface border-border duration-base ease-standard flex items-start gap-4 rounded-xl border p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+        download
+      >
+        <div class="text-2xl" aria-hidden="true">📊</div>
+        <div class="flex-1">
+          <p class="text-text-primary flex items-center justify-between text-sm font-semibold">
+            Export Results
+            <span class="text-text-muted group-hover:text-accent transition-colors">&darr;</span>
+          </p>
+          <p class="text-text-secondary mt-1 text-sm">
+            Download match results and standings as CSV.
+          </p>
+        </div>
+      </a>
     </div>
   </section>
 

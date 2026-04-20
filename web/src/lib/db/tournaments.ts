@@ -19,6 +19,7 @@ const TOURNAMENT_COLUMNS = `
   allowance_shamble,
   allowance_fourball,
   allowance_singles,
+  status,
   created_at,
   updated_at
 `;
@@ -38,6 +39,7 @@ const TOURNAMENT_UPDATABLE_FIELDS = [
   'allowance_shamble',
   'allowance_fourball',
   'allowance_singles',
+  'status',
 ] as const;
 
 const TOURNAMENT_UPDATABLE_FIELD_SET = new Set<string>(TOURNAMENT_UPDATABLE_FIELDS);

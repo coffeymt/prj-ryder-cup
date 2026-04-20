@@ -28,7 +28,8 @@ function redirectToJoinRoot(): never {
 }
 
 function isLiveTickerPath(pathname: string, code: string): boolean {
-  return pathname === `/t/${encodeURIComponent(code)}/live`;
+  const prefix = `/t/${encodeURIComponent(code)}`;
+  return pathname === `${prefix}/live` || pathname === `${prefix}/leaderboard`;
 }
 
 async function loadCurrentPlayer(

@@ -23,6 +23,7 @@ type LiveMatch = {
   status: LiveMatchStatus;
   closeNotation: string | null;
   matchState: string;
+  teeTime: string | null;
 };
 
 type LiveRound = {
@@ -77,6 +78,7 @@ type MatchRow = {
   round_id: string | number;
   match_number: number;
   format_override: MatchFormat | null;
+  tee_time: string | null;
   result_status: 'PENDING' | 'IN_PROGRESS' | 'FINAL' | null;
   close_notation: string | null;
   side_a_points: number | null;
@@ -280,6 +282,7 @@ async function loadMatches(db: D1Database, tournamentId: string): Promise<MatchR
           m.round_id,
           m.match_number,
           m.format_override,
+          m.tee_time,
           mr.status AS result_status,
           mr.close_notation,
           mr.side_a_points,
@@ -454,6 +457,7 @@ async function buildLiveSnapshot(db: D1Database, tournament: Tournament): Promis
       status: toLiveMatchStatus(matchRow.result_status),
       closeNotation: matchRow.close_notation,
       matchState: toMatchState(matchRow.side_a_holes_won, matchRow.side_b_holes_won),
+      teeTime: matchRow.tee_time ?? null,
     });
   }
 

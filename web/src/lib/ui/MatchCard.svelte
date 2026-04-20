@@ -6,6 +6,7 @@
     status: 'inProgress' | 'closed' | 'notStarted';
     matchState: string;
     closeNotation: string | null;
+    teeTime: string | null;
     sideA: { teamName: string; teamColor: string; playerNames: string[]; points: number };
     sideB: { teamName: string; teamColor: string; playerNames: string[]; points: number };
   };
@@ -40,6 +41,16 @@
     return 'bg-status-closed/10 text-status-closed';
   }
 
+  function formatTeeTime(time: string): string {
+    const parts = /^(\d{1,2}):(\d{2})$/.exec(time);
+    if (!parts) return time;
+    const hours = parseInt(parts[1], 10);
+    const minutes = parts[2];
+    const period = hours >= 12 ? 'PM' : 'AM';
+    const displayHour = hours % 12 || 12;
+    return `${displayHour}:${minutes} ${period}`;
+  }
+
   function closedResultLabel(value: MatchCardData): string {
     if (value.closeNotation) {
       return value.closeNotation;
@@ -69,6 +80,11 @@
       <p class="text-text-primary text-sm font-semibold min-[1920px]:text-xl sm:text-base">
         {match.format} · {match.segment}
       </p>
+      {#if match.teeTime}
+        <p class="text-text-secondary mt-0.5 text-xs min-[1920px]:text-base sm:text-sm">
+          Tee: {formatTeeTime(match.teeTime)}
+        </p>
+      {/if}
       {#if match.status === 'inProgress'}
         <p class="text-status-halved mt-1 text-base font-semibold min-[1920px]:text-2xl sm:text-lg">
           {match.matchState}

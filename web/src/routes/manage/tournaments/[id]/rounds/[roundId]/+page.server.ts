@@ -1,5 +1,6 @@
 import { requireRole, requireSameTournament } from '$lib/auth/guards';
 import { listCourses, listTeesByCourse } from '$lib/db/courses';
+import { updateMatchTeeTime } from '$lib/db/matches';
 import { getTournamentById } from '$lib/db/tournaments';
 import { error, fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
@@ -35,6 +36,7 @@ type MatchPayload = {
   format: 'Scramble' | 'Pinehurst' | 'Shamble' | 'FourBall' | 'Singles' | null;
   status: MatchStatus;
   pointsAtStake: number | null;
+  teeTime: string | null;
   sides: Array<{
     id: string;
     teamId: string;
@@ -278,6 +280,40 @@ export const actions: Actions = {
       action: 'closeMatch',
       matchId,
       success: 'Match was manually closed.',
+    };
+  },
+
+  setTeeTime: async (event) => {
+    requireCommissionerAccess(event.locals, event.params.id);
+
+    const db = getDb(event.platform);
+    const formData = await event.request.formData();
+    const matchId = normalizeString(formData.get('matchId'));
+    const rawTeeTime = normalizeString(formData.get('teeTime'));
+
+    if (!matchId) {
+      return fail(400, {
+        action: 'setTeeTime',
+        error: 'Match id is required.',
+      });
+    }
+
+    const teeTime = rawTeeTime.length > 0 ? rawTeeTime : null;
+
+    if (teeTime !== null && !/^\d{2}:\d{2}$/.test(teeTime)) {
+      return fail(400, {
+        action: 'setTeeTime',
+        matchId,
+        error: 'Tee time must be in HH:MM format.',
+      });
+    }
+
+    await updateMatchTeeTime(db, matchId, teeTime);
+
+    return {
+      action: 'setTeeTime',
+      matchId,
+      success: teeTime ? `Tee time set to ${teeTime}.` : 'Tee time cleared.',
     };
   },
 };

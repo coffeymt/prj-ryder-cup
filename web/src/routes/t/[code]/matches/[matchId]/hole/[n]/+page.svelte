@@ -135,71 +135,75 @@
   <section class="space-y-3">
     {#each rows as row (row.id)}
       <article
-        class={`border-border bg-surface p-card-padding duration-base space-y-3 rounded-2xl border border-l-4 shadow-md transition-all ${
+        class={`border-border bg-surface p-card-padding duration-base rounded-2xl border border-l-4 shadow-md transition-all ${
           row.player.teamColor === data.match.teamBColor ? 'border-l-team-b' : 'border-l-team-a'
         }`}
       >
-        <div class="flex items-start justify-between gap-2">
-          <div class="min-w-0">
-            <p
-              class="text-text-primary flex items-center gap-2 text-base font-semibold"
-              style={teamStyle(row.player.teamColor)}
-            >
-              <span
-                class="border-border h-2.5 w-2.5 shrink-0 rounded-full border bg-[var(--team-color)]"
-                aria-hidden="true"
-              ></span>
-              <span class="truncate">{row.player.name}</span>
-            </p>
-            <p class="text-text-secondary text-sm">
-              {#if row.isTeamEntry}
-                {row.teammateNames.join(' / ')}
-              {:else}
-                {row.player.teamName}
-              {/if}
-            </p>
-            {#if row.player.courseHandicap !== null}
-              <p class="text-text-muted text-xs">
-                Course HCP {row.player.courseHandicap.toFixed(1)}
+        <div class="flex items-start gap-3">
+          <div class="flex w-2/5 min-w-0 flex-col gap-2">
+            <div class="min-w-0">
+              <p
+                class="text-text-primary flex items-center gap-2 text-base font-semibold"
+                style={teamStyle(row.player.teamColor)}
+              >
+                <span
+                  class="border-border h-2.5 w-2.5 shrink-0 rounded-full border bg-[var(--team-color)]"
+                  aria-hidden="true"
+                ></span>
+                <span class="truncate">{row.player.name}</span>
               </p>
-            {/if}
+              <p class="text-text-secondary text-sm">
+                {#if row.isTeamEntry}
+                  {row.teammateNames.join(' / ')}
+                {:else}
+                  {row.player.teamName}
+                {/if}
+              </p>
+              {#if row.player.courseHandicap !== null}
+                <p class="text-text-muted text-xs">
+                  Course HCP {row.player.courseHandicap.toFixed(1)}
+                </p>
+              {/if}
+            </div>
+            <StrokeDots strokes={row.strokesOnHole} />
           </div>
-          <StrokeDots strokes={row.strokesOnHole} />
-        </div>
 
-        <HoleStepper
-          value={row.grossStrokes}
-          min={1}
-          max={15}
-          par={data.par}
-          onChange={(nextValue) => updateGross(row.id, nextValue)}
-        />
+          <div class="flex flex-1 flex-col gap-2">
+            <HoleStepper
+              value={row.grossStrokes}
+              min={1}
+              max={15}
+              par={data.par}
+              onChange={(nextValue) => updateGross(row.id, nextValue)}
+            />
 
-        <div class="grid grid-cols-2 gap-2">
-          <button
-            type="button"
-            class={`min-h-touch duration-fast rounded-lg border px-3 text-sm font-semibold transition-all active:scale-95 ${
-              row.conceded
-                ? 'border-status-down bg-surface-raised text-status-down'
-                : 'border-border bg-surface-raised text-text-primary hover:bg-surface'
-            }`}
-            aria-pressed={row.conceded}
-            on:click={() => toggleConceded(row.id)}
-          >
-            Concede
-          </button>
-          <button
-            type="button"
-            class={`min-h-touch duration-fast rounded-lg border px-3 text-sm font-semibold transition-all active:scale-95 ${
-              row.pickedUp
-                ? 'border-status-halved bg-surface-raised text-status-halved'
-                : 'border-border bg-surface-raised text-text-primary hover:bg-surface'
-            }`}
-            aria-pressed={row.pickedUp}
-            on:click={() => togglePickedUp(row.id)}
-          >
-            Picked Up
-          </button>
+            <div class="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                class={`min-h-touch duration-fast rounded-lg border px-4 text-base font-semibold transition-all active:scale-95 ${
+                  row.conceded
+                    ? 'border-status-down bg-surface-raised text-status-down'
+                    : 'border-border bg-surface-raised text-text-primary hover:bg-surface'
+                }`}
+                aria-pressed={row.conceded}
+                on:click={() => toggleConceded(row.id)}
+              >
+                Concede
+              </button>
+              <button
+                type="button"
+                class={`min-h-touch duration-fast rounded-lg border px-4 text-base font-semibold transition-all active:scale-95 ${
+                  row.pickedUp
+                    ? 'border-status-halved bg-surface-raised text-status-halved'
+                    : 'border-border bg-surface-raised text-text-primary hover:bg-surface'
+                }`}
+                aria-pressed={row.pickedUp}
+                on:click={() => togglePickedUp(row.id)}
+              >
+                Picked Up
+              </button>
+            </div>
+          </div>
         </div>
       </article>
     {/each}

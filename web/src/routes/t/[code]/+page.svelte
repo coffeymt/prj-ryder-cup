@@ -41,6 +41,16 @@
     return data.myMatches.filter((match) => match.roundId === roundId);
   }
 
+  function formatTeeTime(time: string): string {
+    const parts = /^(\d{1,2}):(\d{2})$/.exec(time);
+    if (!parts) return time;
+    const hours = parseInt(parts[1], 10);
+    const minutes = parts[2];
+    const period = hours >= 12 ? 'PM' : 'AM';
+    const displayHour = hours % 12 || 12;
+    return `${displayHour}:${minutes} ${period}`;
+  }
+
   function roundStatusClasses(status: string): string {
     if (status === 'Final') {
       return 'bg-status-closed/10 text-status-closed';
@@ -223,6 +233,11 @@
                             <span class="text-text-muted mx-1 font-normal">|</span>
                             {match.format}
                           </p>
+                          {#if match.teeTime}
+                            <p class="text-text-secondary mt-0.5 text-xs">
+                              Tee: {formatTeeTime(match.teeTime)}
+                            </p>
+                          {/if}
                         </div>
                         <span
                           class={`rounded-full px-2.5 py-1 text-xs font-semibold ${matchStateClasses(match.statusLabel)}`}

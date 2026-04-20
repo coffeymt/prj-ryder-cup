@@ -140,6 +140,7 @@
           status: mapMatchStatus(match.status),
           matchState: match.matchState,
           closeNotation: match.closeNotation,
+          teeTime: match.teeTime ?? null,
           sideA: {
             teamName: sideATeam?.name ?? 'Team A',
             teamColor: resolveTeamColor(sideATeam?.color, 'var(--color-accent)'),

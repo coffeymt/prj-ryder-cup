@@ -181,7 +181,7 @@ Both global layouts provide a clear path back to `/`:
 | Layout | Pattern |
 |---|---|
 | `routes/manage/+layout.svelte` | "Tears Tourneys ⛳" text link in the top-left header |
-| `routes/t/[code]/+layout.svelte` | Labelled "Exit" button (home icon + text) in the top-left header |
+| `routes/t/[code]/+layout.svelte` | Labelled "Home" button (home icon + text) in the top-left header |
 
 ## 4. Motion
 

@@ -21,6 +21,7 @@ export type Tournament = {
   allowance_shamble: number;
   allowance_fourball: number;
   allowance_singles: number;
+  status: 'active' | 'archived';
   created_at: string;
   updated_at: string;
 };
@@ -107,6 +108,7 @@ export type Match = {
   round_id: string;
   match_number: number;
   format_override: MatchFormat | null;
+  tee_time: string | null;
   created_at: string;
 };
 
