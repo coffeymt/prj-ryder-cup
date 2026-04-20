@@ -62,7 +62,9 @@
 
   async function submitHoleScore(row: RowDraft): Promise<void> {
     if (row.grossStrokes === null && !row.conceded && !row.pickedUp) {
-      throw new Error(`Enter a score for ${row.player.name} or mark them as conceded or picked up.`);
+      throw new Error(
+        `Enter a score for ${row.player.name} or mark them as conceded or picked up.`
+      );
     }
     await outbox.submitScore(`/api/matches/${encodeURIComponent(data.match.id)}/holes`, {
       playerId: row.submitPlayerId,
@@ -80,7 +82,9 @@
 
     errorMessage = '';
 
-    const missingScore = rows.find((row) => row.grossStrokes === null && !row.conceded && !row.pickedUp);
+    const missingScore = rows.find(
+      (row) => row.grossStrokes === null && !row.conceded && !row.pickedUp
+    );
     if (missingScore) {
       errorMessage = `Enter a score for ${missingScore.player.name} or mark them as conceded or picked up.`;
       return;
@@ -224,7 +228,7 @@
   <div class="grid grid-cols-2 gap-2">
     <a
       href={backHref}
-      class="min-h-touch bg-surface-raised text-text-primary hover:bg-surface duration-base inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold shadow-sm transition-all hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+      class="min-h-touch bg-surface-raised text-text-primary hover:bg-surface duration-base focus-visible:outline-accent inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold shadow-sm transition-all hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
     >
       &larr; Back
     </a>
