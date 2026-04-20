@@ -68,6 +68,16 @@ See [Shadow Hierarchy](#6-shadow-hierarchy) for component-to-shadow mapping.
 
 See [Motion](#4-motion) for keyframes and reduced-motion rules.
 
+### CSS Base Layer
+
+`@layer base` in `app.css` resets anchor tags globally:
+
+```css
+a { color: inherit; text-decoration: none; }
+```
+
+This prevents browser defaults (purple/blue underlined links) from overriding Tailwind utility classes on `<a>` elements. All link appearance must be applied explicitly via Tailwind.
+
 ### Dark Mode
 
 Dark mode is implemented via CSS variables. The system automatically respects `prefers-color-scheme: dark`.
@@ -123,6 +133,7 @@ Cards use a shadow-based depth hierarchy. See [Shadow Hierarchy](#6-shadow-hiera
 - **Layout:** Flex row with `−` button, score display, `+` button.
 - **Classes:** `flex items-center justify-between rounded-xl border border-border bg-surface p-1`
 - **Tactile feedback:** Buttons use `active:scale-95 transition-transform duration-fast`. The center display uses `transition-colors duration-base` for smooth color transitions when the value crosses par.
+- **Null state:** `value` prop accepts `number | null`. When `null`, the display renders `–` (en-dash) with `text-text-muted`; pressing either `+` or `−` jumps to `par`. Submission is blocked while value remains `null`.
 
 ### Navigation Pills
 

@@ -277,26 +277,32 @@ async function loadMatches(db: D1Database, tournamentId: string): Promise<MatchR
   const result = await db
     .prepare(
       `
+        WITH latest_results AS (
+          SELECT
+            *,
+            ROW_NUMBER() OVER (PARTITION BY match_id ORDER BY computed_at DESC) AS rn
+          FROM match_results
+        )
         SELECT
           m.id AS match_id,
           m.round_id,
           m.match_number,
           m.format_override,
           m.tee_time,
-          mr.status AS result_status,
-          mr.close_notation,
-          mr.side_a_points,
-          mr.side_b_points,
-          mr.side_a_holes_won,
-          mr.side_b_holes_won,
+          lr.status AS result_status,
+          lr.close_notation,
+          lr.side_a_points,
+          lr.side_b_points,
+          lr.side_a_holes_won,
+          lr.side_b_holes_won,
           rs.segment_type,
           rs.format AS segment_format
         FROM matches m
         INNER JOIN rounds r ON r.id = m.round_id
-        LEFT JOIN match_results mr ON mr.match_id = m.id
-        LEFT JOIN round_segments rs ON rs.id = mr.segment_id
+        LEFT JOIN latest_results lr ON lr.match_id = m.id AND lr.rn = 1
+        LEFT JOIN round_segments rs ON rs.id = lr.segment_id
         WHERE r.tournament_id = ?1
-        ORDER BY r.round_number ASC, m.match_number ASC, mr.computed_at ASC, mr.segment_id ASC
+        ORDER BY r.round_number ASC, m.match_number ASC
       `
     )
     .bind(tournamentId)
@@ -333,7 +339,7 @@ async function loadLastUpdated(db: D1Database, tournamentId: string): Promise<st
   const row = await db
     .prepare(
       `
-        SELECT MAX(hs.entered_at) AS last_updated
+        SELECT MAX(hs.updated_at) AS last_updated
         FROM hole_scores hs
         INNER JOIN matches m ON m.id = hs.match_id
         INNER JOIN rounds r ON r.id = m.round_id

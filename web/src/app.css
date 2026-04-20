@@ -159,8 +159,8 @@
     font-family: var(--font-display);
   }
 
-  a[role='button'],
-  a.no-underline {
+  a {
+    color: inherit;
     text-decoration: none;
   }
 }

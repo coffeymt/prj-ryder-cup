@@ -86,6 +86,16 @@ On reconnect
 
 `processed_ops.match_id` scopes idempotency keys per match, added by migration `0003`.
 
+## Live Data
+
+`GET /api/live/[code]` builds a `LiveSnapshot` (teams, rounds, matches, `lastUpdated`) consumed by SSE clients and direct pollers.
+
+| Concern | Implementation |
+|---|---|
+| Match deduplication | `loadMatches()` uses `ROW_NUMBER() OVER (PARTITION BY match_id ORDER BY computed_at DESC)` CTE — only the latest `match_results` row per match is returned, preventing duplicates from multi-segment tournaments |
+| SSE change detection | `loadLastUpdated()` queries `MAX(hs.updated_at)` from `hole_scores` — score corrections (which update `updated_at` without inserting a new row) correctly trigger a live feed push |
+| Leaderboard auto-refresh | `/t/[code]/leaderboard` calls `invalidateAll()` on a 15-second interval (guarded by `document.visibilityState === 'visible'`) and immediately on `visibilitychange`; interval is cleared on component destroy |
+
 ## Service Worker Strategies
 
 | Route pattern | Strategy | Cache name |

@@ -10,14 +10,14 @@
   export let data: PageData;
 
   type RowDraft = PageData['players'][number] & {
-    grossStrokes: number;
+    grossStrokes: number | null;
     conceded: boolean;
     pickedUp: boolean;
   };
 
   let rows: RowDraft[] = data.players.map((playerRow) => ({
     ...playerRow,
-    grossStrokes: playerRow.currentScore?.grossStrokes ?? data.par,
+    grossStrokes: playerRow.currentScore?.grossStrokes ?? null,
     conceded: playerRow.currentScore?.conceded ?? false,
     pickedUp: playerRow.currentScore?.pickedUp ?? false,
   }));
@@ -61,6 +61,9 @@
   }
 
   async function submitHoleScore(row: RowDraft): Promise<void> {
+    if (row.grossStrokes === null && !row.conceded && !row.pickedUp) {
+      throw new Error(`Enter a score for ${row.player.name} or mark them as conceded or picked up.`);
+    }
     await outbox.submitScore(`/api/matches/${encodeURIComponent(data.match.id)}/holes`, {
       playerId: row.submitPlayerId,
       holeNumber: data.holeNumber,
@@ -76,6 +79,13 @@
     }
 
     errorMessage = '';
+
+    const missingScore = rows.find((row) => row.grossStrokes === null && !row.conceded && !row.pickedUp);
+    if (missingScore) {
+      errorMessage = `Enter a score for ${missingScore.player.name} or mark them as conceded or picked up.`;
+      return;
+    }
+
     isSaving = true;
 
     try {
@@ -214,7 +224,7 @@
   <div class="grid grid-cols-2 gap-2">
     <a
       href={backHref}
-      class="min-h-touch bg-surface-raised text-text-primary hover:bg-surface duration-base inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold shadow-sm transition-all hover:shadow-md"
+      class="min-h-touch bg-surface-raised text-text-primary hover:bg-surface duration-base inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold shadow-sm transition-all hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
     >
       &larr; Back
     </a>

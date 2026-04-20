@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { untrack } from 'svelte';
+  import { untrack, onMount } from 'svelte';
+  import { invalidateAll } from '$app/navigation';
   import type { PageData } from './$types';
 
   let { data }: { data: PageData } = $props();
@@ -100,6 +101,28 @@
   // Column totals for the breakdown table
   const totalByTeamA = $derived(teamA.totalPoints);
   const totalByTeamB = $derived(teamB.totalPoints);
+
+  // Auto-refresh: re-run the server load every 15 seconds and on tab focus
+  onMount(() => {
+    const intervalId = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        invalidateAll();
+      }
+    }, 15_000);
+
+    function handleVisibilityChange() {
+      if (document.visibilityState === 'visible') {
+        invalidateAll();
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      clearInterval(intervalId);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  });
 </script>
 
 <svelte:head>

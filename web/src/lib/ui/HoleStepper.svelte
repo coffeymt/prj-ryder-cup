@@ -1,5 +1,5 @@
 <script lang="ts">
-  export let value = 4;
+  export let value: number | null = null;
   export let min = 1;
   export let max = 15;
   export let par = 4;
@@ -14,7 +14,13 @@
   }
 
   $: relationClass =
-    value < par ? 'text-status-up' : value > par ? 'text-status-down' : 'text-text-primary';
+    value === null
+      ? 'text-text-muted'
+      : value < par
+        ? 'text-status-up'
+        : value > par
+          ? 'text-status-down'
+          : 'text-text-primary';
 </script>
 
 <div
@@ -24,8 +30,8 @@
     type="button"
     class="border-border bg-surface-raised text-text-primary hover:bg-surface duration-fast min-h-stepper inline-flex flex-1 items-center justify-center rounded-xl border text-5xl font-semibold transition-transform active:scale-95 disabled:cursor-not-allowed disabled:opacity-45"
     aria-label="Decrease strokes"
-    disabled={value <= min}
-    on:click={() => update(value - 1)}
+    disabled={value !== null && value <= min}
+    on:click={() => update(value !== null ? value - 1 : par)}
   >
     −
   </button>
@@ -33,15 +39,15 @@
   <div
     class={`border-border bg-surface-raised font-display duration-base min-h-stepper flex flex-1 items-center justify-center rounded-xl border px-2 text-6xl font-semibold tabular-nums transition-colors ${relationClass}`}
   >
-    {value}
+    {value === null ? '–' : value}
   </div>
 
   <button
     type="button"
     class="border-border bg-surface-raised text-text-primary hover:bg-surface duration-fast min-h-stepper inline-flex flex-1 items-center justify-center rounded-xl border text-5xl font-semibold transition-transform active:scale-95 disabled:cursor-not-allowed disabled:opacity-45"
     aria-label="Increase strokes"
-    disabled={value >= max}
-    on:click={() => update(value + 1)}
+    disabled={value !== null && value >= max}
+    on:click={() => update(value !== null ? value + 1 : par)}
   >
     +
   </button>
