@@ -1,7 +1,6 @@
 import type { Player, PlayerTournament, PlayerWithTournament } from './types';
 
 type CreatePlayerInput = {
-  id: string;
   name: string;
   email?: string | null;
   ghin_number?: string | null;
@@ -17,7 +16,6 @@ type BulkCreatePlayerInput = {
 };
 
 type CreatePlayerTournamentInput = {
-  id?: string;
   player_id: string;
   tournament_id: string;
   team_id?: string | null;
@@ -119,15 +117,14 @@ export async function createPlayer(db: D1Database, data: CreatePlayerInput): Pro
   const createdAt = data.created_at ?? nowIso();
   const updatedAt = createdAt;
 
-  await db
+  const result = await db
     .prepare(
       `
-        INSERT INTO players (id, name, email, ghin_number, handicap_index, created_at, updated_at)
-        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)
+        INSERT INTO players (name, email, ghin_number, handicap_index, created_at, updated_at)
+        VALUES (?1, ?2, ?3, ?4, ?5, ?6)
       `
     )
     .bind(
-      data.id,
       data.name,
       data.email ?? null,
       data.ghin_number ?? null,
@@ -137,10 +134,11 @@ export async function createPlayer(db: D1Database, data: CreatePlayerInput): Pro
     )
     .run();
 
-  const created = await getPlayerById(db, data.id);
+  const newId = String(result.meta.last_row_id);
+  const created = await getPlayerById(db, newId);
 
   if (!created) {
-    throw new Error(`Failed to create player ${data.id}.`);
+    throw new Error(`Failed to create player with last_row_id ${newId}.`);
   }
 
   return created;
@@ -257,44 +255,12 @@ export async function bulkCreatePlayers(
     return [];
   }
 
-  const prepared = players.map((player) => {
-    const id = crypto.randomUUID();
-    const createdAt = nowIso();
-    const updatedAt = createdAt;
-
-    const statement = db
-      .prepare(
-        `
-          INSERT INTO players (id, name, email, ghin_number, handicap_index, created_at, updated_at)
-          VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)
-        `
-      )
-      .bind(
-        id,
-        player.name,
-        player.email ?? null,
-        player.ghin_number ?? null,
-        player.handicap_index,
-        createdAt,
-        updatedAt
-      );
-
-    const createdPlayer: Player = {
-      id,
-      name: player.name,
-      email: player.email ?? null,
-      ghin_number: player.ghin_number ?? null,
-      handicap_index: player.handicap_index,
-      created_at: createdAt,
-      updated_at: updatedAt,
-    };
-
-    return { statement, createdPlayer };
-  });
-
-  await db.batch(prepared.map((item) => item.statement));
-
-  return prepared.map((item) => item.createdPlayer);
+  const results: Player[] = [];
+  for (const player of players) {
+    const created = await createPlayer(db, player);
+    results.push(created);
+  }
+  return results;
 }
 
 // ---------------------------------------------------------------------------
@@ -305,18 +271,16 @@ export async function createPlayerTournament(
   db: D1Database,
   data: CreatePlayerTournamentInput
 ): Promise<PlayerTournament> {
-  const id = data.id ?? crypto.randomUUID();
   const createdAt = data.created_at ?? nowIso();
 
-  await db
+  const result = await db
     .prepare(
       `
-        INSERT INTO player_tournaments (id, player_id, tournament_id, team_id, handicap_index_override, created_at)
-        VALUES (?1, ?2, ?3, ?4, ?5, ?6)
+        INSERT INTO player_tournaments (player_id, tournament_id, team_id, handicap_index_override, created_at)
+        VALUES (?1, ?2, ?3, ?4, ?5)
       `
     )
     .bind(
-      id,
       data.player_id,
       data.tournament_id,
       data.team_id ?? null,
@@ -325,7 +289,8 @@ export async function createPlayerTournament(
     )
     .run();
 
-  const created = await getPlayerTournamentById(db, id);
+  const newId = String(result.meta.last_row_id);
+  const created = await getPlayerTournamentById(db, newId);
 
   if (!created) {
     throw new Error(
@@ -448,39 +413,10 @@ export async function bulkCreatePlayerTournaments(
     return [];
   }
 
-  const prepared = entries.map((entry) => {
-    const id = crypto.randomUUID();
-    const createdAt = nowIso();
-
-    const statement = db
-      .prepare(
-        `
-          INSERT INTO player_tournaments (id, player_id, tournament_id, team_id, handicap_index_override, created_at)
-          VALUES (?1, ?2, ?3, ?4, ?5, ?6)
-        `
-      )
-      .bind(
-        id,
-        entry.player_id,
-        entry.tournament_id,
-        entry.team_id ?? null,
-        entry.handicap_index_override ?? null,
-        createdAt
-      );
-
-    const createdEntry: PlayerTournament = {
-      id,
-      player_id: entry.player_id,
-      tournament_id: entry.tournament_id,
-      team_id: entry.team_id ?? null,
-      handicap_index_override: entry.handicap_index_override ?? null,
-      created_at: createdAt,
-    };
-
-    return { statement, createdEntry };
-  });
-
-  await db.batch(prepared.map((item) => item.statement));
-
-  return prepared.map((item) => item.createdEntry);
+  const results: PlayerTournament[] = [];
+  for (const entry of entries) {
+    const created = await createPlayerTournament(db, entry);
+    results.push(created);
+  }
+  return results;
 }

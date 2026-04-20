@@ -20,13 +20,6 @@ function getDatabase(event: Parameters<RequestHandler>[0]): D1Database {
   return db;
 }
 
-function getNumericStringId(): string {
-  const timestamp = Date.now();
-  const randomPart = Math.floor(Math.random() * 1_000_000);
-
-  return String(timestamp * 1_000_000 + randomPart);
-}
-
 function isNonEmptyString(value: unknown): value is string {
   return typeof value === 'string' && value.trim().length > 0;
 }
@@ -146,7 +139,6 @@ export const POST: RequestHandler = async (event) => {
   }
 
   const team = await createTeam(db, {
-    id: getNumericStringId(),
     tournament_id: tournamentId,
     name: body.name.trim(),
     color: body.color,

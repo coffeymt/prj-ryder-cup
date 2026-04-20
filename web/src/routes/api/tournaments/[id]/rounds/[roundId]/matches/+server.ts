@@ -351,7 +351,6 @@ export const POST: RequestHandler = async ({ params, request, locals, platform }
     }
 
     const createdMatch = await createMatch(db, {
-      id: crypto.randomUUID(),
       round_id: params.roundId,
       match_number: nextMatchNumber,
       format_override: segment.format,
@@ -360,14 +359,12 @@ export const POST: RequestHandler = async ({ params, request, locals, platform }
     nextMatchNumber += 1;
 
     const createdSideA = await createMatchSide(db, {
-      id: crypto.randomUUID(),
       match_id: createdMatch.id,
       team_id: requestedMatch.sideA.teamId,
       side_label: 'A',
     });
 
     const createdSideB = await createMatchSide(db, {
-      id: crypto.randomUUID(),
       match_id: createdMatch.id,
       team_id: requestedMatch.sideB.teamId,
       side_label: 'B',

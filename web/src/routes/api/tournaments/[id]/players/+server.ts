@@ -183,7 +183,6 @@ export const POST: RequestHandler = async (event) => {
   }
 
   const player = await createPlayer(db, {
-    id: crypto.randomUUID(),
     name: body.displayName.trim(),
     handicap_index: body.handicapIndex,
     email: isNonEmptyString(body.email) ? (body.email as string).trim() : null,

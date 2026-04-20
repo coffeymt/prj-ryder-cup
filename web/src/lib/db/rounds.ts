@@ -1,7 +1,7 @@
 import type { Round, RoundSegment } from './types';
 
-type CreateRoundInput = Omit<Round, 'created_at'> & Partial<Pick<Round, 'created_at'>>;
-type CreateRoundSegmentInput = Omit<RoundSegment, 'created_at'> &
+type CreateRoundInput = Omit<Round, 'id' | 'created_at'> & Partial<Pick<Round, 'created_at'>>;
+type CreateRoundSegmentInput = Omit<RoundSegment, 'id' | 'created_at'> &
   Partial<Pick<RoundSegment, 'created_at'>>;
 
 const ROUND_COLUMNS = `
@@ -69,11 +69,10 @@ function normalizeRoundSegment(row: RoundSegment | null): RoundSegment | null {
 export async function createRound(db: D1Database, data: CreateRoundInput): Promise<Round> {
   const createdAt = data.created_at ?? nowIso();
 
-  await db
+  const result = await db
     .prepare(
       `
         INSERT INTO rounds (
-          id,
           tournament_id,
           round_number,
           course_id,
@@ -82,11 +81,10 @@ export async function createRound(db: D1Database, data: CreateRoundInput): Promi
           notes,
           created_at
         )
-        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)
+        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)
       `
     )
     .bind(
-      data.id,
       data.tournament_id,
       data.round_number,
       data.course_id,
@@ -97,10 +95,11 @@ export async function createRound(db: D1Database, data: CreateRoundInput): Promi
     )
     .run();
 
-  const created = await getRoundById(db, data.id);
+  const newId = String(result.meta.last_row_id);
+  const created = await getRoundById(db, newId);
 
   if (!created) {
-    throw new Error(`Failed to create round ${data.id}.`);
+    throw new Error(`Failed to create round with last_row_id ${newId}.`);
   }
 
   return created;
@@ -183,11 +182,10 @@ export async function createRoundSegment(
 ): Promise<RoundSegment> {
   const createdAt = data.created_at ?? nowIso();
 
-  await db
+  const result = await db
     .prepare(
       `
         INSERT INTO round_segments (
-          id,
           round_id,
           segment_type,
           hole_start,
@@ -197,11 +195,10 @@ export async function createRoundSegment(
           allowance_override,
           created_at
         )
-        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)
+        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)
       `
     )
     .bind(
-      data.id,
       data.round_id,
       data.segment_type,
       data.hole_start,
@@ -213,6 +210,7 @@ export async function createRoundSegment(
     )
     .run();
 
+  const newId = String(result.meta.last_row_id);
   const row = await db
     .prepare(
       `
@@ -222,13 +220,13 @@ export async function createRoundSegment(
         LIMIT 1
       `
     )
-    .bind(data.id)
+    .bind(newId)
     .first<RoundSegment>();
 
   const created = normalizeRoundSegment(row);
 
   if (!created) {
-    throw new Error(`Failed to create round segment ${data.id}.`);
+    throw new Error(`Failed to create round segment with last_row_id ${newId}.`);
   }
 
   return created;

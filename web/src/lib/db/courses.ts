@@ -1,9 +1,9 @@
 import type { Course, CourseImportData, Hole, Tee } from './types';
 
-type CreateCourseInput = Omit<Course, 'created_at' | 'updated_at'> &
+type CreateCourseInput = Omit<Course, 'id' | 'created_at' | 'updated_at'> &
   Partial<Pick<Course, 'created_at' | 'updated_at'>>;
-type CreateTeeInput = Omit<Tee, 'created_at'> & Partial<Pick<Tee, 'created_at'>>;
-type UpsertHoleInput = Omit<Hole, 'id' | 'created_at'> & Partial<Pick<Hole, 'id' | 'created_at'>>;
+type CreateTeeInput = Omit<Tee, 'id' | 'created_at'> & Partial<Pick<Tee, 'created_at'>>;
+type UpsertHoleInput = Omit<Hole, 'id' | 'created_at'> & Partial<Pick<Hole, 'created_at'>>;
 
 const COURSE_COLUMNS = `
   id,
@@ -121,20 +121,21 @@ export async function createCourse(db: D1Database, data: CreateCourseInput): Pro
   const createdAt = data.created_at ?? nowIso();
   const updatedAt = data.updated_at ?? createdAt;
 
-  await db
+  const result = await db
     .prepare(
       `
-        INSERT INTO courses (id, name, location, is_seed, created_at, updated_at)
-        VALUES (?1, ?2, ?3, ?4, ?5, ?6)
+        INSERT INTO courses (name, location, is_seed, created_at, updated_at)
+        VALUES (?1, ?2, ?3, ?4, ?5)
       `
     )
-    .bind(data.id, data.name, data.location, data.is_seed, createdAt, updatedAt)
+    .bind(data.name, data.location, data.is_seed, createdAt, updatedAt)
     .run();
 
-  const created = await getCourseById(db, data.id);
+  const newId = String(result.meta.last_row_id);
+  const created = await getCourseById(db, newId);
 
   if (!created) {
-    throw new Error(`Failed to create course ${data.id}.`);
+    throw new Error(`Failed to create course with last_row_id ${newId}.`);
   }
 
   return created;
@@ -207,11 +208,10 @@ export async function updateCourse(
 export async function createTee(db: D1Database, data: CreateTeeInput): Promise<Tee> {
   const createdAt = data.created_at ?? nowIso();
 
-  await db
+  const result = await db
     .prepare(
       `
         INSERT INTO tees (
-          id,
           course_id,
           name,
           color_hex,
@@ -226,11 +226,10 @@ export async function createTee(db: D1Database, data: CreateTeeInput): Promise<T
           par9b,
           created_at
         )
-        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14)
+        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13)
       `
     )
     .bind(
-      data.id,
       data.course_id,
       data.name,
       data.color_hex,
@@ -247,6 +246,7 @@ export async function createTee(db: D1Database, data: CreateTeeInput): Promise<T
     )
     .run();
 
+  const newId = String(result.meta.last_row_id);
   const row = await db
     .prepare(
       `
@@ -256,13 +256,13 @@ export async function createTee(db: D1Database, data: CreateTeeInput): Promise<T
         LIMIT 1
       `
     )
-    .bind(data.id)
+    .bind(newId)
     .first<Tee>();
 
   const created = normalizeTee(row);
 
   if (!created) {
-    throw new Error(`Failed to create tee ${data.id}.`);
+    throw new Error(`Failed to create tee with last_row_id ${newId}.`);
   }
 
   return created;
@@ -301,31 +301,51 @@ export async function upsertHole(db: D1Database, data: UpsertHoleInput): Promise
     .bind(data.tee_id, data.hole_number)
     .first<Hole>();
 
-  const holeId = data.id ?? (existing ? String(existing.id) : crypto.randomUUID());
-  const createdAt = data.created_at ?? (existing ? existing.created_at : nowIso());
+  if (existing) {
+    const existingId = String(existing.id);
+    await db
+      .prepare(
+        `
+          UPDATE holes
+          SET par = ?1, yardage = ?2, stroke_index = ?3
+          WHERE id = ?4
+        `
+      )
+      .bind(data.par, data.yardage ?? null, data.stroke_index, existingId)
+      .run();
 
-  await db
+    const updated = await getHoleById(db, existingId);
+
+    if (!updated) {
+      throw new Error(`Failed to upsert hole ${existingId}.`);
+    }
+
+    return updated;
+  }
+
+  const createdAt = data.created_at ?? nowIso();
+  const result = await db
     .prepare(
       `
-        INSERT OR REPLACE INTO holes (id, tee_id, hole_number, par, yardage, stroke_index, created_at)
-        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)
+        INSERT INTO holes (tee_id, hole_number, par, yardage, stroke_index, created_at)
+        VALUES (?1, ?2, ?3, ?4, ?5, ?6)
       `
     )
     .bind(
-      holeId,
       data.tee_id,
       data.hole_number,
       data.par,
-      data.yardage,
+      data.yardage ?? null,
       data.stroke_index,
       createdAt
     )
     .run();
 
-  const upserted = await getHoleById(db, holeId);
+  const newId = String(result.meta.last_row_id);
+  const upserted = await getHoleById(db, newId);
 
   if (!upserted) {
-    throw new Error(`Failed to upsert hole ${holeId}.`);
+    throw new Error(`Failed to upsert hole with last_row_id ${newId}.`);
   }
 
   return upserted;
@@ -488,25 +508,27 @@ export async function bulkUpsertHoles(
 
   const statements = holes.map((hole) => {
     const existingHole = existingByNumber.get(hole.hole_number);
-    const holeId = existingHole?.id ?? crypto.randomUUID();
-    const createdAt = existingHole?.created_at ?? now;
+
+    if (existingHole) {
+      return db
+        .prepare(
+          `
+            UPDATE holes
+            SET par = ?1, yardage = ?2, stroke_index = ?3
+            WHERE id = ?4
+          `
+        )
+        .bind(hole.par, hole.yardage ?? null, hole.stroke_index, existingHole.id);
+    }
 
     return db
       .prepare(
         `
-          INSERT OR REPLACE INTO holes (id, tee_id, hole_number, par, yardage, stroke_index, created_at)
-          VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)
+          INSERT INTO holes (tee_id, hole_number, par, yardage, stroke_index, created_at)
+          VALUES (?1, ?2, ?3, ?4, ?5, ?6)
         `
       )
-      .bind(
-        holeId,
-        teeId,
-        hole.hole_number,
-        hole.par,
-        hole.yardage ?? null,
-        hole.stroke_index,
-        createdAt
-      );
+      .bind(teeId, hole.hole_number, hole.par, hole.yardage ?? null, hole.stroke_index, now);
   });
 
   await db.batch(statements);
@@ -517,79 +539,67 @@ export async function importFullCourse(
   courseData: CourseImportData
 ): Promise<Course> {
   const now = nowIso();
-  const courseId = crypto.randomUUID();
 
-  const statements: D1PreparedStatement[] = [
-    db
-      .prepare(
-        `
-          INSERT INTO courses (id, name, location, is_seed, created_at, updated_at)
-          VALUES (?1, ?2, ?3, ?4, ?5, ?6)
-        `
-      )
-      .bind(courseId, courseData.name, courseData.location ?? null, 0, now, now),
-  ];
+  const courseResult = await db
+    .prepare(
+      `
+        INSERT INTO courses (name, location, is_seed, created_at, updated_at)
+        VALUES (?1, ?2, ?3, ?4, ?5)
+      `
+    )
+    .bind(courseData.name, courseData.location ?? null, 0, now, now)
+    .run();
+
+  const courseId = String(courseResult.meta.last_row_id);
 
   for (const tee of courseData.tees) {
-    const teeId = crypto.randomUUID();
+    const teeResult = await db
+      .prepare(
+        `
+          INSERT INTO tees (
+            course_id, name, color_hex,
+            cr18, slope18, par18,
+            cr9f, slope9f, par9f,
+            cr9b, slope9b, par9b,
+            created_at
+          )
+          VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13)
+        `
+      )
+      .bind(
+        courseId,
+        tee.name,
+        tee.color_hex ?? null,
+        tee.cr18,
+        tee.slope18,
+        tee.par18,
+        tee.cr9f ?? null,
+        tee.slope9f ?? null,
+        tee.par9f ?? null,
+        tee.cr9b ?? null,
+        tee.slope9b ?? null,
+        tee.par9b ?? null,
+        now
+      )
+      .run();
 
-    statements.push(
-      db
-        .prepare(
-          `
-            INSERT INTO tees (
-              id, course_id, name, color_hex,
-              cr18, slope18, par18,
-              cr9f, slope9f, par9f,
-              cr9b, slope9b, par9b,
-              created_at
-            )
-            VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14)
-          `
-        )
-        .bind(
-          teeId,
-          courseId,
-          tee.name,
-          tee.color_hex ?? null,
-          tee.cr18,
-          tee.slope18,
-          tee.par18,
-          tee.cr9f ?? null,
-          tee.slope9f ?? null,
-          tee.par9f ?? null,
-          tee.cr9b ?? null,
-          tee.slope9b ?? null,
-          tee.par9b ?? null,
-          now
-        )
-    );
+    const teeId = String(teeResult.meta.last_row_id);
 
-    for (const hole of tee.holes) {
-      const holeId = crypto.randomUUID();
-
-      statements.push(
+    if (tee.holes.length > 0) {
+      const holeStatements = tee.holes.map((hole) =>
         db
           .prepare(
             `
-              INSERT INTO holes (id, tee_id, hole_number, par, yardage, stroke_index, created_at)
-              VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)
+              INSERT INTO holes (tee_id, hole_number, par, yardage, stroke_index, created_at)
+              VALUES (?1, ?2, ?3, ?4, ?5, ?6)
             `
           )
-          .bind(
-            holeId,
-            teeId,
-            hole.hole_number,
-            hole.par,
-            hole.yardage ?? null,
-            hole.stroke_index,
-            now
-          )
+          .bind(teeId, hole.hole_number, hole.par, hole.yardage ?? null, hole.stroke_index, now)
       );
+
+      await db.batch(holeStatements);
     }
   }
-
-  await db.batch(statements);
 
   const created = await getCourseById(db, courseId);
 

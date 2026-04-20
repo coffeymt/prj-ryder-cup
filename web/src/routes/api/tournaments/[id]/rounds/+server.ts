@@ -358,7 +358,6 @@ export const POST: RequestHandler = async ({ params, request, locals, platform }
     1;
 
   const createdRound = await createRound(db, {
-    id: crypto.randomUUID(),
     tournament_id: params.id,
     round_number: nextRoundNumber,
     course_id: courseId,
@@ -382,7 +381,6 @@ export const POST: RequestHandler = async ({ params, request, locals, platform }
     const range = segmentHoleRange(dbSegmentType);
 
     const createdSegment = await createRoundSegment(db, {
-      id: crypto.randomUUID(),
       round_id: createdRound.id,
       segment_type: dbSegmentType,
       hole_start: range.holeStart,

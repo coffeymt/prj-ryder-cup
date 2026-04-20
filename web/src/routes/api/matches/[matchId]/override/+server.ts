@@ -314,7 +314,6 @@ export const POST: RequestHandler = async (event) => {
     const afterScore = isRecord(delegatedPayload) ? delegatedPayload.holeScore : null;
 
     await writeAuditEntry(db, {
-      id: crypto.randomUUID(),
       tournament_id: round.tournament_id,
       actor_player_id: null,
       actor_email: userId,
@@ -378,7 +377,6 @@ export const POST: RequestHandler = async (event) => {
   }
 
   await writeAuditEntry(db, {
-    id: crypto.randomUUID(),
     tournament_id: round.tournament_id,
     actor_player_id: null,
     actor_email: userId,

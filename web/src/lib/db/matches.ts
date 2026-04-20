@@ -7,10 +7,11 @@ import type {
   MatchSidePlayer,
 } from './types';
 
-type CreateMatchInput = Omit<Match, 'created_at'> & Partial<Pick<Match, 'created_at'>>;
-type CreateMatchSideInput = Omit<MatchSide, 'created_at'> & Partial<Pick<MatchSide, 'created_at'>>;
+type CreateMatchInput = Omit<Match, 'id' | 'created_at'> & Partial<Pick<Match, 'created_at'>>;
+type CreateMatchSideInput = Omit<MatchSide, 'id' | 'created_at'> &
+  Partial<Pick<MatchSide, 'created_at'>>;
 type UpsertMatchHoleResultInput = Omit<MatchHoleResult, 'id' | 'computed_at'> &
-  Partial<Pick<MatchHoleResult, 'id' | 'computed_at'>>;
+  Partial<Pick<MatchHoleResult, 'computed_at'>>;
 type UpdateMatchResultInput = Partial<
   Pick<
     MatchResult,
@@ -91,27 +92,21 @@ function normalizeMatchSide(row: MatchSide | null): MatchSide | null {
 export async function createMatch(db: D1Database, data: CreateMatchInput): Promise<Match> {
   const createdAt = data.created_at ?? nowIso();
 
-  await db
+  const result = await db
     .prepare(
       `
-        INSERT INTO matches (id, round_id, match_number, format_override, tee_time, created_at)
-        VALUES (?1, ?2, ?3, ?4, ?5, ?6)
+        INSERT INTO matches (round_id, match_number, format_override, tee_time, created_at)
+        VALUES (?1, ?2, ?3, ?4, ?5)
       `
     )
-    .bind(
-      data.id,
-      data.round_id,
-      data.match_number,
-      data.format_override,
-      data.tee_time ?? null,
-      createdAt
-    )
+    .bind(data.round_id, data.match_number, data.format_override, data.tee_time ?? null, createdAt)
     .run();
 
-  const created = await getMatchById(db, data.id);
+  const newId = String(result.meta.last_row_id);
+  const created = await getMatchById(db, newId);
 
   if (!created) {
-    throw new Error(`Failed to create match ${data.id}.`);
+    throw new Error(`Failed to create match with last_row_id ${newId}.`);
   }
 
   return created;
@@ -200,13 +195,10 @@ export async function updateMatchStatus(
     return;
   }
 
-  const rowId = crypto.randomUUID();
-
   await db
     .prepare(
       `
         INSERT INTO match_results (
-          id,
           match_id,
           segment_id,
           status,
@@ -218,7 +210,7 @@ export async function updateMatchStatus(
           side_b_points,
           computed_at
         )
-        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)
+        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)
         ON CONFLICT(match_id, segment_id) DO UPDATE SET
           status = excluded.status,
           side_a_holes_won = excluded.side_a_holes_won,
@@ -231,7 +223,6 @@ export async function updateMatchStatus(
       `
     )
     .bind(
-      rowId,
       id,
       result.segment_id,
       status,
@@ -252,16 +243,17 @@ export async function createMatchSide(
 ): Promise<MatchSide> {
   const createdAt = data.created_at ?? nowIso();
 
-  await db
+  const result = await db
     .prepare(
       `
-        INSERT INTO match_sides (id, match_id, team_id, side_label, created_at)
-        VALUES (?1, ?2, ?3, ?4, ?5)
+        INSERT INTO match_sides (match_id, team_id, side_label, created_at)
+        VALUES (?1, ?2, ?3, ?4)
       `
     )
-    .bind(data.id, data.match_id, data.team_id, data.side_label, createdAt)
+    .bind(data.match_id, data.team_id, data.side_label, createdAt)
     .run();
 
+  const newId = String(result.meta.last_row_id);
   const row = await db
     .prepare(
       `
@@ -271,13 +263,13 @@ export async function createMatchSide(
         LIMIT 1
       `
     )
-    .bind(data.id)
+    .bind(newId)
     .first<MatchSide>();
 
   const created = normalizeMatchSide(row);
 
   if (!created) {
-    throw new Error(`Failed to create match side ${data.id}.`);
+    throw new Error(`Failed to create match side with last_row_id ${newId}.`);
   }
 
   return created;
@@ -312,11 +304,11 @@ export async function addPlayerToSide(
   await db
     .prepare(
       `
-        INSERT OR IGNORE INTO match_side_players (id, match_side_id, player_id, created_at)
-        VALUES (?1, ?2, ?3, ?4)
+        INSERT OR IGNORE INTO match_side_players (match_side_id, player_id, created_at)
+        VALUES (?1, ?2, ?3)
       `
     )
-    .bind(crypto.randomUUID(), matchSideId, playerId, nowIso())
+    .bind(matchSideId, playerId, nowIso())
     .run();
 }
 
@@ -348,14 +340,12 @@ export async function upsertMatchHoleResult(
   db: D1Database,
   data: UpsertMatchHoleResultInput
 ): Promise<void> {
-  const rowId = data.id ?? crypto.randomUUID();
   const computedAt = data.computed_at ?? nowIso();
 
   await db
     .prepare(
       `
         INSERT INTO match_hole_results (
-          id,
           match_id,
           segment_id,
           hole_number,
@@ -364,7 +354,7 @@ export async function upsertMatchHoleResult(
           side_b_net,
           computed_at
         )
-        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)
+        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)
         ON CONFLICT(match_id, hole_number) DO UPDATE SET
           segment_id = excluded.segment_id,
           result = excluded.result,
@@ -374,7 +364,6 @@ export async function upsertMatchHoleResult(
       `
     )
     .bind(
-      rowId,
       data.match_id,
       data.segment_id,
       data.hole_number,

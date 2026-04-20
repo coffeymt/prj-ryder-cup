@@ -1,6 +1,6 @@
 import type { Team } from './types';
 
-type CreateTeamInput = Omit<Team, 'created_at'> & Partial<Pick<Team, 'created_at'>>;
+type CreateTeamInput = Omit<Team, 'id' | 'created_at'> & Partial<Pick<Team, 'created_at'>>;
 
 const TEAM_COLUMNS = `
   id,
@@ -34,20 +34,21 @@ function normalizeTeam(row: Team | null): Team | null {
 export async function createTeam(db: D1Database, data: CreateTeamInput): Promise<Team> {
   const createdAt = data.created_at ?? nowIso();
 
-  await db
+  const result = await db
     .prepare(
       `
-        INSERT INTO teams (id, tournament_id, name, color, captain_player_id, created_at)
-        VALUES (?1, ?2, ?3, ?4, ?5, ?6)
+        INSERT INTO teams (tournament_id, name, color, captain_player_id, created_at)
+        VALUES (?1, ?2, ?3, ?4, ?5)
       `
     )
-    .bind(data.id, data.tournament_id, data.name, data.color, data.captain_player_id, createdAt)
+    .bind(data.tournament_id, data.name, data.color, data.captain_player_id, createdAt)
     .run();
 
-  const created = await getTeamById(db, data.id);
+  const newId = String(result.meta.last_row_id);
+  const created = await getTeamById(db, newId);
 
   if (!created) {
-    throw new Error(`Failed to create team ${data.id}.`);
+    throw new Error(`Failed to create team with last_row_id ${newId}.`);
   }
 
   return created;

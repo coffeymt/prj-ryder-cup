@@ -1,6 +1,7 @@
 import type { AuditLog } from './types';
 
-type WriteAuditEntryInput = Omit<AuditLog, 'created_at'> & Partial<Pick<AuditLog, 'created_at'>>;
+type WriteAuditEntryInput = Omit<AuditLog, 'id' | 'created_at'> &
+  Partial<Pick<AuditLog, 'created_at'>>;
 
 const AUDIT_COLUMNS = `
   id,
@@ -38,11 +39,10 @@ export async function writeAuditEntry(
 ): Promise<AuditLog> {
   const createdAt = data.created_at ?? nowIso();
 
-  await db
+  const result = await db
     .prepare(
       `
         INSERT INTO audit_log (
-          id,
           tournament_id,
           actor_player_id,
           actor_email,
@@ -53,11 +53,10 @@ export async function writeAuditEntry(
           new_value,
           created_at
         )
-        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)
+        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)
       `
     )
     .bind(
-      data.id,
       data.tournament_id,
       data.actor_player_id,
       data.actor_email,
@@ -70,6 +69,8 @@ export async function writeAuditEntry(
     )
     .run();
 
+  const insertedId = result.meta.last_row_id;
+
   const row = await db
     .prepare(
       `
@@ -79,13 +80,13 @@ export async function writeAuditEntry(
         LIMIT 1
       `
     )
-    .bind(data.id)
+    .bind(insertedId)
     .first<AuditLog>();
 
   const created = normalizeAuditLog(row);
 
   if (!created) {
-    throw new Error(`Failed to write audit entry ${data.id}.`);
+    throw new Error(`Failed to write audit entry (last_row_id=${insertedId}).`);
   }
 
   return created;

@@ -93,7 +93,6 @@ export const POST: RequestHandler = async (event) => {
   }
 
   const auditEntry = await writeAuditEntry(db, {
-    id: crypto.randomUUID(),
     tournament_id: tournament.id,
     actor_player_id: null,
     actor_email: userId,
