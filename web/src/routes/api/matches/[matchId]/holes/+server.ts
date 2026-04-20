@@ -777,6 +777,7 @@ export const POST: RequestHandler = async (event) => {
     if (isHttpError(handlerError)) {
       throw handlerError;
     }
+    console.error('[POST /api/matches/:matchId/holes] Unhandled error:', handlerError);
     return json(
       { message: 'An error occurred while processing the score submission.' },
       { status: 500 }
